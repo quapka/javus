@@ -9,6 +9,8 @@ $(TARGET):
 	-rm $(TARGET).cap
 	$(ANT) $@
 
+reinstall: $(TARGET) install
+
 install:
 	$(GP) --force --install $(TARGET).cap --verbose --debug
 
