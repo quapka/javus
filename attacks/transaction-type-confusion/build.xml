@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TransactionTypeConfusion" default="default" basedir=".">
+    <description>Builds, tests, and runs the project SimpleApplet.</description>
+    <!-- <import file="nbproject/build-impl.xml"/> -->
+    <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ext/ant-javacard.jar"/>
+
+    <!-- <property name="JC222" value="ext/java_card_kit-2_2_2"/> -->
+    <property name="JC222" value="ext/jc222_kit"/>
+    <property name="JC305" value="ext/jc305u3_kit"/>
+    <target name="transactiontypeconfusion">
+        <javacard jckit="${JC222}">
+            <cap output="transactiontypeconfusion.cap" sources="src/TransactionTypeConfusion" aid="0011223344">
+                <applet class="transactiontypeconfusion.TransactionTypeConfusion" aid="00112233445566778899bb"/>
+            </cap>
+        </javacard>
+    </target>
+</project>
