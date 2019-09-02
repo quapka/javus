@@ -6,3 +6,5 @@
 
 # ignore the external Java Card system dependencies/libraries
 ext/
+
+*.log
