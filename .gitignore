@@ -3,3 +3,6 @@
 # ignore Converted Applet files - might change in the future due to binary editing
 # of CAP files, where versioning is important
 *.cap
+
+# ignore the external Java Card system dependencies/libraries
+ext/
