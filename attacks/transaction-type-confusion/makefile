@@ -6,6 +6,7 @@ GP = java -jar /home/qup/projects/fi/crocs/GlobalPlatformPro/gp.jar
 all: $(TARGET)
 
 $(TARGET):
+	-rm $(TARGET).cap
 	$(ANT) $@
 
 install:
