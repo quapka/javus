@@ -1,5 +1,3 @@
-*.pdf
-
 # ignore Converted Applet files - might change in the future due to binary editing
 # of CAP files, where versioning is important
 *.cap
@@ -8,3 +6,7 @@
 ext/
 
 *.log
+
+# ignore the papers
+*.pdf
+readings/
