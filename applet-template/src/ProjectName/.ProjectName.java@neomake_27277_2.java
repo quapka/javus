@@ -1,0 +1,33 @@
+package <PackageName>;
+
+import javacard.framework.*;
+
+public class <ProjectName> extends Applet {
+    private static final byte INS_SUCCESS = 0x01;
+    private static final byte INS_FAILURE = 0x01;
+
+    byte[] success = {(byte) 0x01, (byte) 0x02, (byte) 0x01, (byte) 0x02};
+    byte[] failure = {(byte) 0x80, (byte) 0x40, (byte) 0x80, (byte) 0x40};
+
+    public static void install(byte[] array, short off, byte len) {
+        new <ProjectName>().register();
+    }
+    public void process(APDU apdu) {
+        if (selectingApplet()) { return; }
+
+        byte[] buf = apdu.getBuffer();
+        switch (buf[ISO7816.OFFSET_INS]) {
+            case INS_SUCCESS:
+                Util.arrayCopyNonAtomic(success, (short) 0, buf, (short) 0, msgLen);
+                apdu.setOutgoingAndSend((short) 0, (short) 4);
+                break;
+            case INS_FAILURE:
+                Util.arrayCopyNonAtomic(failure, (short) 0, buf, (short) 0, msgLen);
+                apdu.setOutgoingAndSend((short) 0, (short) 4);
+                break;
+            default:
+                ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
+        }
+    }
+
+}
