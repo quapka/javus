@@ -119,15 +119,15 @@ class NewApplet(object):
 
         os.symlink(os.path.join(self.repo_dir, 'ext'), os.path.join(self.dest_path, 'ext'))
 
-    def rollback(self):
-        shutil.rmtree(self.dest_path)
+    # def rollback(self):
+    #     shutil.rmtree(self.dest_path)
 
     def run(self):
-        try:
-            self.create_applet_template()
-        except:
-            self.rollback()
-            raise
+        # try:
+        self.create_applet_template()
+        # except:
+        #     self.rollback()
+        #     raise
 
     @staticmethod
     def validate_jc_version(value):
