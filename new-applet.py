@@ -98,7 +98,7 @@ class NewApplet(object):
         with open(os.path.join(self.source_path, 'makefile'), 'r') as f:
             data = f.read()
 
-        data = re.sub('<PackageName>', self.project_name.lower(), data)
+        data = re.sub('<PackageName>', self.package_name.lower(), data)
         data = re.sub('<RID>', self.rid, data)
         if not self.pix:
             self.pix = ''
