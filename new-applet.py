@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import binascii
 import os
 import re
 import shutil
@@ -103,6 +104,10 @@ class NewApplet(object):
         if not self.pix:
             self.pix = ''
         data = re.sub('<PIX>', self.pix, data)
+        apdu_data_len = int(len(self.rid + self.pix) / 2)
+        apdu_data_len = binascii.hexlify(apdu_data_len.to_bytes(1, 'little'))
+        apdu_data_len = apdu_data_len.decode('ascii')
+        data = re.sub('<DATA_LEN>', apdu_data_len, data)
 
         with open(os.path.join(self.dest_path, 'makefile'), 'w') as f:
             f.write(data)
