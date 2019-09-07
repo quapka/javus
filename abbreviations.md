@@ -1,4 +1,4 @@
-AID - Application ID
+AID - Application ID (RID concatenated with PIX)
 APDU - Application Protocol Data Unit
 Applet - Java Card applet
 CAP - Converted Applet
