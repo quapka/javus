@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CardName" default="default" basedir=".">
+        <description>Builds, tests, and runs the project CardName.</description>
+    <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ext/ant-javacard.jar"/>
+
+    <!-- <property name="JC222" value="ext/java_card_kit-2_2_2"/> -->
+    <property name="JC212" value="ext/jc212_kit"/>
+    <property name="JC221" value="ext/jc221_kit"/>
+    <property name="JC222" value="ext/jc222_kit"/>
+    <property name="JC305u3" value="ext/jc305u3_kit"/>
+    <target name="com.card_name">
+        <javacard jckit="${JC222}">
+            <cap output="com.card_name.cap" sources="src/CardName" aid="0011223344">
+                <applet class="com.card_name.CardName" aid="0011223344AABBCC"/>
+            </cap>
+        </javacard>
+    </target>
+</project>
