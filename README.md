@@ -18,3 +18,11 @@ Práce pokryje tyto konkrétní kroky:
     Vytvoření automatizované aplikace pro test (ne)možnosti provádět potenciálně problematické operace.
     Pokus o návrh vlastních útoků na JavaCard RE a jejich případná integrace do testovacího nástroje.
     Vyhodnocení na vybraných reálných kartách.
+
+TODOs
+-----
+- since each attack will have it's own applet (therefore an AID) we should have a reasonable way of assigning RIDs and PIXs
+    - one RID is enough
+    - PIX based on type of attack?
+
+- categorize the attacks
