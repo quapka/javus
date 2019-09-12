@@ -1,6 +1,6 @@
-TARGET = <PackageName>
+TARGET = "<PackageName>"
 ANT = ant
-GP = java -jar ${GO_PATH}
+GP = java -jar "${GO_PATH}"
 SELECT_CMD = 00a40400
 
 all: $(TARGET)
