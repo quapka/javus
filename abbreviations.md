@@ -1,6 +1,8 @@
 AID - Application ID (RID concatenated with PIX)
 APDU - Application Protocol Data Unit
 Applet - Java Card applet
+BCV - Byte Code Verifier
+CAD - Card Acceptance Device, e.g. terminal
 CAP - Converted Applet
 JC - Java Card
 JCC - Java Card Converter
