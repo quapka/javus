@@ -2,6 +2,7 @@ TARGET = "<PackageName>"
 ANT = ant
 GP = java -jar "${GO_PATH}"
 SELECT_CMD = 00a40400
+AID = "<RID><PIX>"
 
 all: $(TARGET)
 
@@ -18,6 +19,6 @@ uninstall:
 	$(GP) --uninstall $(TARGET).cap --verbose --debug
 
 apdu:
-	$(GP) --verbose --debug --apdu $(SELECT_CMD)<DATA_LEN><RID><PIX>
+	$(GP) --verbose --debug --apdu $(SELECT_CMD)<DATA_LEN>$(AID)
 
 deploy: $(TARGET) install apdu
