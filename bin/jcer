@@ -138,6 +138,7 @@ class JavaCardError(object):
 
 
     def validate_constant(self, value):
+        value = value.replace('0x', '')
         arg_len = 4
         if len(value) != arg_len:
             raise argparse.ArgumentTypeError(
