@@ -26,3 +26,18 @@ TODOs
     - PIX based on type of attack?
 
 - categorize the attacks
+
+General notes from meetings
+---------------------------
+
+vynechat Connected
+attack using side effects - multiple calls
+apdu buffer object
+ - write to apdu in one applet and read them in
+catching various exceptions
+
+let Petr send the diploma thesis related to the topic
+
+Trello board
+- papers: abstracts
+- tools
