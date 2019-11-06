@@ -12,3 +12,6 @@ ext
 # ignore the papers
 *.pdf
 readings/
+
+# Java compiled files
+*.class
