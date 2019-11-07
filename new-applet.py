@@ -21,6 +21,7 @@ class NewApplet(object):
         required_named.add_argument(
             '-n', '--project-name',
             help='Project name of the new applet',
+            type=self.validate_project_name,
             required=True,
         )
 
@@ -167,6 +168,13 @@ class NewApplet(object):
             )
 
         return value.upper()
+
+    def validate_project_name(self, value):
+        if re.match('^(?:[A-Z][a-z]*)+$', value):
+            return value
+        raise argparse.ArgumentTypeError(
+            "The 'project-name': {} is not in CamelCase!".format(value)
+        )
 
     @staticmethod
     def is_hex(value):
