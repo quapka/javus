@@ -12,6 +12,7 @@ JCSystem - Java Card System
 JCVM - Java Card Virtual Machine
 PIN - Personal Identification Number
 PIX - Proprietary Application Identifier Extension
+RFU - Reserved for Future Use
 RID - Registered Application Provider Identifier
 SATSA - The Security and Trust Services API
 SDK - Software Development Kit
