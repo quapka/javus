@@ -148,7 +148,7 @@ class NewApplet(object):
     def validate_rid(self, value):
         if len(value) != 10: # five bytes
             raise argparse.ArgumentTypeError(
-                'The lenght of the rid is not correct. Five bytes are expected.')
+                'The length of the rid is not correct. Five bytes are expected.')
 
         if not self.is_hex(value):
             raise argparse.ArgumentTypeError(
@@ -159,7 +159,7 @@ class NewApplet(object):
     def validate_pix(self, value):
         if len(value) < 2 or len(value) > 22: # 1 - 11 bytes
             raise argparse.ArgumentTypeError(
-                'The lenght of the rid is not correct. One through eleven bytes are expected.')
+                'The length of the rid is not correct. One through eleven bytes are expected.')
         if not self.is_hex(value):
 
             raise argparse.ArgumentTypeError(
