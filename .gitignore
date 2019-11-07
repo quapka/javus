@@ -15,3 +15,11 @@ readings/
 
 # Java compiled files
 *.class
+
+# media files
+*.jpg
+*.jpeg
+*.JPG
+*.JPEG
+*.png
+*.PNG
