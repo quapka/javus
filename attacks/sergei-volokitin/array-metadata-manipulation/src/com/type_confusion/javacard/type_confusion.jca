@@ -161,7 +161,8 @@
 			.stack 1;
 			.locals 0;
 
-				L0:	sconst_0;
+				// L0:	sconst_0;
+				L0:	aload_0;
 					sreturn;
 		}
 
@@ -169,7 +170,8 @@
 			.stack 1;
 			.locals 0;
 
-				L0:	aconst_null;
+				// L0:	aconst_null;
+				L0:	sload_0;
 					areturn;
 		}
 
