@@ -1,0 +1,195 @@
+#!/usr/bin/env python3
+import argparse
+import logging
+import os
+import subprocess as sp
+import sys
+import time
+from datetime import datetime, timezone
+
+import pkcs11
+import pymongo
+
+log = logging.getLogger(__file__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(name)s: %(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
+LOG_LEVELS = [
+    logging.DEBUG, logging.INFO, logging.WARNING,
+    logging.ERROR, logging.CRITICAL
+]
+
+# kudos to: https://medium.com/@ramojol/python-context-managers-and-the-with-statement-8f53d4d9f87
+class MongoConnection(object):
+    def __init__(self, host='localhost', port='27017'):
+        self.host = host
+        self.port = port
+        self.connection = None
+        self.db_name = 'card-analysis'
+        self.collation_name = 'commands'
+
+    def __enter__(self, *args, **kwargs):
+        conn_str = f'mongodb://{self.host}:{self.port}'
+        log.debug('Starting the connection with %s', conn_str)
+
+        self.connection = pymongo.MongoClient(conn_str)
+        self.db = self.connection[self.db_name]
+        self.col = self.db[self.collation_name]
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        log.debug('Closing the connection to the database')
+        self.connection.close()
+
+class Timer(object):
+    # naive timer, but to get at least an idea
+    def __init__(self):
+        self.start = None
+        self.end = None
+        self.duration = None
+
+    def __enter__(self, *args, **kwargs):
+        self.start = time.time()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.end = time.time()
+        self.duration = self.end - self.start
+
+
+def determine_reader():
+    lib = pkcs11.lib('/usr/lib/x86_64-linux-gnu/pkcs11/opensc-pkcs11.so')
+    try:
+        log.debug('Getting the card reader slots')
+        slots = lib.get_slots()
+    except pkcs11.DeviceError:
+        log.error('determine_reader failed with DeviceError')
+
+    tokens = []
+    for slot in slots:
+        try:
+            tokens.append(slot.get_token())
+        except pkcs11.TokenNotPresent:
+            pass
+
+    if len(tokens) > 1:
+        msg = 'Multiple tokens detected!'
+        raise RuntimeError(msg)
+    elif len(tokens) == 1:
+        return tokens[0].slot.slot_description
+
+    msg = 'No tokens present in any of the readers. Readers found:\n'
+    msg += '\n'.join([slot.slot_description for slot in slots])
+    raise RuntimeError(msg)
+
+def get_utc_timestamp():
+    now = datetime.now()
+    now = now.replace(tzinfo=timezone.utc)
+    return now.timestamp()
+
+def insert_middle(original, position, values):
+    # will remove the value in original[position]
+    return original[:position] + values + original[position + 1:]
+
+
+class Recorder(object):
+    def __init__(self):
+        self.verbosity = logging.ERROR
+        self.dry_run = False
+        self.command = None
+        self.record = True
+        log.setLevel(self.verbosity)
+
+        self.parser = argparse.ArgumentParser(
+                description="Run a command and record it's output in a MongDB"
+        )
+        self.add_options()
+        self.parse_options()
+
+
+    def add_options(self):
+        levels = ', '.join([str(lvl) for lvl in LOG_LEVELS])
+        self.parser.add_argument(
+            '-v', '--verbose',
+            help='Set the verbosity {' + levels + '}',
+            type=self.validate_verbosity,
+        )
+        self.parser.add_argument(
+            '-n', '--dry-run',
+            help='Don\'t run any command and don\'t save the output into db',
+            action='store_true',
+        )
+        self.parser.add_argument(
+            '-s', '--no-record',
+            help='Don\'t record the command output in the database',
+            action='store_false'
+        )
+
+        self.parser.add_argument(
+            'command', nargs='*',
+            )
+
+    def validate_verbosity(self, value):
+        try:
+            value = int(value)
+        except ValueError:
+            raise argparse.ArgumentTypeError('verbosity is not and integer')
+        if value not in LOG_LEVELS:
+            raise argparse.ArgumentTypeError('verbosity level not from expected range')
+        return value
+
+    def parse_options(self):
+        args = self.parser.parse_args()
+        self.verbosity = args.verbose
+        self.dry_run = args.dry_run
+        self.command = args.command
+
+        if not self.command:
+            raise argparse.ArgumentTypeError("positional argument 'command' required")
+
+        if args.no_record:
+            self.record = False
+
+    def substitute_gp(self):
+        gp = [
+            'java',
+            '-jar',
+            os.path.join(os.environ['HOME'], 'projects/GlobalPlatformPro/gp.jar'),
+        ]
+        if 'gp' in self.command:
+            insert_middle(self.command, self.command.index('gp'), gp)
+
+    def run(self):
+        reader = determine_reader()
+        timestamp = get_utc_timestamp()
+        # resolve gp alias
+        self.substitute_gp()
+
+        if self.dry_run:
+            print('Would run:')
+            print(self.command)
+            sys.exit(0)
+
+
+        with Timer() as timer:
+            output = sp.check_output(self.command, stderr=sys.stdout)
+
+        print(output.decode('utf8'))
+
+        if self.record:
+            log.debug('Output recording')
+            with MongoConnection() as c:
+                c.col.insert_one({
+                    'command': ' '.join(self.command),
+                    'output': output.decode('utf8'),
+                    'timestamp': timestamp,
+                    'duration': timer.duration,
+                    'reader': reader,
+                    })
+        else:
+            log.debug('No output recording')
+
+if __name__ == '__main__':
+    recorder = Recorder()
+    recorder.run()
