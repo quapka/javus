@@ -10,7 +10,7 @@
     <property name="JC305u3" value="ext/jc305u3_kit"/>
     <target name="com.card_name">
         <javacard jckit="${JC222}">
-            <cap output="com.card_name.cap" sources="src/CardName" aid="0011223344">
+            <cap output="com.card_name.cap" sources="src/com" aid="0011223344">
                 <applet class="com.card_name.CardName" aid="0011223344AABBCC"/>
             </cap>
         </javacard>
