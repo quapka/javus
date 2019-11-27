@@ -99,7 +99,6 @@ class Recorder(object):
         self.dry_run = False
         self.command = None
         self.record = True
-        log.setLevel(self.verbosity)
 
         self.parser = argparse.ArgumentParser(
                 description="Run a command and record it's output in a MongDB"
@@ -107,6 +106,8 @@ class Recorder(object):
         self.add_options()
         self.parse_options()
 
+        log.setLevel(self.verbosity)
+        log.debug('Logging level changed')
 
     def add_options(self):
         levels = ', '.join([str(lvl) for lvl in LOG_LEVELS])
