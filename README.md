@@ -41,3 +41,26 @@ let Petr send the diploma thesis related to the topic
 Trello board
 - papers: abstracts
 - tools
+
+Fresh device setup (Ubuntu 18.04)
+------------------
+Install `pkcs11-tool` (requires root privileges):
+```
+$ apt install opensc
+```
+
+Install Java:
+```
+$ apt install openjdk-8-jre-headless
+$ apt install openjdk-8-jdk
+```
+
+Install Apache build tool:
+```
+$ apt install ant
+```
+
+Install Mongo database:
+```
+sudo apt install -y mongodb
+```
