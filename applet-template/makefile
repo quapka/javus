@@ -1,4 +1,5 @@
-TARGET = "<PackageName>"
+jcv = 212
+TARGET = "<PackageName>".${jvc}
 ANT = ant
 GP = java -jar "${GO_PATH}"
 SELECT_CMD = "00a40400"

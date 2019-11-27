@@ -32,13 +32,6 @@ class NewApplet(object):
         )
 
         required_named.add_argument(
-            '-v', '--java-card-version',
-            help='Version of the Java Card extensions',
-            required=True,
-            type=self.validate_jc_version,
-        )
-
-        required_named.add_argument(
             '-r', '--rid',
             help='The RID - Registered Application Provider Identifier for the applet',
             required=True,
@@ -72,7 +65,6 @@ class NewApplet(object):
         args = self.parser.parse_args()
         self.project_name = args.project_name
         self.package_name = args.package_name
-        self.jc_version = args.java_card_version
         self.rid = args.rid
         self.pix = args.pix
         self.source_path = args.source_path
@@ -87,7 +79,6 @@ class NewApplet(object):
 
         data = re.sub('<ProjectName>', self.project_name, data)
         data = re.sub('<PackageName>', self.package_name, data)
-        data = re.sub('<JCVersion>', 'JC'+ self.jc_version, data)
         data = re.sub('<RID>', self.rid, data)
         if not self.pix:
             self.pix = ''
@@ -134,17 +125,6 @@ class NewApplet(object):
         # except:
         #     self.rollback()
         #     raise
-
-    @staticmethod
-    def validate_jc_version(value):
-        exts = ['212', '221', '222', '305_u3']
-        if value not in exts:
-            raise argparse.ArgumentTypeError(
-                "The Java Card extension '{value}' is not supported. Choose one of {exts}.".format(
-                    value=value,
-                     exts=', '.join(exts))
-            )
-        return value
 
     def validate_rid(self, value):
         if len(value) != 10: # five bytes

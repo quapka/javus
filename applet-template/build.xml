@@ -8,9 +8,32 @@
     <property name="JC221" value="ext/jc221_kit"/>
     <property name="JC222" value="ext/jc222_kit"/>
     <property name="JC305u3" value="ext/jc305u3_kit"/>
-    <target name="<PackageName>">
-        <javacard jckit="${<JCVersion>}">
-            <cap output="<PackageName>.cap" sources="src/<ProjectName>" aid="<RID>">
+
+    <target name="<PackageName>.jc212">
+            <javacard jckit="${JC212}">
+            <cap output="<PackageName>-jc212.cap" sources="src/<ProjectName>" aid="<RID>"
+                verify="false">
+                <applet class="<PackageName>.<ProjectName>" aid="<RID><PIX>"/>
+            </cap>
+        </javacard>
+    </target>
+    <target name="<PackageName>.jc221">
+            <javacard jckit="${JC221}">
+            <cap output="<PackageName>-jc221.cap" sources="src/<ProjectName>" aid="<RID>">
+                <applet class="<PackageName>.<ProjectName>" aid="<RID><PIX>"/>
+            </cap>
+        </javacard>
+    </target>
+    <target name="<PackageName>.jc222">
+            <javacard jckit="${JC222}">
+            <cap output="<PackageName>-jc222.cap" sources="src/<ProjectName>" aid="<RID>">
+                <applet class="<PackageName>.<ProjectName>" aid="<RID><PIX>"/>
+            </cap>
+        </javacard>
+    </target>
+    <target name="<PackageName>.jc305u3">
+            <javacard jckit="${JC305u3}">
+            <cap output="<PackageName>-jc305u3.cap" sources="src/<ProjectName>" aid="<RID>">
                 <applet class="<PackageName>.<ProjectName>" aid="<RID><PIX>"/>
             </cap>
         </javacard>
