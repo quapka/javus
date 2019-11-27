@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SimpleApplet" default="default" basedir=".">
+        <description>Builds, tests, and runs the project SimpleApplet.</description>
+    <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ext/ant-javacard.jar"/>
+
+    <!-- <property name="JC222" value="ext/java_card_kit-2_2_2"/> -->
+    <property name="JC212" value="ext/jc212_kit"/>
+    <property name="JC221" value="ext/jc221_kit"/>
+    <property name="JC222" value="ext/jc222_kit"/>
+    <property name="JC305u3" value="ext/jc305u3_kit"/>
+    <target name="com.simple.jc212">
+        <javacard jckit="${JC212}">
+            <cap output="com.simple-jc212.cap" sources="src/com" aid="0011223344" verify="false">
+                <applet class="com.simple.SimpleApplet" aid="0011223344AABBDD"/>
+            </cap>
+        </javacard>
+    </target>
+    <target name="com.simple.jc221">
+        <javacard jckit="${JC221}">
+            <cap output="com.simple-jc221.cap" sources="src/com" aid="0011223344">
+                <applet class="com.simple.SimpleApplet" aid="0011223344AABBDD"/>
+            </cap>
+        </javacard>
+    </target>
+    <target name="com.simple.jc222">
+        <javacard jckit="${JC222}">
+            <cap output="com.simple-jc222.cap" sources="src/com" aid="0011223344">
+                <applet class="com.simple.SimpleApplet" aid="0011223344AABBDD"/>
+            </cap>
+        </javacard>
+    </target>
+    <target name="com.simple.jc305">
+        <javacard jckit="${JC305u3}">
+            <cap output="com.simple-jc305.cap" sources="src/com" aid="0011223344">
+                <applet class="com.simple.SimpleApplet" aid="0011223344AABBDD"/>
+            </cap>
+        </javacard>
+    </target>
+</project>
