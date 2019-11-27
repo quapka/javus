@@ -159,7 +159,7 @@ class Recorder(object):
             os.path.join(os.environ['HOME'], 'projects/GlobalPlatformPro/gp.jar'),
         ]
         if 'gp' in self.command:
-            insert_middle(self.command, self.command.index('gp'), gp)
+            self.command = insert_middle(self.command, self.command.index('gp'), gp)
 
     def run(self):
         reader = determine_reader()
