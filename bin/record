@@ -142,7 +142,8 @@ class Recorder(object):
 
     def parse_options(self):
         args = self.parser.parse_args()
-        self.verbosity = args.verbose
+        if args.verbose is not None:
+            self.verbosity = args.verbose
         self.dry_run = args.dry_run
         self.command = args.command
 
