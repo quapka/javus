@@ -179,7 +179,7 @@ class Recorder(object):
         print(output.decode('utf8'))
 
         if self.record:
-            log.debug('Output recording')
+            log.info('Output recording')
             with MongoConnection() as c:
                 c.col.insert_one({
                     'command': ' '.join(self.command),
@@ -189,7 +189,7 @@ class Recorder(object):
                     'reader': reader,
                     })
         else:
-            log.debug('No output recording')
+            log.info('Not recording of the output')
 
 if __name__ == '__main__':
     recorder = Recorder()
