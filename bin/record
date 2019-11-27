@@ -175,16 +175,26 @@ class Recorder(object):
 
 
         with Timer() as timer:
-            output = sp.check_output(self.command, stderr=sys.stdout)
+            process = sp.run(self.command,
+                    stdout=sp.PIPE,
+                    stderr=sp.PIPE,
+            )
 
-        print(output.decode('utf8'))
+        stdout = process.stdout.decode('utf8')
+        stderr = process.stderr.decode('utf8')
+        print('standard output:')
+        print(stdout)
+        print('standard error:')
+        print(stderr)
 
         if self.record:
             log.info('Output recording')
             with MongoConnection() as c:
                 c.col.insert_one({
                     'command': ' '.join(self.command),
-                    'output': output.decode('utf8'),
+                    'stdout': stdout,
+                    'stderr': stderr,
+                    'returncode': process.returncode,
                     'timestamp': timestamp,
                     'duration': timer.duration,
                     'reader': reader,
