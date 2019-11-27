@@ -149,7 +149,7 @@ class Recorder(object):
         if not self.command:
             raise argparse.ArgumentTypeError("positional argument 'command' required")
 
-        if args.no_record:
+        if not args.no_record:
             self.record = False
 
     def substitute_gp(self):
