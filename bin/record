@@ -2,6 +2,7 @@
 import argparse
 import logging
 import os
+import re
 import subprocess as sp
 import sys
 import time
@@ -99,6 +100,11 @@ class Recorder(object):
         self.dry_run = False
         self.command = None
         self.record = True
+        self.gp = [
+            'java',
+            '-jar',
+            os.path.join(os.environ['HOME'], 'projects/GlobalPlatformPro/gp.jar'),
+        ]
 
         self.parser = argparse.ArgumentParser(
                 description="Run a command and record it's output in a MongDB"
@@ -154,13 +160,25 @@ class Recorder(object):
             self.record = False
 
     def substitute_gp(self):
-        gp = [
-            'java',
-            '-jar',
-            os.path.join(os.environ['HOME'], 'projects/GlobalPlatformPro/gp.jar'),
-        ]
         if 'gp' in self.command:
-            self.command = insert_middle(self.command, self.command.index('gp'), gp)
+            self.command = insert_middle(self.command, self.command.index('gp'), self.gp)
+
+    def get_card_name(self):
+        cmd = self.gp[:]
+        if '--emv' in self.command:
+            cmd += ['--emv']
+
+        cmd += ['--info']
+        output = sp.check_output(cmd)
+
+        atr = re.compile(r'ATR: ([0-9A-Z]+)')
+        groups = atr.search(output.decode('utf8'))
+        if groups:
+            ATR = groups.group(1)
+
+        name = sp.check_output(['id-card', ATR])
+        return name.decode('utf8').strip()
+
 
     def run(self):
         reader = determine_reader()
@@ -179,6 +197,7 @@ class Recorder(object):
                     stdout=sp.PIPE,
                     stderr=sp.PIPE,
             )
+        card_name = self.get_card_name()
 
         stdout = process.stdout.decode('utf8')
         stderr = process.stderr.decode('utf8')
@@ -197,6 +216,7 @@ class Recorder(object):
                     'returncode': process.returncode,
                     'timestamp': timestamp,
                     'duration': timer.duration,
+                    'card-name': card_name,
                     'reader': reader,
                     })
         else:
