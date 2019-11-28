@@ -1,15 +1,31 @@
 jcv = 212
-TARGET = "com.shareableinterface.jc${jcv}"
+PACKAGE = "com.shareableinterfaceslave"
+TARGET = "$(PACKAGE).jc${jcv}"
 ANT = ant
 GP = java -jar "${GO_PATH}"
 SELECT_CMD = "00a40400"
-AID = "000000000104"
+RID = "0000000002"
+PIX = "08"
+AID = "000000000208"
 
 all: $(TARGET)
 
 $(TARGET):
 	-rm $(TARGET).cap
 	$(ANT) $@
+
+versions:
+	-rm $(PACKAGE).jc212.cap
+	$(ANT) $(PACKAGE).jc212
+
+	-rm $(PACKAGE).jc221.cap
+	$(ANT) $(PACKAGE).jc221
+
+	-rm $(PACKAGE).jc222.cap
+	$(ANT) $(PACKAGE).jc222
+
+	-rm $(PACKAGE).jc305u3.cap
+	$(ANT) $(PACKAGE).jc305u3
 
 reinstall: $(TARGET) install
 
