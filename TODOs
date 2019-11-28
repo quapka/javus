@@ -1,0 +1,1 @@
+Make `pipenv shell` locate the Pipfile in working dirs or directories above - works only for two level nesting.
