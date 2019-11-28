@@ -134,6 +134,11 @@ class Recorder(object):
         )
 
         self.parser.add_argument(
+            '-c', '--comment',
+            help='Add a comment',
+        )
+
+        self.parser.add_argument(
             'command', nargs='*',
             )
 
@@ -152,6 +157,11 @@ class Recorder(object):
             self.verbosity = args.verbose
         self.dry_run = args.dry_run
         self.command = args.command
+
+        if args.comment is not None:
+            self.comment = args.comment
+        else:
+            self.comment = ''
 
         if not self.command:
             raise argparse.ArgumentTypeError("positional argument 'command' required")
@@ -210,6 +220,7 @@ class Recorder(object):
             log.info('Output recording')
             with MongoConnection() as c:
                 c.col.insert_one({
+                    'comment': self.comment,
                     'command': ' '.join(self.command),
                     'stdout': stdout,
                     'stderr': stderr,
