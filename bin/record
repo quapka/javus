@@ -68,17 +68,16 @@ def determine_reader():
         log.error('determine_reader failed with DeviceError')
 
     tokens = []
+    devices = []
     for slot in slots:
-        try:
-            tokens.append(slot.get_token())
-        except pkcs11.TokenNotPresent:
-            pass
+        if slot.flags & pkcs11.SlotFlag.TOKEN_PRESENT:
+            tokens.append(slot.slot_description)
 
     if len(tokens) > 1:
         msg = 'Multiple tokens detected!'
         raise RuntimeError(msg)
     elif len(tokens) == 1:
-        return tokens[0].slot.slot_description
+        return tokens[0]
 
     msg = 'No tokens present in any of the readers. Readers found:\n'
     msg += '\n'.join([slot.slot_description for slot in slots])
