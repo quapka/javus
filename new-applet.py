@@ -105,13 +105,13 @@ class NewApplet(object):
             f.write(data)
 
         # create the source file
-        os.makedirs(os.path.join(self.dest_path, 'src', self.project_name))
-        with open(os.path.join(self.source_path, 'src', 'ProjectName', 'ProjectName.java'), 'r') as f:
+        os.makedirs(os.path.join(self.dest_path, 'src', 'com', self.project_name))
+        with open(os.path.join(self.source_path, 'src', 'com', 'ProjectName', 'ProjectName.java'), 'r') as f:
             data = f.read()
         data = re.sub('<ProjectName>', self.project_name, data)
         data = re.sub('<PackageName>', self.package_name, data)
 
-        with open(os.path.join(self.dest_path, 'src', self.project_name, self.project_name + '.java'), 'w') as f:
+        with open(os.path.join(self.dest_path, 'src', 'com', self.project_name, self.project_name + '.java'), 'w') as f:
             f.write(data)
 
         os.symlink(os.path.join(self.repo_dir, 'ext'), os.path.join(self.dest_path, 'ext'))

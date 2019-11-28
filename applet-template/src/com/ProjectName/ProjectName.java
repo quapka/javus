@@ -1,4 +1,4 @@
-package <PackageName>;
+package com.<PackageName>;
 
 import javacard.framework.*;
 
