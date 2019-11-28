@@ -1,8 +1,11 @@
 jcv = 212
-TARGET = "com.<PackageName>.jc${jcv}"
+PACKAGE = "com.<PackageName>"
+TARGET = "$(PACKAGE).jc${jcv}"
 ANT = ant
 GP = java -jar "${GO_PATH}"
 SELECT_CMD = "00a40400"
+RID = "<RID>"
+PIX = "<PIX>"
 AID = "<RID><PIX>"
 
 all: $(TARGET)
@@ -10,6 +13,19 @@ all: $(TARGET)
 $(TARGET):
 	-rm $(TARGET).cap
 	$(ANT) $@
+
+versions:
+	-rm $(PACKAGE).jc212.cap
+	$(ANT) $(PACKAGE).jc212
+
+	-rm $(PACKAGE).jc221.cap
+	$(ANT) $(PACKAGE).jc221
+
+	-rm $(PACKAGE).jc222.cap
+	$(ANT) $(PACKAGE).jc222
+
+	-rm $(PACKAGE).jc305u3.cap
+	$(ANT) $(PACKAGE).jc305u3
 
 reinstall: $(TARGET) install
 
