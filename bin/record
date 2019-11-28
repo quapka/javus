@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import subprocess as sp
+import hashlib
 import sys
 import time
 from datetime import datetime, timezone
@@ -92,6 +93,21 @@ def insert_middle(original, position, values):
     # will remove the value in original[position]
     return original[:position] + values + original[position + 1:]
 
+def md5_file(filename):
+    # kudos to:
+    # https://stackoverflow.com/a/3431838/2377489
+    md5 = hashlib.md5()
+    with open(filename, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b''):
+            md5.update(chunk)
+    return md5.hexdigest()
+
+def uses_capfile(command):
+    cap_mask = [x.endswith('.cap') for x in command]
+    try:
+        return any(cap_mask), cap_mask.index(True)
+    except ValueError:
+        return any(cap_mask), None
 
 class Recorder(object):
     def __init__(self):
@@ -194,6 +210,7 @@ class Recorder(object):
         timestamp = get_utc_timestamp()
         # resolve gp alias
         self.substitute_gp()
+        record = {}
 
         if self.dry_run:
             print('Would run:')
@@ -207,6 +224,18 @@ class Recorder(object):
                     stderr=sp.PIPE,
             )
         card_name = self.get_card_name()
+        has_cap, index = uses_capfile(self.command)
+        cap_record = {
+            'cap-file': '',
+            'cap-file-md5sum': '',
+        }
+        if has_cap:
+            file_sum = md5_file(self.command[index])
+            cap_record['cap-file'] = self.command[index]
+            cap_record['cap-file-md5sum'] = file_sum
+
+        record.update(cap_record)
+
 
         stdout = process.stdout.decode('utf8')
         stderr = process.stderr.decode('utf8')
@@ -217,18 +246,19 @@ class Recorder(object):
 
         if self.record:
             log.info('Output recording')
+            record.update({
+                'comment': self.comment,
+                'command': ' '.join(self.command),
+                'stdout': stdout,
+                'stderr': stderr,
+                'returncode': process.returncode,
+                'timestamp': timestamp,
+                'duration': timer.duration,
+                'card-name': card_name,
+                'reader': reader,
+            })
             with MongoConnection() as c:
-                c.col.insert_one({
-                    'comment': self.comment,
-                    'command': ' '.join(self.command),
-                    'stdout': stdout,
-                    'stderr': stderr,
-                    'returncode': process.returncode,
-                    'timestamp': timestamp,
-                    'duration': timer.duration,
-                    'card-name': card_name,
-                    'reader': reader,
-                    })
+                c.col.insert_one(record)
         else:
             log.info('Not recording of the output')
 
