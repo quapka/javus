@@ -1,24 +1,5 @@
 package com.illegalcast;
 
-// import javacard.framework.*;
-
-// public class IllegalCastOfShortToRef extends Applet {
-
-//     public static void install(byte[] array, short off, byte len) {
-//         new IllegalCastOfShortToRef().register();
-//     }
-//     public void process(APDU apdu) {
-//         if (selectingApplet()) { return; }
-
-//         byte[] buf = apdu.getBuffer();
-//         switch (buf[ISO7816.OFFSET_INS]) {
-//             default:
-//                 ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
-//         }
-//     }
-
-// }
-
 /*
  * Copyright 2016 Riscure
  */
@@ -34,7 +15,7 @@ import javacard.security.*;
  * @aid 0xA0:0x00:0x00:0x00:0xAA:0x44:0x01
  * @version 1.0
  */
-public class ShortToRef extends Applet {
+public class IllegalCastOfShortToRef extends Applet {
   // Constants
 
   private static final byte INS_SUCCESS = 0x01;
@@ -47,14 +28,14 @@ public class ShortToRef extends Applet {
   protected static final byte CLA_APP = (byte) 0xA0; // CLASS byte for regular APDUs
   protected static final byte INS_READ = (byte) 0xB0; // INS byte to read arbitrary reference
 
-  byte[] failure = {(byte) 0x80, (byte) 0x40, (byte) 0x80, (byte) 0x40};
-  short msgLen = 4;
+  // byte[] failure = {(byte) 0x80, (byte) 0x40, (byte) 0x80, (byte) 0x40};
+  // short msgLen = 4;
 
   public static void install(byte[] bArray, short bOffset, byte bLength) {
-    new ShortToRef(bArray, bOffset, bLength);
+    new IllegalCastOfShortToRef(bArray, bOffset, bLength);
   }
 
-  protected ShortToRef(byte[] bArray, short bOffset, byte bLength) {
+  protected IllegalCastOfShortToRef(byte[] bArray, short bOffset, byte bLength) {
     register();
   }
 
@@ -75,15 +56,15 @@ public class ShortToRef extends Applet {
           Util.arrayCopy(ba, (short) 0, buffer, (short) 0, length);
           apdu.setOutgoingAndSend((short) 0, length);
         }
-        Util.arrayCopyNonAtomic(failure, (short) 0, buffer, (short) 0, msgLen);
-        apdu.setOutgoingAndSend((short) 0, (short) 4);
+        // Util.arrayCopyNonAtomic(failure, (short) 0, buffer, (short) 0, msgLen);
+        // apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       case INS_SUCCESS:
-        Util.arrayCopyNonAtomic(success, (short) 0, buf, (short) 0, msgLen);
+        Util.arrayCopyNonAtomic(success, (short) 0, buffer, (short) 0, msgLen);
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       case INS_FAILURE:
-        Util.arrayCopyNonAtomic(failure, (short) 0, buf, (short) 0, msgLen);
+        Util.arrayCopyNonAtomic(failure, (short) 0, buffer, (short) 0, msgLen);
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
 

@@ -12,7 +12,8 @@
     <target name="com.illegalcast.jc212">
             <javacard jckit="${JC212}">
             <cap output="com.illegalcast-jc212.cap" sources="src/com" aid="A0000000AA"
-                verify="false">
+                verify="false"
+                jca="test.jca">
                 <applet class="com.illegalcast.IllegalCastOfShortToRef" aid="A0000000AA4401"/>
             </cap>
         </javacard>
