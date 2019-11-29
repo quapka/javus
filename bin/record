@@ -61,6 +61,10 @@ class Timer(object):
 
 
 def determine_reader():
+    # hardcoded for now some cards are not recognized
+    return 'Gemalto PC Twin Reader 00 00'
+    return 'Alcor Micro AU9560 00 00'
+
     lib = pkcs11.lib('/usr/lib/x86_64-linux-gnu/pkcs11/opensc-pkcs11.so')
     try:
         log.debug('Getting the card reader slots')
