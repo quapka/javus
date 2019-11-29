@@ -204,6 +204,8 @@ class Recorder(object):
         groups = atr.search(output.decode('utf8'))
         if groups:
             ATR = groups.group(1)
+        else:
+            return ''
 
         name = sp.check_output(['id-card', ATR])
         return name.decode('utf8').strip()
