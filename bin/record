@@ -161,6 +161,13 @@ class Recorder(object):
             'command', nargs='*',
             )
 
+        self.parser.add_argument(
+            '-a', '--name',
+            help='Card name',
+            type=lambda x: x in 'ABCDEFGHI',
+            required=True,
+        )
+
     def validate_verbosity(self, value):
         try:
             value = int(value)
@@ -187,6 +194,8 @@ class Recorder(object):
 
         if not args.no_record:
             self.record = False
+
+        self.name = args.name
 
     def substitute_gp(self):
         if 'gp' in self.command:
@@ -229,7 +238,9 @@ class Recorder(object):
                     stdout=sp.PIPE,
                     stderr=sp.PIPE,
             )
-        card_name = self.get_card_name()
+
+        # card_name = self.get_card_name()
+        card_name = self.name
         has_cap, index = uses_capfile(self.command)
         cap_record = {
             'cap-file': '',
