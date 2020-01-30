@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TransArr" default="default" basedir=".">
+        <description>Builds, tests, and runs the project TransArr.</description>
+    <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ext/ant-javacard.jar"/>
+
+    <!-- <property name="JC222" value="ext/java_card_kit-2_2_2"/> -->
+    <property name="JC212" value="ext/jc212_kit"/>
+    <property name="JC221" value="ext/jc221_kit"/>
+    <property name="JC222" value="ext/jc222_kit"/>
+    <property name="JC305u3" value="ext/jc305u3_kit"/>
+    <target name="com.transaction_ref">
+        <javacard jckit="${JC222}">
+            <cap output="com.transaction_ref.cap" sources="src/TransArr" aid="A000000033">
+                <applet class="com.transaction_ref.TransArr" aid="A0000000333301"/>
+            </cap>
+        </javacard>
+    </target>
+</project>
