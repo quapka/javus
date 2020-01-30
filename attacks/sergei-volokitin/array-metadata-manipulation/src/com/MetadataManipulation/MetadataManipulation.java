@@ -59,17 +59,17 @@ public class MetadataManipulation extends Applet {
     return 0; // dummy statement
   }
 
+  public static short addrHelper(short ptr) {
+    return ptr;
+    // return 0; // dummy statement
+  }
+
   public static byte[] ptr(short addr) {
     // return (byte[])addr;
     return null; // dummy statement
   }
 
-  public static short[] addr2(short[] ptr) {
-    return ptr;
-    // return 0; // dummy statement
-  }
-
-  public static byte ptr2(byte addr) {
+  public static byte[] ptrHelper(byte[] addr) {
     return addr;
     // return null; // dummy statement
   }
