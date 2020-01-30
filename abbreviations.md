@@ -24,3 +24,4 @@ RID - Registered Application Provider Identifier
 SATSA - The Security and Trust Services API
 SDA - Static Data Authentication (only shared triple DES key)
 SDK - Software Development Kit
+NVM - Non-Volatile Memory
