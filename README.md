@@ -64,3 +64,10 @@ Install Mongo database:
 ```
 sudo apt install -y mongodb
 ```
+
+Questions
+---------
+Can ATR change during card lifetime?
+     - Yes.
+How to identify card?
+    - Custom installed applet?
