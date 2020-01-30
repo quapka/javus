@@ -124,6 +124,9 @@ class Recorder(object):
             '-jar',
             os.path.join(os.environ['HOME'], 'projects/GlobalPlatformPro/gp.jar'),
         ]
+        self.attack_id = ''
+        self.stage = ''
+        self.attack_name = ''
 
         self.parser = argparse.ArgumentParser(
                 description="Run a command and record it's output in a MongDB"
@@ -168,6 +171,21 @@ class Recorder(object):
             required=True,
         )
 
+        self.parser.add_argument(
+            '-i', '--attack-id',
+            help='Unique identifier of the attack scenarion',
+        )
+
+        self.parser.add_argument(
+            '-t', '--stage',
+            help='Stage of the attack scenario'
+        )
+
+        self.parser.add_argument(
+            '--attack-name',
+            help='Possible unique name of the attack/attack scenario'
+        )
+
     def validate_verbosity(self, value):
         try:
             value = int(value)
@@ -201,6 +219,14 @@ class Recorder(object):
             self.record = False
 
         self.name = args.name
+        if args.attack_id is not None:
+            self.attack_id = args.attack_id
+
+        if args.stage is not None:
+            self.stage = args.stage
+
+        if args.attack_name is not None:
+            self.attack_name = args.attack_name
 
     def substitute_gp(self):
         if 'gp' in self.command:
@@ -279,6 +305,9 @@ class Recorder(object):
                 'duration': timer.duration,
                 'card-name': card_name,
                 'reader': reader,
+                'attack-id': self.attack_id,
+                'stage': self.stage,
+                'attack-name': self.attack_name,
             })
             with MongoConnection() as c:
                 c.col.insert_one(record)
