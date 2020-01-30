@@ -164,7 +164,7 @@ class Recorder(object):
         self.parser.add_argument(
             '-a', '--name',
             help='Card name',
-            type=lambda x: x in 'ABCDEFGHI',
+            type=self.validate_name,
             required=True,
         )
 
@@ -176,6 +176,11 @@ class Recorder(object):
         if value not in LOG_LEVELS:
             raise argparse.ArgumentTypeError('verbosity level not from expected range')
         return value
+
+    def validate_name(self, value):
+        if value in 'ABCDEFGHI':
+            return value
+            raise argparse.ArgumentTypeError('Card name unknown')
 
     def parse_options(self):
         args = self.parser.parse_args()
@@ -241,6 +246,7 @@ class Recorder(object):
 
         # card_name = self.get_card_name()
         card_name = self.name
+        print('Card name: ', card_name)
         has_cap, index = uses_capfile(self.command)
         cap_record = {
             'cap-file': '',
