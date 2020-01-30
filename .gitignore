@@ -23,3 +23,6 @@ readings/
 *.JPEG
 *.png
 *.PNG
+
+# general directory for stuff, that should not be tracked nor deleted
+ignore/
