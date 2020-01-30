@@ -17,25 +17,25 @@
             </cap>
         </javacard>
     </target>
-    <target name="com.metadatamanipulation.jc221">
-            <javacard jckit="${JC221}">
-            <cap output="com.metadatamanipulation-jc221.cap" sources="src/com" aid="A0000000AA">
-                <applet class="com.metadatamanipulation.MetadataManipulation" aid="A0000000AA5501"/>
-            </cap>
-        </javacard>
-    </target>
-    <target name="com.metadatamanipulation.jc222">
-            <javacard jckit="${JC222}">
-            <cap output="com.metadatamanipulation-jc222.cap" sources="src/com" aid="A0000000AA">
-                <applet class="com.metadatamanipulation.MetadataManipulation" aid="A0000000AA5501"/>
-            </cap>
-        </javacard>
-    </target>
-    <target name="com.metadatamanipulation.jc305u3">
-            <javacard jckit="${JC305u3}">
-            <cap output="com.metadatamanipulation-jc305u3.cap" sources="src/com" aid="A0000000AA">
-                <applet class="com.metadatamanipulation.MetadataManipulation" aid="A0000000AA5501"/>
-            </cap>
-        </javacard>
-    </target>
-</project>
+    <!-- <target name="com.metadatamanipulation.jc221"> -->
+    <!--         <javacard jckit="${JC221}"> -->
+    <!--         <cap output="com.metadatamanipulation-jc221.cap" sources="src/com" aid="A0000000AA"> -->
+    <!--             <applet class="com.metadatamanipulation.MetadataManipulation" aid="A0000000AA5501"/> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="com.metadatamanipulation.jc222"> -->
+    <!--         <javacard jckit="${JC222}"> -->
+    <!--         <cap output="com.metadatamanipulation-jc222.cap" sources="src/com" aid="A0000000AA"> -->
+    <!--             <applet class="com.metadatamanipulation.MetadataManipulation" aid="A0000000AA5501"/> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="com.metadatamanipulation.jc305u3"> -->
+    <!--         <javacard jckit="${JC305u3}"> -->
+    <!--         <cap output="com.metadatamanipulation-jc305u3.cap" sources="src/com" aid="A0000000AA"> -->
+    <!--             <applet class="com.metadatamanipulation.MetadataManipulation" aid="A0000000AA5501"/> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
+<!-- </project> -->
