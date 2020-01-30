@@ -11,9 +11,10 @@
 
     <target name="com.metadatamanipulation.jc212">
             <javacard jckit="${JC212}">
-            <cap output="com.metadatamanipulation-jc212.cap" sources="src/com" aid="A0000000AA"
+            <cap output="com.metadatamanipulation-jc212.cap" sources="src/com" aid="AE000000AA"
+                jca="com.metadatamanipulation.jc212.jca"
                 verify="false">
-                <applet class="com.metadatamanipulation.MetadataManipulation" aid="A0000000AA5501"/>
+                <applet class="com.metadatamanipulation.MetadataManipulation" aid="AE000000AA5501"/>
             </cap>
         </javacard>
     </target>
