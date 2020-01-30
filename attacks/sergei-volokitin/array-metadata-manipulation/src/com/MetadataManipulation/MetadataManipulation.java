@@ -42,11 +42,11 @@ public class MetadataManipulation extends Applet {
         apdu.setOutgoingAndSend((short) 0, (short) 2);
         break;
       case INS_SUCCESS:
-        Util.arrayCopyNonAtomic(success, (short) 0, buf, (short) 0, msgLen);
+        Util.arrayCopyNonAtomic(success, (short) 0, buffer, (short) 0, msgLen);
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       case INS_FAILURE:
-        Util.arrayCopyNonAtomic(failure, (short) 0, buf, (short) 0, msgLen);
+        Util.arrayCopyNonAtomic(failure, (short) 0, buffer, (short) 0, msgLen);
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       default:
