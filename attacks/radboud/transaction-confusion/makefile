@@ -4,9 +4,9 @@ TARGET = "$(PACKAGE).jc${jcv}"
 ANT = ant
 GP = java -jar "${GO_PATH}"
 SELECT_CMD = "00a40400"
-RID = "0000000004"
+RID = "0100000004"
 PIX = "01"
-AID = "000000000401"
+AID = "010000000401"
 
 all: $(TARGET)
 

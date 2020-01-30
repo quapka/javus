@@ -11,31 +11,31 @@
 
     <target name="com.dumpmemapplet.jc212">
             <javacard jckit="${JC212}">
-            <cap output="com.dumpmemapplet-jc212.cap" sources="src/com" aid="0000000004"
+            <cap output="com.dumpmemapplet-jc212.cap" sources="src/com" aid="0100000004"
                 verify="false">
-                <applet class="com.dumpmemapplet.DumpMemApplet" aid="000000000401"/>
+                <applet class="com.dumpmemapplet.DumpMemApplet" aid="010000000401"/>
             </cap>
         </javacard>
     </target>
-    <target name="com.dumpmemapplet.jc221">
-            <javacard jckit="${JC221}">
-            <cap output="com.dumpmemapplet-jc221.cap" sources="src/com" aid="0000000004">
-                <applet class="com.dumpmemapplet.DumpMemApplet" aid="000000000401"/>
-            </cap>
-        </javacard>
-    </target>
-    <target name="com.dumpmemapplet.jc222">
-            <javacard jckit="${JC222}">
-            <cap output="com.dumpmemapplet-jc222.cap" sources="src/com" aid="0000000004">
-                <applet class="com.dumpmemapplet.DumpMemApplet" aid="000000000401"/>
-            </cap>
-        </javacard>
-    </target>
-    <target name="com.dumpmemapplet.jc305u3">
-            <javacard jckit="${JC305u3}">
-            <cap output="com.dumpmemapplet-jc305u3.cap" sources="src/com" aid="0000000004">
-                <applet class="com.dumpmemapplet.DumpMemApplet" aid="000000000401"/>
-            </cap>
-        </javacard>
-    </target>
+    <!-- <target name="com.dumpmemapplet.jc221"> -->
+    <!--         <javacard jckit="${JC221}"> -->
+    <!--         <cap output="com.dumpmemapplet-jc221.cap" sources="src/com" aid="0000000004"> -->
+    <!--             <applet class="com.dumpmemapplet.DumpMemApplet" aid="000000000401"/> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="com.dumpmemapplet.jc222"> -->
+    <!--         <javacard jckit="${JC222}"> -->
+    <!--         <cap output="com.dumpmemapplet-jc222.cap" sources="src/com" aid="0000000004"> -->
+    <!--             <applet class="com.dumpmemapplet.DumpMemApplet" aid="000000000401"/> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="com.dumpmemapplet.jc305u3"> -->
+    <!--         <javacard jckit="${JC305u3}"> -->
+    <!--         <cap output="com.dumpmemapplet-jc305u3.cap" sources="src/com" aid="0000000004"> -->
+    <!--             <applet class="com.dumpmemapplet.DumpMemApplet" aid="000000000401"/> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
 </project>
