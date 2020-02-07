@@ -21,13 +21,13 @@ class CommandLineApp():
     '''
     Template for Python command line applications.
     '''
-    APP_DESCRIPTION = "Run a command and record it's output in a MongDB"
+    APP_DESCRIPTION = None
 
     def __init__(self):
         self.verbosity = logging.ERROR
 
         self.parser = argparse.ArgumentParser(
-                description="Run a command and record it's output in a MongDB"
+                description=self.APP_DESCRIPTION,
         )
         self.add_options()
         self.parse_options()
