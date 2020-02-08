@@ -6,6 +6,5 @@ description='Package containing utilities for the analysis of JavaCard Virtual M
 url='#',
 author='quapka',
 author_email='quapka@gmail.com',
-license='MIT',
 packages=['jcvmutils'],
 zip_safe=False)
