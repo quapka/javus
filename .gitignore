@@ -26,3 +26,7 @@ readings/
 
 # general directory for stuff, that should not be tracked nor deleted
 ignore/
+
+# ignore compiled Python files
+*.pyc
+*.pyo
