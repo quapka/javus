@@ -53,9 +53,9 @@ class CommandLineApp():
         return value
 
     def parse_options(self):
-        args = self.parser.parse_args()
-        if args.verbose is not None:
-            self.verbosity = args.verbose
+        self.args = self.parser.parse_args()
+        if self.args.verbose is not None:
+            self.verbosity = self.args.verbose
 
     def run(self):
         pass
