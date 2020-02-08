@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import argparse
 import logging
 
@@ -8,14 +6,7 @@ import pymongo
 from dominate.tags import body, caption, link, table, tbody, td, th, tr
 from dominate.util import raw
 
-# import utils.CommandLineApp
 from .utils import CommandLineApp
-
-# steps
-# connect to mongo
-# retrieve results
-# go through steps and mark them as (success, failure, other)
-# draw the final table
 
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()
@@ -56,13 +47,6 @@ def get_install_result(obj):
         return raw(passed())
     last_two = obj['stderr'].strip().split('\n')[-2:]
     return raw(failed() + '</br>' + '</br>'.join(last_two))
-
-# def get_uninstall_result(obj):
-#     return get_install_result(obj)
-#     # if obj['returncode'] == 0:
-#     #     return raw(passed())
-#     # last_two = obj['stderr'].strip().split('\n')[-2:]
-#     # return raw(failed() + '</br>' + '</br>'.join(last_two))
 
 def get_uninstall_result(obj):
     if obj['returncode'] == 0:
@@ -113,7 +97,6 @@ class Table(CommandLineApp):
         self._STAGES.update({
             UNINSTALL: get_uninstall_result,
         })
-        # print(self._STAGES)
 
     def run(self):
         self.build_stages()
@@ -161,51 +144,3 @@ class Table(CommandLineApp):
                     row += td(perform(obj))
 
         return self.doc.render()
-        # with tbody:
-        #     caption = caption(self.ATTACK_NAME)
-        #     header_row = tr()
-        #     for stage in columns:
-        #         header_row += th(stage)
-        #     for card_name in 'ABCDEFGHI':
-        #         desc = {
-        #             'card-name': card_name,
-        #             'attack-name': ATTACK_NAME,
-        #         }
-
-        #         last_attack_id = commands.find_one(
-        #             filter=desc,
-        #             sort=[('timestamp', pymongo.DESCENDING)]
-        #         )['attack-id']
-
-        #         row = tr()
-        #         for stage in columns:
-        #             if stage == CARD_NAME:
-        #                 row += td(card_name)
-        #             elif stage == INSTALL:
-        #                 obj = commands.find_one({
-        #                     'card-name': card_name,
-        #                     'attack-id':last_attack_id,
-        #                     'stage': INSTALL,
-        #                 })
-        #                 if obj is None:
-        #                     continue
-        #                 row += td(get_install_result(obj))
-        #             elif stage == UNINSTALL:
-        #                 obj = commands.find_one({
-        #                     'card-name': card_name,
-        #                     'attack-id':last_attack_id,
-        #                     'stage': UNINSTALL,
-        #                 })
-        #                 row += td(get_uninstall_result(obj))
-        #             else:
-        #                 obj = commands.find_one({
-        #                     'card-name': card_name,
-        #                     'attack-id':last_attack_id,
-        #                     'stage': stage,
-        #                 })
-        #                 row += td(get_read_result(obj))
-
-
-if __name__ == '__main__':
-    table = Table()
-    table.run()
