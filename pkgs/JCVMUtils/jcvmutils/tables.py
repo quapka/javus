@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
 import argparse
+import logging
 
+import dominate
 import pymongo
+from dominate.tags import body, caption, link, table, tbody, td, th, tr
+from dominate.util import raw
 
 # import utils.CommandLineApp
-from utils import CommandLineApp
+from .utils import CommandLineApp
 
 # steps
 # connect to mongo
@@ -13,6 +17,11 @@ from utils import CommandLineApp
 # go through steps and mark them as (success, failure, other)
 # draw the final table
 
+log = logging.getLogger(__file__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(name)s: %(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
 
 # pylint: disable=C0103
 # pylint: disable=E0602
@@ -48,32 +57,39 @@ def get_install_result(obj):
     last_two = obj['stderr'].strip().split('\n')[-2:]
     return raw(failed() + '</br>' + '</br>'.join(last_two))
 
-def get_uninstall_result(obj):
-    return get_install_result(obj)
-    # if obj['returncode'] == 0:
-    #     return raw(passed())
-    # last_two = obj['stderr'].strip().split('\n')[-2:]
-    # return raw(failed() + '</br>' + '</br>'.join(last_two))
+# def get_uninstall_result(obj):
+#     return get_install_result(obj)
+#     # if obj['returncode'] == 0:
+#     #     return raw(passed())
+#     # last_two = obj['stderr'].strip().split('\n')[-2:]
+#     # return raw(failed() + '</br>' + '</br>'.join(last_two))
 
-INSTALL = 'install'
-UNISNTALL = 'uninstall'
+def get_uninstall_result(obj):
+    if obj['returncode'] == 0:
+        return raw(passed())
+    return raw(failed())
+
+
+CARD_NAME = 'card-name'
+INSTALL = 'installation'
+UNINSTALL = 'uninstallation'
 
 class Table(CommandLineApp):
     APP_DESCRIPTION = 'Script for creating HTML tables from different attack scenarios'
-    STAGES = [
-        INSTALL,
-        UNINSTALL,
-    ]
+    ATTACK_NAME = None
+    STAGES = None
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.output_file = None
-        self.doc = dominate.document(title=ATTACK_NAME + ' attack')
-        with doc.head:
+        self._STAGES = None
+        self.doc = dominate.document(title=self.ATTACK_NAME + ' attack')
+        with self.doc.head:
             link(rel='stylesheet', href='../../../tables/stylesheet.css')
 
-        body = doc.add(body())
-        table = body.add(table())
-        tbody = table.add(tbody())
+        self.body = self.doc.add(body())
+        self.table = self.body.add(table())
+        self.tbody = self.table.add(tbody())
 
 
     def add_options(self):
@@ -86,53 +102,108 @@ class Table(CommandLineApp):
 
     def parse_options(self):
         super().parse_options()
-        if args.output_file is not None:
-            self.output_file = args.output_file
+        if self.args.output_file is not None:
+            self.output_file = self.args.output_file
+
+    def build_stages(self):
+        self._STAGES = {
+            INSTALL: get_install_result,
+        }
+        self._STAGES.update(self.STAGES)
+        self._STAGES.update({
+            UNINSTALL: get_uninstall_result,
+        })
+        # print(self._STAGES)
 
     def run(self):
-        with tbody:
-            caption = caption(ATTACK_NAME)
+        self.build_stages()
+        with self.tbody:
+            caption(self.ATTACK_NAME)
             header_row = tr()
-            for stage in columns:
-                header_row += th(stage)
+            header_row += th(CARD_NAME)
+            for stage_name in self._STAGES.keys():
+                header_row += th(stage_name)
+
             for card_name in 'ABCDEFGHI':
                 desc = {
                     'card-name': card_name,
-                    'attack-name': ATTACK_NAME,
+                    'attack-name': self.ATTACK_NAME,
                 }
 
-                last_attack_id = commands.find_one(
+                last_attack = commands.find_one(
                     filter=desc,
                     sort=[('timestamp', pymongo.DESCENDING)]
-                )['attack-id']
+                )
+                if last_attack is None:
+                    continue
+
+                last_attack_id = last_attack['attack-id']
+                if last_attack_id is None:
+                    continue
+
 
                 row = tr()
-                for stage in columns:
-                    if stage == CARD_NAME:
-                        row += td(card_name)
-                    elif stage == INSTALL:
-                        obj = commands.find_one({
-                            'card-name': card_name,
-                            'attack-id':last_attack_id,
-                            'stage': INSTALL,
-                        })
-                        if obj is None:
-                            continue
-                        row += td(get_install_result(obj))
-                    elif stage == UNINSTALL:
-                        obj = commands.find_one({
-                            'card-name': card_name,
-                            'attack-id':last_attack_id,
-                            'stage': UNINSTALL,
-                        })
-                        row += td(get_uninstall_result(obj))
-                    else:
-                        obj = commands.find_one({
-                            'card-name': card_name,
-                            'attack-id':last_attack_id,
-                            'stage': stage,
-                        })
-                        row += td(get_read_result(obj))
+                row += td(card_name)
+                for stage, perform  in self._STAGES.items():
+                    desc = {
+                        'card-name': card_name,
+                        'attack-id':last_attack_id,
+                        'stage': stage,
+                    }
+                    msg = 'Trying to recover object for'
+                    msg += 'card-name: {}'.format(desc['card-name'])
+                    msg += 'attack-id: {}'.format(desc['attack-id'])
+                    msg += 'stage: {}'.format(desc['stage'])
+                    log.debug(msg)
+                    obj = commands.find_one(desc)
+                    if obj is None:
+                        raise ValueError('No object retrieved!')
+                    row += td(perform(obj))
+
+        return self.doc.render()
+        # with tbody:
+        #     caption = caption(self.ATTACK_NAME)
+        #     header_row = tr()
+        #     for stage in columns:
+        #         header_row += th(stage)
+        #     for card_name in 'ABCDEFGHI':
+        #         desc = {
+        #             'card-name': card_name,
+        #             'attack-name': ATTACK_NAME,
+        #         }
+
+        #         last_attack_id = commands.find_one(
+        #             filter=desc,
+        #             sort=[('timestamp', pymongo.DESCENDING)]
+        #         )['attack-id']
+
+        #         row = tr()
+        #         for stage in columns:
+        #             if stage == CARD_NAME:
+        #                 row += td(card_name)
+        #             elif stage == INSTALL:
+        #                 obj = commands.find_one({
+        #                     'card-name': card_name,
+        #                     'attack-id':last_attack_id,
+        #                     'stage': INSTALL,
+        #                 })
+        #                 if obj is None:
+        #                     continue
+        #                 row += td(get_install_result(obj))
+        #             elif stage == UNINSTALL:
+        #                 obj = commands.find_one({
+        #                     'card-name': card_name,
+        #                     'attack-id':last_attack_id,
+        #                     'stage': UNINSTALL,
+        #                 })
+        #                 row += td(get_uninstall_result(obj))
+        #             else:
+        #                 obj = commands.find_one({
+        #                     'card-name': card_name,
+        #                     'attack-id':last_attack_id,
+        #                     'stage': stage,
+        #                 })
+        #                 row += td(get_read_result(obj))
 
 
 if __name__ == '__main__':
