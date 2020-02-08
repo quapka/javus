@@ -149,7 +149,8 @@ class JavaCardError(object):
 
         if not self.is_hex(value):
             raise argparse.ArgumentTypeError(
-                'The value is not hexadecimal.'
+                'The value \'{value}\' is not hexadecimal.'.format(
+                    value=value)
             )
 
         return value.upper()
