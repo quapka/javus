@@ -140,7 +140,7 @@ class Table(CommandLineApp):
                     log.debug(msg)
                     obj = commands.find_one(desc)
                     if obj is None:
-                        raise ValueError('No object retrieved!')
+                        continue
                     row += td(perform(obj))
 
         return self.doc.render()
