@@ -2,59 +2,13 @@
 
 import re
 
-import dominate
-import pymongo
-from dominate.tags import body, caption, link, table, tbody, td, th, tr
 from dominate.util import raw
-
-
-def green(x):
-    return '<span style="color: green;">{}</span>'.format(x)
-
-def red(x):
-    return '<span style="color: red;">{}</span>'.format(x)
-
-def passed():
-    return green('&#10004;')
-
-def failed():
-    return red('&#10060;')
-
-# pylint: disable=C0103
-client = pymongo.MongoClient('mongodb://localhost:27017')
-database = client.get_database('card-analysis')
-
-commands = database.commands
-
-doc = dominate.document(title='Test table')
-with doc.head:
-    link(rel='stylesheet', href='../../../tables/stylesheet.css')
-
-body = doc.add(body())
-table = body.add(table())
-tbody = table.add(tbody())
+from jcvmutils.tables import Table, failed, passed
 
 ATTACK_NAME = 'ArrayMetadataManipulation'
 
-# stages = commands.find({'attack-id': last_attack_id})
-CARD_NAME = 'card-name'
-INSTALL = 'installation'
 PATCH = 'send INS_PATCH'
-UNINSTALL = 'uninstallation'
 
-columns = [CARD_NAME, INSTALL, PATCH, UNINSTALL]
-
-def get_install_result(obj):
-    if obj['returncode'] == 0:
-        return raw(passed())
-    last_two = obj['stderr'].strip().split('\n')[-2:]
-    return raw(failed() + '</br>' + '</br>'.join(last_two))
-
-def get_uninstall_result(obj):
-    if obj['returncode'] == 0:
-        return raw(passed())
-    last_two = obj['stderr'].strip().split('\n')[-2:]
-    return raw(failed() + '</br>' + '</br>'.join(last_two))
 
 def get_read_result(obj):
     # rex = re.compile(r'(A>>.*A0B00000 00.*\nA<<\s*\(.*\)\s+(.*))', re.MULTILINE)
@@ -71,48 +25,13 @@ def get_read_result(obj):
         return raw(ret)
     return raw(failed())
 
-with tbody:
-    caption = caption(ATTACK_NAME)
-    header_row = tr()
-    for stage in columns:
-        header_row += th(stage)
-    for card_name in 'ABCDEFGHI':
-        desc = {
-            'card-name': card_name,
-            'attack-name': ATTACK_NAME,
-        }
 
-        last_attack_id = commands.find_one(
-            filter=desc,
-            sort=[('timestamp', pymongo.DESCENDING)]
-        )['attack-id']
+class Result(Table):
+    ATTACK_NAME = 'ArrayMetadataManipulation'
+    STAGES = {
+        PATCH: get_read_result,
+    }
 
-        row = tr()
-        for stage in columns:
-            if stage == CARD_NAME:
-                row += td(card_name)
-            elif stage == INSTALL:
-                obj = commands.find_one({
-                    'card-name': card_name,
-                    'attack-id':last_attack_id,
-                    'stage': INSTALL,
-                })
-                if obj is None:
-                    continue
-                row += td(get_install_result(obj))
-            # elif stage == PATCH:
-            #     obj = commands.find_one({
-            #         'card-name': card_name,
-            #         'attack-id':last_attack_id,
-            #         'stage': PATCH,
-            #     })
-            #     row += td(get_read_result(obj))
-            # elif stage == UNINSTALL:
-            #     obj = commands.find_one({
-            #         'card-name': card_name,
-            #         'attack-id':last_attack_id,
-            #         'stage': UNINSTALL,
-            #     })
-            #     row += td(get_uninstall_result(obj))
-
-print(doc.render())
+if __name__ == '__main__':
+    res = Result()
+    print(res.run())
