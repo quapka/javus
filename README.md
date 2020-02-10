@@ -71,3 +71,8 @@ Can ATR change during card lifetime?
      - Yes.
 How to identify card?
     - Custom installed applet?
+
+General notes on a setup
+------------------------
+In order to manage different versions of JDK use:
+$ sudo update-alternatives --config java
