@@ -1,0 +1,58 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage{enumitem}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+
+% Template for homework assignment @ FI muni
+
+% Homework setup
+\newcommand{\authorName}{Bc.~Jan~Kvapil}
+\newcommand{\courseID}{\texttt{\textless course id\textgreater}}
+\newcommand{\homeworkID}{\texttt{\textless homeword id\textgreater}}
+
+\usepackage{amsthm}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+% Create a nice header
+% \fancyhead[L]{\courseID:\homeworkID}
+\fancyhead[C]{\authorName}
+\fancyhead[R]{\today}
+\renewcommand{\headrulewidth}{0.4pt}
+
+
+% \author{Bc.~Jan~Kvapil}
+\subtitle{}
+
+\begin{document}
+
+% \maketitle
+\section{Types of Attacks}
+
+\subsection{Physical attacks}
+\subsection{Logical attacks}
+\subsection{Combined attacks}
+
+\section{Specific attacks}
+
+\subsection{Transaction confusion}
+
+
+\section{JavaCard Versions}
+
+\section{Process of analysis}
+
+As with any other analysis of a hardware devices the problem of non-deterministic behaviour arises. This means, that from time to time the devices don't respond as expected, require hard reset or might just stop working altogether. This is even more true with the analysis of Smart cards/Java cards, because they try to be defensive and prevent malicious user from gaining data/secrets he's not allowed to see.
+
+Doing the analysis in real-time, that is running the various attacks many many times and analysing the data on the fly might result in unexpected failures -- maybe reaching the write limit on the EEPROM or getting the card into locked state or simply not responding due to too many packets exchanged. It was also observed, that some of the applets used during the analysis could have been installed, but not uninstalled ([TODO comment on this more with examples and potential hypothesis why is it happening]).
+\subsection{Implementation of the attacks}
+\subsection{Creation of an attack scenario}
+\subsection{Gathering data}
+\subsection{Analysis of the results}
+
+
+\end{document}
