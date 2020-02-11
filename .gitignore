@@ -31,3 +31,7 @@ ignore/
 # ignore compiled Python files
 *.pyc
 *.pyo
+
+# ignore intermediate TeX files
+*.aux
+*.out
