@@ -6,8 +6,20 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+  mathescape = true,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+% Kudos to: https://tex.stackexchange.com/a/318573/38874
+\newcommand{\dollar}{\mbox{\textdollar}}
 
-% Template for homework assignment @ FI muni
+
+
+% TODO make sure typesetting the underscore and dollar sign and other
+% special signs is consistent with the font around
 
 % Homework setup
 \newcommand{\authorName}{Bc.~Jan~Kvapil}
@@ -30,6 +42,51 @@
 
 \begin{document}
 
+\section*{List of abbreviations}
+As in other areas common terms are abbreviated, this seemingly reduces the space used, but can make it harder to navigate in a text, for this reason we include the list of abbreviations used (throughout the project):
+\begin{itemize}
+    \item[AID] Application ID (RID concatenated with PIX)
+    \item[APDU] Application Protocol Data Unit
+    \item[ATR] Answer to Reset
+    \item[Applet] Java Card applet
+    \item[BCV] Byte Code Verifier
+    \item[CAD] Card Acceptance Device, e.g. terminal
+    \item[CAP] Converted Applet
+    \item[DAP] Data Authentication Pattern
+    \item[DDA] Dynamic Data Authentication (also RSA)
+    \item[EMV] Europay-Mastercard-Visa
+    \item[JC] Java Card
+    \item[JCC] Java Card Converter
+    \item[JCRE] Java Card Runtime Environment
+    \item[JCRMI] Java Card Remote Method Invocation
+    \item[JCSystem] Java Card System
+    \item[JCVM] Java Card Virtual Machine
+    \item[PCD] Proximity Coupling Device
+    \item[PED] Pin Entry Device
+    \item[PICC] Proximity Card
+    \item[PIN] Personal Identification Number
+    \item[PIX] Proprietary Application Identifier Extension
+    \item[RFU] Reserved for Future Use
+    \item[RID] Registered Application Provider Identifier
+    \item[SATSA] The Security and Trust Services API
+    \item[SDA] Static Data Authentication (only shared triple DES key)
+    \item[SDK] Software Development Kit
+    \item[NVM] Non-Volatile Memory
+\end{itemize}
+
+\section{Typestting of the figures}
+
+Since this text would like to achieve some level of also practical examples, that the reader can adopt we will show parts of source code, scripts and outputs of shell sessions. To make it clearer, here are few notes on the typesetting of these:
+\begin{itemize}
+    \item[\texttt{$\dollar$}] As usual in UNIX-like operating systems (more specifically shells) this denotes the shell prompt. What follows is what the user of the shell types.
+    \item[\texttt{output}] Lines that are not starting with \texttt{$\dollar$}, but are typeset in the \texttt{teletype, typewriter or monospace font} denote the output (of previously ran commands/scripts). The other case is when we reference parts of the actual source code (e.g. function or variable name or a constant, \ldots).
+    \item[\texttt{[\ldots]}] Sometimes displaying the output does not help the readability and would just create an unnecessary clutter in the text, the \texttt{[\ldots]} denotes that some or all of the output was omitted.
+    \item[\texttt{\#}] A pound symbol (a hash) is used to note lines, that contain further explanation or commentary.
+    \item[\texttt{\\}] Similarly as in UNIX-like shells the backslash denotes, that the line (without any whitespace) continues on the next line. Simply needed in case of lines, that are too long.
+\end{itemize}
+
+Smaller examples of the previous rules can appear also inline, but usually will be typesetted as standalone figures and referenced in the text.
+
 % \maketitle
 \section{Types of Attacks}
 
@@ -49,10 +106,127 @@
 As with any other analysis of a hardware devices the problem of non-deterministic behaviour arises. This means, that from time to time the devices don't respond as expected, require hard reset or might just stop working altogether. This is even more true with the analysis of Smart cards/Java cards, because they try to be defensive and prevent malicious user from gaining data/secrets he's not allowed to see.
 
 Doing the analysis in real-time, that is running the various attacks many many times and analysing the data on the fly might result in unexpected failures -- maybe reaching the write limit on the EEPROM or getting the card into locked state or simply not responding due to too many packets exchanged. It was also observed, that some of the applets used during the analysis could have been installed, but not uninstalled ([TODO comment on this more with examples and potential hypothesis why is it happening]).
+
+In order to avoid this problem a set of tools/scripts were developed (a combination of Bash and Python scripts).
+
+\subsection{Helper tools}
+
+This subsection will present some of the tools used during the analysis.
+
+\subsubsection{GlobalPlatformPro}
+
+The communication between the smart card and the work station (regular PC/notebook) is managed through a built-in or external reader, commonly called Card Acceptance Device (CAD). Instead of sending raw bytes to the device we can take advantage of already implemented open source solution GlobalPlatformPro (see \url{https://github.com/martinpaljak/GlobalPlatformPro}). This tool does some of the heavy work for us and allows to (un)install particular applet, send a Application Protocol Data Unit (APDU) packet to the running applet etc. See \ref{lst:gp-list-command} for and example of listing the applets installed on a particular card:
+\begin{lstlisting}[
+    language=bash,
+    caption={Example output using GlobalPlatformPro},
+    captionpos=b,
+    label={lst:gp-list-command}]
+$\dollar$ gp --list
+Warning: no keys given, using default test key <KEY ANONYMIZED>
+ISD: A000000003000000 (OP_READY)
+     Privs:   SecurityDomain, CardLock, CardTerminate,
+     CardReset, CVMManagement
+
+APP: A0000000AA4401 (SELECTABLE)
+     Privs:
+
+APP: A0000000333301 (SELECTABLE)
+     Privs:
+
+PKG: A0000000AA (LOADED)
+     Version: 0.0
+     Applet:  A0000000AA4401
+
+PKG: A000000033 (LOADED)
+     Version: 0.0
+     Applet:  A0000000333301
+\end{lstlisting}
+
+\subsubsection{\texttt{record.py}}
+
+As discussed above the communication with the card poses some challenges. To overcome them partially a script \texttt{record.py} was developed. This Python script makes it possible to record the communication and saves it in a local Mongo database (MongoDB). MongoDB is NoSQL -- which in practice means, that we don't have to worry that much about the structure of the records in the database. Each record in the database is similar to dictionary structure from Python. In simple terms, dictionary stores pairs of objects, first object is called a key and the corresponding second object from the pair is called the value. Different records in the database don't have to have the same keys -- this allows us to change what we record about the communication with the card, without the worry of having the trouble of missing data from the past (this is rather a technical detail, because if the missing data is needed for the analysis, we need to redo the experiments).
+
+Say, that we want to record the communication with the card during the installation of the applet. Obvious things to record are the GlobalPlatformPro commmand, the identifier of the smart card (e.g. dedicated name) the name of the applet, the hash of the applet (more robust identification, for later matching), the standard output and the standard error from the GlobalPlatformPro. For the other commands (when during a particular attack we send some crafted APDU) it can be the actual APDU, the duration of the communication ([TODO reference some comments on side-channel analysis, that the duration might be way off in absolute numbers, but still interesting when seen relatively and compared to other cards/commands]).
+
+To give an example we can take the A.1-illegal-cast-of-a-short-to-a-reference ([TODO \textit{legally} reference Sergei Volokitin work]) attack and record what happens if we send the instruction \texttt{INS{\textunderscore}READ} meant for reading parts of the memory (see \ref{lst:gp-ins-read-command}, [TODO reference details in the attack]).
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Recording \texttt{INS{\textunderscore}READ} instruction.},
+    captionpos=b,
+    label={lst:gp-ins-read-command}]
+# First a command
+$\dollar$ gp --verbose --debug --apdu 00a4040007A0000000AA4401\
+--apdu a0b0000000
+# To record the details we need to add few more points
+# and then we can use record.py like this
+$\dollar$ record\
+    --name A\
+    --attack-name IllegalCast\
+    --attack-id 9387b42c4df9a160d16f404daa6a9337a0f1d121\
+    --stage INS$\_$READ\
+    --comment "Trying out the attack"
+    -- gp --verbose --debug --apdu 00a4040007A0000000AA4401\
+        --apdu a0b0000000
+\end{lstlisting}
+
+As described previously, the data about the particular command are stored in dictionary like form. The result of the command in \ref{lst:gp-ins-read-command} would look something like this \ref{lst:gp-ins-read-result}:
+\begin{lstlisting}[
+    language=bash,
+    caption={Example data stored when using \texttt{record.py}},
+    captionpos=b,
+    label={lst:gp-ins-read-result}]
+{'$\_$id': ObjectId('5df164f68efe0312ef292045'),
+ 'cap-file': 'com.illegalcast-jc212.malicious.cap',
+ 'cap-file-md5sum': 'ca9cef8727866634534eb712c095a0e1',
+ 'comment': 'Trying out the attack',
+ 'command': 'java -jar /home/qup/projects/GlobalPlatformPro/gp.jar\
+ --verbose --debug --install com.stackunderflow-jc212.malicious.cap',
+ 'stdout': [...],
+ 'stderr': [...],
+ 'returncode': 0,
+ 'timestamp': 1576104709.385113,
+ 'duration': 1.319394588470459,
+ 'card-name': 'A',
+ 'reader': 'Gemalto PC Twin Reader 00 00',
+ 'attack-id': '9387b42c4df9a160d16f404daa6a9337a0f1d121',
+ 'attack-name': 'IllegalCast',
+ 'stage': 'INS$\_$READ'}
+
+\end{lstlisting}
+
 \subsection{Implementation of the attacks}
+
+Most of the attack ([TODO at this point]) are taken from the master thesis of Sergei Volokitin ([TODO proper citation]) and only sligthly modified -- either to allow easier and more detailed analysis.
 \subsection{Creation of an attack scenario}
+
+The goal is to test the various logical attacks on different cards, record how they react and finaly analyse the results. To simplify, we've created a so called scenarios for each attack. Each scenario (in esence a Bash/Python script) comprises of different stages of the attack:
+\begin{enumerate}
+    \item Installation -- even this seemingly straightforward step can fail. We are using \textit{malicious} applets, that can have the bytecode altered. This way we can skip the off-card bytecode verifier, however, there can also be a on-card one, that can prevent the installation.
+    \item Various number of stages. Each attack is bit different, some attack require particular setup, sending some preparation APDUs, before e.g. an attemp at reading memory is made.
+    \item uninstallation -- one would hope, that once installed applet can be easily uninstalled, however, sometimes the uninstallation failed. Even if the uninstallation is unsuccessful, the attack might still be deemed successful, however, potentially leaving traces behind.
+\end{enumerate}
+
+Example of such scenario can be see in \ref{lst:example-scenario}:
+\begin{lstlisting}[
+    language=bash,
+    caption={Example of a scenario for Transaction confusion attack},
+    captionpos=b,
+    label={lst:example-scenario}]
+
+#!/bin/bash
+source ~/.bash$\_$aliases # particularly 'gp' alias
+
+attack$\_$id="$\dollar$(echo "$\dollar$(date +$\%$s)" | sha1sum | awk '{ print $\dollar$1 }')"
+\end{lstlisting}
+
 \subsection{Gathering data}
 \subsection{Analysis of the results}
 
+\section*{More technical notes}
+
+\subsection{GlobalPlatformPro}
+
+GlobalPlatformPro pro is a Java JAR file provided as \texttt{gp.jar} file. The full command to run it on UNIX-like system would be \texttt{$\dollar$ java -jar <path-to-gp.jar>}. To avoid typing it all the time we can create a shorter alias (like \texttt{gp}) in \texttt{.bashrc}, \texttt{.profile} or similar. This solution might not work in all use cases -- e.g. when calling from a Bash script (if the aliases are not explicitly sourced or created again) or when calling from Python script (for example using \texttt{subprocess} calls, again for similar reason).
 
 \end{document}
