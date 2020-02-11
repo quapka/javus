@@ -91,15 +91,21 @@ Smaller examples of the previous rules can appear also inline, but usually will 
 \section{Types of Attacks}
 
 \subsection{Physical attacks}
+[TODO]
 \subsection{Logical attacks}
+[TODO]
 \subsection{Combined attacks}
+[TODO]
 
 \section{Specific attacks}
+[TODO]
 
 \subsection{Transaction confusion}
+[TODO]
 
 
 \section{JavaCard Versions}
+[TODO]
 
 \section{Process of analysis}
 
@@ -216,17 +222,91 @@ Example of such scenario can be see in \ref{lst:example-scenario}:
 
 #!/bin/bash
 source ~/.bash$\_$aliases # particularly 'gp' alias
-
+[...]
+# generate random but unique attack identifier
 attack$\_$id="$\dollar$(echo "$\dollar$(date +$\%$s)" | sha1sum | awk '{ print $\dollar$1 }')"
+[...]
+# install the applet
+record\
+    --name "$\dollar$CARD$\_$NAME"\
+    --attack-name "BasicTransaction"\
+    --attack-id "$\dollar$attack$\_$id"\
+    --stage "installation"\
+    -- gp --verbose --debug --install com.dumpmemapplet-jc212.cap\
+       "$\dollar$EMV"
+[...]
+# send first preparation APDU
+record --name "$\dollar$CARD$\_$NAME"\
+    --attack-name "BasicTransaction"\
+    --attack-id "$\dollar$attack$\_$id"\
+    --stage "send INS$\_$PREPARE1"\
+    -- gp --verbose --debug --apdu 00a4040006010000000401\
+       --apdu 8001000000 "$\dollar$EMV"
+# send the second preparation APDU
+record --name "$\dollar$CARD$\_$NAME"\
+    --attack-name "BasicTransaction"\
+    --attack-id "$\dollar$attack$\_$id"\
+    --stage "send INS$\_$PREPARE2"\
+    -- gp --verbose --debug --apdu 00a4040006010000000401\
+       --apdu 8002000000 "$\dollar$EMV"
 \end{lstlisting}
 
 \subsection{Gathering data}
+
+For a given attack we've created a \texttt{scenario.sh} script (as explained above), that we've then ran against several smart cards (around ten). Each stage of a particular attack had to be manually inspected and a automated checker had to be devised, that assess, whether the stage of the attack for a given card was successful, unsuccessful or unknown. In this context success is measured from the point of view of the malicious user attacker, that is, reading out parts of a memory is deemed a success, whereas getting error is unsuccessful -- the adversary got caught by the card and stopped.
+
+Because the communication output of GlobalPlatformPro is textual we've again created a Python package and then a script for each attack, that inspects the various outputs of the stages and performs the check using regular expressions.
+
+For example let's take the Stack Underflow attack ([TODO again credits to Sergei Volokitin]). This attack has only one other stage apart from (un)installation and that is \texttt{INS$\_$READ}, that allows to read due to underflowing of the JC stack.
+
+The corresponding APDU for this instruction is \texttt{A0B0000000}, where the P1 ([TODO explain APDU structure]) byte can be changed, to attempt to read a different part of the memory.
+
+We can mark this stage successful in case the card return the status word \texttt{9000} ([TODO explnation of status words]) and hopefully also some bytes. The relevant part from the communication (the APDU packets exchanged for this step are in \ref{lst:ins-read-apdus}:
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Output of \texttt{INS$\_$READ} during the Stack underflow attack},
+    captionpos=b,
+    label={lst:ins-read-apdus}]
+[...]
+# first select the corresponding applet
+A>> T=1 (4+0007) 00A40400 07 A0000000000701
+A<< (0000+2) (15ms) 9000
+# now try to retrieve some bytes
+A>> T=1 (4+0000) A0B00000 00
+# the retrieval was successfull, however only zeros were returned
+A<< (0004+2) (11ms) 00000000 9000
+[...]
+\end{lstlisting}
+
+The regular expression tries to match the APDU for the \texttt{INS$\_$READ} and then gathers the response. The relevant Python code looks like this \texttt{re.compile(r'(A>>.*A0B0.* 00.*{\textbackslash}n(.*))', re.MULTILINE)}.
+
+The unsuccessful case can be due to an error returned (e.g. \texttt{6F00 No precise diagnosis}) diagnoses or the card can detect some malicious behavior and simply stop the communication/transaction and return \texttt{SCARD$\_$E$\_$NOT$\_$TRANSACTED}.
+
+
 \subsection{Analysis of the results}
+
+For the Stack underflow attack out of the ten cards only did allow the \texttt{INS$\_$READ} instruction and returned something (unfortunately only zeros [TODO try the whole range of values]). The complete results are in the table~\ref{tbl:stack-underflow} ([TODO add the HTML table directly into \LaTeX]).
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|}
+        \hline
+            INSERT HTML TABLE (at the moment as an stack-underflow.html attachement).\\
+        \hline
+    \end{tabular}
+    \label{tbl:stack-underflow}
+    \caption{Stack underflow attack results on various cards}
+\end{table}
 
 \section*{More technical notes}
 
 \subsection{GlobalPlatformPro}
 
 GlobalPlatformPro pro is a Java JAR file provided as \texttt{gp.jar} file. The full command to run it on UNIX-like system would be \texttt{$\dollar$ java -jar <path-to-gp.jar>}. To avoid typing it all the time we can create a shorter alias (like \texttt{gp}) in \texttt{.bashrc}, \texttt{.profile} or similar. This solution might not work in all use cases -- e.g. when calling from a Bash script (if the aliases are not explicitly sourced or created again) or when calling from Python script (for example using \texttt{subprocess} calls, again for similar reason).
+
+\subsection{Python's environment}
+
+All Python code is written in Python 3, to make the code base more manageable, few packages have been developed. To organize the Python modules we've used Pipenv.
 
 \end{document}
