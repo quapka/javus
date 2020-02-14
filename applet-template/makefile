@@ -1,5 +1,5 @@
 jcv = 212
-PACKAGE = "com.<PackageName>"
+PACKAGE = com.<PackageName>
 TARGET = "$(PACKAGE).jc${jcv}"
 ANT = ant
 GP = java -jar "${GO_PATH}"
