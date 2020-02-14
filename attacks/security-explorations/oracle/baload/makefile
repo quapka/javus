@@ -1,5 +1,5 @@
 jcv = 212
-PACKAGE = "com.baload"
+PACKAGE = com.baload
 TARGET = "$(PACKAGE).jc${jcv}"
 ANT = ant
 GP = java -jar "${GO_PATH}"
