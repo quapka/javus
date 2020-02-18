@@ -59,6 +59,7 @@ class CommandLineApp():
             self.verbosity = self.args.verbose
 
     def run(self):
+        raise RuntimeError('Not implemented yet!')
         pass
 
 if __name__ == '__main__':
