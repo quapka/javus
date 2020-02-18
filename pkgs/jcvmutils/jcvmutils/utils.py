@@ -25,6 +25,7 @@ class CommandLineApp():
 
     def __init__(self):
         self.verbosity = logging.ERROR
+        self.args = None
 
         self.parser = argparse.ArgumentParser(
                 description=self.APP_DESCRIPTION,
