@@ -18,19 +18,13 @@ LOG_LEVELS = [
 
 
 with open('/home/qup/projects/fi/thesis/readings/java-card-docs/specs/jc_specification/specs/jcvm/html/JCVM07instr.html', 'r') as f:
-
-# with open('test.html', 'r') as f:
     data = f.read()
 
 soup = BeautifulSoup(data, 'html.parser')
 
 
 def main():
-    # tag = soup.find('h3', attrs={'class':'Head2'})
-    # while tag is not None:
     for tag in soup.findAll('h3', attrs={'class':'Head2'}):
-
-        # data = [str(tag)]
         data = [tag.text]
         tag = tag.nextSibling
         while True:
@@ -38,17 +32,12 @@ def main():
                 if 'class' in tag.attrs:
                     if 'Head2' in tag.attrs['class'] or 'footnotes' in tag.attrs['class']:
                         process_inst(data)
-                        # print('\n'.join(process_inst(data)))
                         break
 
-                # data.append(str(tag))
                 data.append(tag.text)
                 tag = tag.nextSibling
             else:
                 tag = tag.nextSibling
-        # break
-
-
 
 def process_inst(inst_lines):
     record = {}
@@ -65,33 +54,11 @@ def process_inst(inst_lines):
     record['short-description'] = next(lines)
     current = next(lines)
 
-    # if current == 'Format':
-    #     formats = []
-    #     x = next(lines)
-    #     while x != 'Forms':
-    #         formats.append(x)
-    #         x = next(lines)
-
     formats, lines = read_while('Forms', lines)
     record['format'] = formats
 
-    # if x == 'Forms':
-    #     forms = []
-    #     x = next(lines)
-    #     while x !='Stack':
-    #         forms.append(x)
-    #         x = next(lines)
-    #     record['forms'] = forms
     forms, lines = read_while('Stack', lines)
     record['forms'] = forms
-
-    # if x == 'Stack':
-    #     stacks = []
-    #     x = next(lines)
-    #     while x != 'Description':
-    #         stacks.append(x)
-    #         x = next(lines)
-    #     record['stack'] = stacks
 
     stacks, lines = read_while('Description', lines)
     record['stack'] = stacks
@@ -108,21 +75,7 @@ def process_inst(inst_lines):
     with MongoConnection(collation='bytecode-instructions') as c:
         c.col.insert_one(record)
 
-
-    # if x == 'Description':
-    #     desc = []
-    #     pass
     print(record)
-    # format
-    # various forms
-    # [..]
-    # Stack
-    # before -> after
-    # Description
-    # [..]
-    # Runtime Exception
-    # Notes
-    # [...]
     return lines
 
 def read_while(stopper, lines):
@@ -130,7 +83,6 @@ def read_while(stopper, lines):
     if lines is None:
         return result, None
     lines = iter(lines)
-    # copy_lines = iter(lines[:])
     try:
         x = next(lines)
     except StopIteration:
@@ -144,9 +96,6 @@ def read_while(stopper, lines):
 
     return result, lines
 
-
-
-# print('\n'.join(process_inst(data)))
 
 if __name__ == '__main__':
     main()
