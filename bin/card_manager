@@ -120,7 +120,7 @@ class CardManager(CommandLineApp):
         pass
 
     def format_sws(self, *sws):
-        error_code = ''.join(['{:0X}'.format(x) for x in sws])
+        error_code = ''.join(['{:02X}'.format(x) for x in sws])
         return error_code
 
     def select_card_name_applet(self):
