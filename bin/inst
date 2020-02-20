@@ -1,0 +1,91 @@
+#!/usr/bin/env python
+import logging
+
+import bs4
+import pymongo
+from bs4 import BeautifulSoup
+from jcvmutils.utils import CommandLineApp
+
+log = logging.getLogger(__file__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(name)s: %(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
+LOG_LEVELS = [
+    logging.DEBUG, logging.INFO, logging.WARNING,
+    logging.ERROR, logging.CRITICAL
+]
+
+with open('/home/qup/projects/fi/thesis/readings/java-card-docs/specs/jc_specification/specs/jcvm/html/JCVM07instr.html', 'r') as f:
+
+# with open('test.html', 'r') as f:
+    data = f.read()
+
+soup = BeautifulSoup(data, 'html.parser')
+
+class MongoConnection(object):
+    def __init__(self, host='localhost', port='27017'):
+        self.host = host
+        self.port = port
+        self.connection = None
+        self.db_name = 'card-analysis'
+        self.collation_name = 'bytecode-instructions'
+
+    def __enter__(self, *args, **kwargs):
+        conn_str = f'mongodb://{self.host}:{self.port}'
+        log.debug('Starting the connection with %s', conn_str)
+
+        self.connection = pymongo.MongoClient(conn_str)
+        self.db = self.connection[self.db_name]
+        self.col = self.db[self.collation_name]
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        log.debug('Closing the connection to the database')
+        self.connection.close()
+
+
+class App(CommandLineApp):
+    def __init__(self):
+        self.bytecode = None
+        super().__init__()
+
+    def add_options(self):
+        super().add_options()
+        self.parser.add_argument(
+            '-b', '--bytecode',
+            help='The name of the bytecode',
+            required=True,
+        )
+
+    def parse_options(self):
+        super().parse_options()
+        if self.args.bytecode is not None:
+            self.bytecode = self.args.bytecode
+
+    def run(self):
+        with MongoConnection() as c:
+            record = c.col.find_one({'name': self.bytecode})
+
+        self.print_record(record)
+
+
+    def print_record(self, record):
+        record['stack'] = ''.join(record['stack'])
+        record['description'] = ''.join(record['description'])
+        if not record['notes']:
+            record['notes'] = ''
+        else:
+            record['notes'] = '\n'.join(record['notes'])
+
+        output = '{name}\n'
+        output += '{short-description}\n'
+        output += '{stack}\n'
+        output += 'Description\n{description}\n'
+        output += 'Notes\n{notes}\n'
+        print(output.format(**record).strip())
+
+
+if __name__ == '__main__':
+    app = App()
+    app.run()
