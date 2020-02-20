@@ -1,0 +1,170 @@
+#!/usr/bin/env python
+import logging
+
+import bs4
+import pymongo
+from bs4 import BeautifulSoup
+
+log = logging.getLogger(__file__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(name)s: %(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
+LOG_LEVELS = [
+    logging.DEBUG, logging.INFO, logging.WARNING,
+    logging.ERROR, logging.CRITICAL
+]
+
+with open('/home/qup/projects/fi/thesis/readings/java-card-docs/specs/jc_specification/specs/jcvm/html/JCVM07instr.html', 'r') as f:
+
+# with open('test.html', 'r') as f:
+    data = f.read()
+
+soup = BeautifulSoup(data, 'html.parser')
+
+class MongoConnection(object):
+    def __init__(self, host='localhost', port='27017'):
+        self.host = host
+        self.port = port
+        self.connection = None
+        self.db_name = 'card-analysis'
+        self.collation_name = 'bytecode-instructions'
+
+    def __enter__(self, *args, **kwargs):
+        conn_str = f'mongodb://{self.host}:{self.port}'
+        log.debug('Starting the connection with %s', conn_str)
+
+        self.connection = pymongo.MongoClient(conn_str)
+        self.db = self.connection[self.db_name]
+        self.col = self.db[self.collation_name]
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        log.debug('Closing the connection to the database')
+        self.connection.close()
+
+def main():
+    # tag = soup.find('h3', attrs={'class':'Head2'})
+    # while tag is not None:
+    for tag in soup.findAll('h3', attrs={'class':'Head2'}):
+
+        # data = [str(tag)]
+        data = [tag.text]
+        tag = tag.nextSibling
+        while True:
+            if isinstance(tag, bs4.element.Tag):
+                if 'class' in tag.attrs:
+                    if 'Head2' in tag.attrs['class'] or 'footnotes' in tag.attrs['class']:
+                        process_inst(data)
+                        # print('\n'.join(process_inst(data)))
+                        break
+
+                # data.append(str(tag))
+                data.append(tag.text)
+                tag = tag.nextSibling
+            else:
+                tag = tag.nextSibling
+        # break
+
+
+
+def process_inst(inst_lines):
+    record = {}
+    lines = [l.strip() for l in inst_lines]
+    lines = [l for l in lines if l]
+    xlines = lines[:]
+    section, name = lines[0].split()
+    # name
+    record['name'] = name.strip()
+    # section
+    record['section'] = section.strip()
+    lines = iter(lines[1:])
+    # short description
+    record['short-description'] = next(lines)
+    current = next(lines)
+
+    # if current == 'Format':
+    #     formats = []
+    #     x = next(lines)
+    #     while x != 'Forms':
+    #         formats.append(x)
+    #         x = next(lines)
+
+    formats, lines = read_while('Forms', lines)
+    record['format'] = formats
+
+    # if x == 'Forms':
+    #     forms = []
+    #     x = next(lines)
+    #     while x !='Stack':
+    #         forms.append(x)
+    #         x = next(lines)
+    #     record['forms'] = forms
+    forms, lines = read_while('Stack', lines)
+    record['forms'] = forms
+
+    # if x == 'Stack':
+    #     stacks = []
+    #     x = next(lines)
+    #     while x != 'Description':
+    #         stacks.append(x)
+    #         x = next(lines)
+    #     record['stack'] = stacks
+
+    stacks, lines = read_while('Description', lines)
+    record['stack'] = stacks
+
+    desc, lines = read_while('Runtime Exceptions', lines)
+    record['description'] = desc
+
+    excp, lines = read_while('Notes', lines)
+    record['runtime-exceptions'] = excp
+
+    nots, lines = read_while(None, lines)
+    record['notes'] = nots
+
+    with MongoConnection() as c:
+        c.col.insert_one(record)
+
+
+    # if x == 'Description':
+    #     desc = []
+    #     pass
+    print(record)
+    # format
+    # various forms
+    # [..]
+    # Stack
+    # before -> after
+    # Description
+    # [..]
+    # Runtime Exception
+    # Notes
+    # [...]
+    return lines
+
+def read_while(stopper, lines):
+    result = []
+    if lines is None:
+        return result, None
+    lines = iter(lines)
+    # copy_lines = iter(lines[:])
+    try:
+        x = next(lines)
+    except StopIteration:
+        return result, None
+    while x != stopper:
+        result.append(x)
+        try:
+            x = next(lines)
+        except StopIteration:
+            return result, None
+
+    return result, lines
+
+
+
+# print('\n'.join(process_inst(data)))
+
+if __name__ == '__main__':
+    main()
