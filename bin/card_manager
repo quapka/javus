@@ -4,9 +4,7 @@ import logging
 import sys
 
 import smartcard
-from jcvmutils.functions import is_hex
 from jcvmutils.utils import CommandLineApp
-from smartcard.CardConnection import CardConnection
 from smartcard.System import readers
 from smartcard.util import toHexString
 
@@ -20,24 +18,9 @@ LOG_LEVELS = [
     logging.DEBUG, logging.INFO, logging.WARNING,
     logging.ERROR, logging.CRITICAL
 ]
-# r = readers()
-# con = r[0].createConnection()
-# con.connect()
-
-# SELECT = [0x00, 0xa4, 0x04, 0x00]
-# LC = [0x08]
-# AID = [0x00, 0x11, 0x22, 0x33, 0x44, 0xAA, 0xBB, 0xCC]
-
-# data, sw1, sw2 = con.transmit(SELECT + LC + AID, protocol=CardConnection.T1_protocol)
-# print(data, sw1, sw2)
-
-# GET_NAME = [0xa0, 0x08, 0x00, 0x00, 0x00]
-# data,sw1, sw2 = con.transmit(GET_NAME, protocol=CardConnection.T1_protocol)
-# print(data, sw1, sw2)
 SELECT = [0x00, 0xA4, 0x04, 0x00]
 
 CARD_NAME_APPLET_AID = [0x00, 0x11, 0x22, 0x33, 0x44, 0xAA, 0xBB, 0xCC]
-# 00a40400080011223344AABBCC
 LEN_AID = [len(CARD_NAME_APPLET_AID)]
 
 GET_NAME_APDU = [0xA0, 0x08, 0x00, 0x00, 0x00]
@@ -80,19 +63,8 @@ class CardManager(CommandLineApp):
             return list(bytes(value, 'ascii'))
         except UnicodeDecodeError:
             raise argparse.ArgumentTypeError("The name '{}' contains non-ascii characters".format(value))
-        # if not is_hex(value):
-        #     raise argparse.ArgumentTypeError("The name '{}' is not a hexadecimal string".format
-        #             (value))
-        # return self.clean_name(value)
 
     def clean_name(self, value):
-        # value = value.upper()
-        # if len(value) % 2 != 0:
-        #     value = '0' + value
-        # if len(value) / 2 > 256:
-        #     value = value[:256]
-
-        # return value.decode('hex')
         return bytes.fromhex(value)
 
     def detect_card(self):
@@ -151,7 +123,6 @@ class CardManager(CommandLineApp):
         payload = SET_NAME_APDU
         payload.append(len(self.new_card_name))
         payload.extend(self.new_card_name)
-        # payload = SET_NAME_APDU.extend([len(self.new_card_name)] + self.new_card_name)
         data, sw1, sw2 = self.card.transmit(payload)
 
     def run(self):
