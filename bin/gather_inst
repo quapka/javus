@@ -4,6 +4,7 @@ import logging
 import bs4
 import pymongo
 from bs4 import BeautifulSoup
+from jcvmutils.utils import MongoConnection
 
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()
@@ -15,6 +16,7 @@ LOG_LEVELS = [
     logging.ERROR, logging.CRITICAL
 ]
 
+
 with open('/home/qup/projects/fi/thesis/readings/java-card-docs/specs/jc_specification/specs/jcvm/html/JCVM07instr.html', 'r') as f:
 
 # with open('test.html', 'r') as f:
@@ -22,26 +24,6 @@ with open('/home/qup/projects/fi/thesis/readings/java-card-docs/specs/jc_specifi
 
 soup = BeautifulSoup(data, 'html.parser')
 
-class MongoConnection(object):
-    def __init__(self, host='localhost', port='27017'):
-        self.host = host
-        self.port = port
-        self.connection = None
-        self.db_name = 'card-analysis'
-        self.collation_name = 'bytecode-instructions'
-
-    def __enter__(self, *args, **kwargs):
-        conn_str = f'mongodb://{self.host}:{self.port}'
-        log.debug('Starting the connection with %s', conn_str)
-
-        self.connection = pymongo.MongoClient(conn_str)
-        self.db = self.connection[self.db_name]
-        self.col = self.db[self.collation_name]
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        log.debug('Closing the connection to the database')
-        self.connection.close()
 
 def main():
     # tag = soup.find('h3', attrs={'class':'Head2'})
@@ -123,7 +105,7 @@ def process_inst(inst_lines):
     nots, lines = read_while(None, lines)
     record['notes'] = nots
 
-    with MongoConnection() as c:
+    with MongoConnection(collation='bytecode-instructions') as c:
         c.col.insert_one(record)
 
 
