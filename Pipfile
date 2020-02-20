@@ -11,6 +11,7 @@ pymongo = "*"
 python-pkcs11 = "*"
 dominate = "*"
 pytest = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.6"
