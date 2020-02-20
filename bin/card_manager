@@ -138,7 +138,10 @@ class CardManager(CommandLineApp):
         log.info('Receieved data: {data} and code {code}'.format(
             data=data, code=self.format_sws(sw1, sw2))
         )
-        print('card-name: ' + ''.join([chr(x) for x in data]))
+        if data:
+            print('card-name: ' + ''.join([chr(x) for x in data]))
+        else:
+            print('No card name retrieved.')
 
     def set_card_name(self):
         log.info("Setting new name of the card to '{}'".format(self.new_card_name))
