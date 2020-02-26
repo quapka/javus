@@ -42,23 +42,25 @@ public class CardName extends Applet {
     byte[] buf = apdu.getBuffer();
     switch (buf[ISO7816.OFFSET_INS]) {
       case INS_SUCCESS:
-        Util.arrayCopyNonAtomic(success, (short) 0, buf, (short) 0, msgLen);
+        Util.arrayCopy(success, (short) 0, buf, (short) 0, msgLen);
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       case INS_FAILURE:
-        Util.arrayCopyNonAtomic(failure, (short) 0, buf, (short) 0, msgLen);
+        Util.arrayCopy(failure, (short) 0, buf, (short) 0, msgLen);
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       case INS_SET_NAME:
         // Util.arrayCopyNonAtomic(buf, (short) buf[ISO7816.OFFSET_CDATA], name, (short) 0,
         // buf[ISO7816.OFFSET_LC]);
-        Util.arrayCopyNonAtomic(
-            buf, (short) ISO7816.OFFSET_CDATA, name, (short) 0, (short) buf[ISO7816.OFFSET_LC]);
+        short dest_plus_len = 0;
+        dest_plus_len =
+            Util.arrayCopy(
+                buf, (short) ISO7816.OFFSET_CDATA, name, (short) 0, (short) buf[ISO7816.OFFSET_LC]);
         nameLen = (short) buf[ISO7816.OFFSET_LC];
         apdu.setOutgoingAndSend((short) 0, nameLen);
         break;
       case INS_GET_NAME:
-        Util.arrayCopyNonAtomic(name, (short) 0, buf, (short) 0, nameLen);
+        Util.arrayCopy(name, (short) 0, buf, (short) 0, nameLen);
         apdu.setOutgoingAndSend((short) 0, nameLen);
         break;
       default:
