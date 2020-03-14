@@ -5,6 +5,7 @@ import sys
 
 import smartcard
 from jcvmutils.utils import CommandLineApp
+from smartcard.CardConnection import CardConnection
 from smartcard.System import readers
 from smartcard.util import toHexString
 
@@ -27,6 +28,11 @@ GET_NAME_APDU = [0xA0, 0x08, 0x00, 0x00, 0x01]
 
 SET_NAME_APDU = [0xA0, 0x04, 0x00, 0x00]
 
+# PROTOCOL = {
+#     CardConnection.T0_protocol: 'T0_protocol',
+#     CardConnection.T1_protocol: 'T1_protocol',
+# }
+
 
 class CardManager(CommandLineApp):
     NO_CARDS_DETECTED_ERROR = 1
@@ -34,6 +40,7 @@ class CardManager(CommandLineApp):
     def __init__(self):
         self.card = None
         self.new_card_name = None
+        self.protocol = None
         super().__init__()
         self.readers = readers()
         # self.cards = None
@@ -48,11 +55,22 @@ class CardManager(CommandLineApp):
             help='Provide at most 256 bytes',
             type=self.validate_name,
         )
+        # self.parser.add_argument(
+        #     '-p', '--protocol',
+        #     help='The protocol to be used for the communication (T0, T1)',
+        #     default=CardConnection.T0_protocol,
+        #     type=self.validate_protocol,
+        # )
 
     def parse_options(self):
         super().parse_options()
         if self.args.new_card_name is not None:
             self.new_card_name = self.args.new_card_name
+
+        # if self.args.protocol is not None:
+        #     self.protocol = self.args.protocol
+
+        # log.info('Using the protocol {}'.format(PROTOCOL[self.protocol]))
 
     def validate_name(self, value):
         '''Expects value to be 'ascii' string
@@ -63,6 +81,16 @@ class CardManager(CommandLineApp):
             return list(bytes(value, 'ascii'))
         except UnicodeDecodeError:
             raise argparse.ArgumentTypeError("The name '{}' contains non-ascii characters".format(value))
+
+    # def validate_protocol(self, value):
+    #     cleaned = value.lower()
+    #     if cleaned == 't0':
+    #         return CardConnection.T0_protocol
+
+    #     if cleaned == 't1':
+    #         return CardConnection.T1_protocol
+
+    #     raise argparse.ArgumentTypeError("The protocol '{}' is unknown. Choose one of T0, T1".format(value))
 
     def clean_name(self, value):
         return bytes.fromhex(value)
@@ -87,6 +115,27 @@ class CardManager(CommandLineApp):
 
         self.card = cards[0]
 
+    def detect_protocol(self):
+        atr = self.card.getATR()
+
+        log.debug('Determing supported protocol from ATR.')
+        if atr.isT0Supported():
+            log.debug('T0 protocol is used.')
+            self.protocol = CardConnection.T0_protocol
+            return
+
+        if atr.isT1Supported():
+            log.debug('T1 protocol is used.')
+            self.protocol = CardConnection.T1_protocol
+            return
+
+        if atr.isT15Supported():
+            log.debug('T15 protocol is used.')
+            self.protocol = CardConnection.T15_protocol
+            return
+
+        raise RuntimeError('No protocol supported!')
+
     def install_card_name_applet(self):
         pass
 
@@ -96,7 +145,9 @@ class CardManager(CommandLineApp):
 
     def select_card_name_applet(self):
         log.info('Selecting the card-name applet')
-        data, sw1, sw2 = self.card.transmit(SELECT + LEN_AID + CARD_NAME_APPLET_AID)
+        data, sw1, sw2 = self.card.transmit(
+            bytes=SELECT + LEN_AID + CARD_NAME_APPLET_AID,
+            protocol=self.protocol)
         log.info('Receieved data: {data} and code {code}'.format(
             data=data, code=self.format_sws(sw1, sw2))
         )
@@ -105,7 +156,9 @@ class CardManager(CommandLineApp):
         self.select_card_name_applet()
 
         log.info('Getting the card-name')
-        data, sw1, sw2 = self.card.transmit(GET_NAME_APDU)
+        data, sw1, sw2 = self.card.transmit(
+            bytes=GET_NAME_APDU,
+            protocol=self.protocol)
         log.info('Receieved data: {data} and code {code}'.format(
             data=data, code=self.format_sws(sw1, sw2))
         )
@@ -123,7 +176,9 @@ class CardManager(CommandLineApp):
         payload = SET_NAME_APDU
         payload.append(len(self.new_card_name))
         payload.extend(self.new_card_name)
-        data, sw1, sw2 = self.card.transmit(payload)
+        data, sw1, sw2 = self.card.transmit(
+            bytes=payload,
+            protocol=self.protocol)
 
     def run(self):
         if self.new_card_name is not None:
