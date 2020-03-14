@@ -28,11 +28,6 @@ GET_NAME_APDU = [0xA0, 0x08, 0x00, 0x00, 0x01]
 
 SET_NAME_APDU = [0xA0, 0x04, 0x00, 0x00]
 
-# PROTOCOL = {
-#     CardConnection.T0_protocol: 'T0_protocol',
-#     CardConnection.T1_protocol: 'T1_protocol',
-# }
-
 
 class CardManager(CommandLineApp):
     NO_CARDS_DETECTED_ERROR = 1
@@ -42,8 +37,8 @@ class CardManager(CommandLineApp):
         self.new_card_name = None
         self.protocol = None
         super().__init__()
+
         self.readers = readers()
-        # self.cards = None
         log.setLevel(self.verbosity)
 
         self.detect_card()
@@ -55,22 +50,11 @@ class CardManager(CommandLineApp):
             help='Provide at most 256 bytes',
             type=self.validate_name,
         )
-        # self.parser.add_argument(
-        #     '-p', '--protocol',
-        #     help='The protocol to be used for the communication (T0, T1)',
-        #     default=CardConnection.T0_protocol,
-        #     type=self.validate_protocol,
-        # )
 
     def parse_options(self):
         super().parse_options()
         if self.args.new_card_name is not None:
             self.new_card_name = self.args.new_card_name
-
-        # if self.args.protocol is not None:
-        #     self.protocol = self.args.protocol
-
-        # log.info('Using the protocol {}'.format(PROTOCOL[self.protocol]))
 
     def validate_name(self, value):
         '''Expects value to be 'ascii' string
@@ -81,16 +65,6 @@ class CardManager(CommandLineApp):
             return list(bytes(value, 'ascii'))
         except UnicodeDecodeError:
             raise argparse.ArgumentTypeError("The name '{}' contains non-ascii characters".format(value))
-
-    # def validate_protocol(self, value):
-    #     cleaned = value.lower()
-    #     if cleaned == 't0':
-    #         return CardConnection.T0_protocol
-
-    #     if cleaned == 't1':
-    #         return CardConnection.T1_protocol
-
-    #     raise argparse.ArgumentTypeError("The protocol '{}' is unknown. Choose one of T0, T1".format(value))
 
     def clean_name(self, value):
         return bytes.fromhex(value)
