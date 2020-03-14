@@ -11,10 +11,8 @@ public class CardName extends Applet {
   byte[] success = {(byte) 0x01, (byte) 0x02, (byte) 0x01, (byte) 0x02};
   byte[] failure = {(byte) 0x80, (byte) 0x40, (byte) 0x80, (byte) 0x40};
   short msgLen = 4;
-  // static short value = 255;
-  short value = 255;
 
-  // static byte[] name = new byte[255];
+  short nameLen = 255;
   byte[] name = new byte[255];
 
   protected CardName(byte[] buffer, short offset, byte length) {
@@ -22,15 +20,6 @@ public class CardName extends Applet {
   }
 
   public static void install(byte[] buffer, short offset, byte length) {
-    // byte AIDLen = buffer[offset];
-    // byte controlLen = buffer[(short)(offset + AIDLen + 1)];
-    // byte dataLen = buffer[(short)(offset + AIDLen + 1 + controlLen + 1)];
-    // if (dataLen != 0) {
-    //     value = dataLen > (short)255 ? (short)255 : dataLen;
-    //     Util.arrayCopy(buffer, (short)(offset + AIDLen + 1 + controlLen + 1 + 1), name, (short)0,
-    // value);
-    // }
-    // new CardName().register();
     new CardName(buffer, offset, length);
   }
 
@@ -40,6 +29,7 @@ public class CardName extends Applet {
     }
 
     byte[] buf = apdu.getBuffer();
+
     switch (buf[ISO7816.OFFSET_INS]) {
       case INS_SUCCESS:
         Util.arrayCopy(success, (short) 0, buf, (short) 0, msgLen);
@@ -50,21 +40,23 @@ public class CardName extends Applet {
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       case INS_SET_NAME:
-        // Util.arrayCopyNonAtomic(buf, (short) buf[ISO7816.OFFSET_CDATA], name, (short) 0,
-        // buf[ISO7816.OFFSET_LC]);
-        // short dest_plus_len = 0;
-        // dest_plus_len =
-        // Util.arrayCopy(buf, (short) ISO7816.OFFSET_CDATA, name, (short) 0, (short)
-        // buf[ISO7816.OFFSET_LC]);
-        value = Util.makeShort(buf[ISO7816.OFFSET_CDATA + 1], buf[ISO7816.OFFSET_CDATA]);
-        // value = (short) buf[ISO7816.OFFSET_LC];
-        Util.setShort(name, (short) 0, value);
-        Util.arrayCopy(name, (short) 0, buf, (short) 0, (short) 2);
+        byte numBytes = buf[ISO7816.OFFSET_LC];
+
+        // necessary for 2.1.2 versions!
+        byte byteRead = (byte) apdu.setIncomingAndReceive();
+
+        if (numBytes != byteRead) {
+          ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+        }
+
+        Util.arrayCopy(buf, (short) ISO7816.OFFSET_CDATA, name, (short) 0, buf[ISO7816.OFFSET_LC]);
+        nameLen = (short) buf[ISO7816.OFFSET_LC];
+
         apdu.setOutgoingAndSend((short) 0, (short) 2);
         break;
       case INS_GET_NAME:
-        Util.arrayCopy(name, (short) 0, buf, (short) 0, value);
-        apdu.setOutgoingAndSend((short) 0, value);
+        Util.arrayCopy(name, (short) 0, buf, (short) 0, nameLen);
+        apdu.setOutgoingAndSend((short) 0, nameLen);
         break;
       default:
         ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
