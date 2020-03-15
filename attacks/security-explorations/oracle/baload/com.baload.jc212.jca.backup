@@ -1,0 +1,211 @@
+// converted by version 1.2
+// on Fri Feb 14 18:52:59 CET 2020
+
+.package com/baload {
+	.aid 0xA1:0x0:0x0:0x0:0x0;
+	.version 0.0;
+
+	.imports {
+		0xA0:0x0:0x0:0x0:0x62:0x1:0x1 1.0;		//javacard/framework
+	}
+
+	.applet {
+		0xA1:0x0:0x0:0x0:0x0:0x0:0x1 InsBaload;
+	}
+
+	.constantPool {
+		// 0
+		instanceFieldRef byte[] InsBaload/success;
+		// 1
+		instanceFieldRef byte[] InsBaload/failure;
+		// 2
+		instanceFieldRef short InsBaload/msgLen;
+		// 3
+		instanceFieldRef byte[] InsBaload/array;
+		// 4
+		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
+		// 5
+		classRef InsBaload;
+		// 6
+		staticMethodRef InsBaload/<init>()V;
+		// 7
+		virtualMethodRef 0.3.1()V;		// javacard/framework/Applet.register()V
+		// 8
+		virtualMethodRef 0.3.3()Z;		// javacard/framework/Applet.selectingApplet()Z
+		// 9
+		virtualMethodRef 0.10.1()[B;		// javacard/framework/APDU.getBuffer()[B
+		// 10
+		staticMethodRef 0.16.2([BS[BSS)S;		// javacard/framework/Util.arrayCopyNonAtomic([BS[BSS)S
+		// 11
+		virtualMethodRef 0.10.8(SS)V;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+		// 12
+		staticMethodRef 0.16.4([BS)S;		// javacard/framework/Util.getShort([BS)S
+		// 13
+		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
+	}
+
+	.class public InsBaload 0 extends 0.3 {		// extends javacard/framework/Applet
+
+		.fields {
+			 byte[] success 0;		// [B
+			 byte[] failure 1;		// [B
+			 byte[] array 2;		// [B
+			 short msgLen 3;		// S
+			private static final byte INS_SUCCESS = 1;		// B
+			private static final byte INS_FAILURE = 2;		// B
+			private static final byte INS_READ = 4;		// B
+		}
+
+		.publicMethodTable 7 {
+			equals(Ljava/lang/Object;)Z;
+			register()V;
+			register([BSB)V;
+			selectingApplet()Z;
+			deselect()V;
+			getShareableInterfaceObject(Ljavacard/framework/AID;B)Ljavacard/framework/Shareable;;
+			select()Z;
+			process(Ljavacard/framework/APDU;)V;
+		}
+
+		.packageMethodTable 0 {
+		}
+
+		.method public <init>()V 0 {
+			.stack 5;
+			.locals 0;
+
+				L0:	aload_0;
+					invokespecial 4;		// javacard/framework/Applet.<init>()V
+					aload_0;
+					sconst_4;
+					newarray 11;
+					dup;
+					sconst_0;
+					sconst_1;
+					bastore;
+					dup;
+					sconst_1;
+					sconst_2;
+					bastore;
+					dup;
+					sconst_2;
+					sconst_1;
+					bastore;
+					dup;
+					sconst_3;
+					sconst_2;
+					bastore;
+					putfield_a 0;		// reference com/baload/InsBaload.success
+					aload_0;
+					sconst_4;
+					newarray 11;
+					dup;
+					sconst_0;
+					bspush -128;
+					bastore;
+					dup;
+					sconst_1;
+					bspush 64;
+					bastore;
+					dup;
+					sconst_2;
+					bspush -128;
+					bastore;
+					dup;
+					sconst_3;
+					bspush 64;
+					bastore;
+					putfield_a 1;		// reference com/baload/InsBaload.failure
+					aload_0;
+					sconst_4;
+					putfield_s 2;		// short com/baload/InsBaload.msgLen
+					aload_0;
+					sconst_1;
+					newarray 11;
+					putfield_a 3;		// reference com/baload/InsBaload.array
+					return;
+		}
+
+		.method public static install([BSB)V 1 {
+			.stack 2;
+			.locals 0;
+
+				L0:	new 5;		// com/baload/InsBaload
+					dup;
+					invokespecial 6;		// com/baload/InsBaload.<init>()V
+					invokevirtual 7;		// javacard/framework/Applet.register()V
+					return;
+		}
+
+		.method public process(Ljavacard/framework/APDU;)V 7 {
+			.stack 5;
+			.locals 2;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					invokevirtual 8;		// javacard/framework/Applet.selectingApplet()Z
+					ifeq L2;
+				L1:	return;
+				L2:	aload_1;
+					invokevirtual 9;		// javacard/framework/APDU.getBuffer()[B
+					astore_3;
+					aload_3;
+					sconst_1;
+					baload;
+					stableswitch L6 1 4 L3 L4 L6 L5;
+				L3:	getfield_a_this 0;		// reference com/baload/InsBaload.success
+					sconst_0;
+					aload_3;
+					sconst_0;
+					getfield_s_this 2;		// short com/baload/InsBaload.msgLen
+					invokestatic 10;		// javacard/framework/Util.arrayCopyNonAtomic([BS[BSS)S
+					pop;
+					aload_1;
+					sconst_0;
+					sconst_4;
+					invokevirtual 11;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+					goto L7;
+				L4:	getfield_a_this 1;		// reference com/baload/InsBaload.failure
+					sconst_0;
+					aload_3;
+					sconst_0;
+					getfield_s_this 2;		// short com/baload/InsBaload.msgLen
+					invokestatic 10;		// javacard/framework/Util.arrayCopyNonAtomic([BS[BSS)S
+					pop;
+					aload_1;
+					sconst_0;
+					sconst_4;
+					invokevirtual 11;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+					goto L7;
+				L5:	aload_3;
+					sconst_2;
+					invokestatic 12;		// javacard/framework/Util.getShort([BS)S
+					sstore_2;
+					getfield_a_this 0;		// reference com/baload/InsBaload.success
+					sconst_0;
+					getfield_a_this 0;		// reference com/baload/InsBaload.success
+                                        aload_2;
+                                        baload;
+					//sconst_1;
+					bastore;
+					getfield_a_this 0;		// reference com/baload/InsBaload.success
+					sconst_0;
+					aload_3;
+					sconst_0;
+					getfield_s_this 2;		// short com/baload/InsBaload.msgLen
+					invokestatic 10;		// javacard/framework/Util.arrayCopyNonAtomic([BS[BSS)S
+					pop;
+					aload_1;
+					sconst_0;
+					sconst_4;
+					invokevirtual 11;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+					goto L7;
+				L6:	sspush 27904;
+					invokestatic 13;		// javacard/framework/ISOException.throwIt(S)V
+				L7:	return;
+		}
+
+	}
+
+}
