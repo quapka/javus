@@ -12,6 +12,7 @@ python-pkcs11 = "*"
 dominate = "*"
 pytest = "*"
 beautifulsoup4 = "*"
+invoke = "*"
 
 [requires]
 python_version = "3.6"
