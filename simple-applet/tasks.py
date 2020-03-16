@@ -53,5 +53,3 @@ def update_build_aid(aid):
             prop.attrib['value'] = aid.PIX
 
     tree.write(open(BUILD_FILE, 'wb'), encoding="utf-8", xml_declaration=True)
-    # import sys
-    # tree.write(sys.stdout.buffer)
