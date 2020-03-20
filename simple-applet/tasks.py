@@ -1,7 +1,8 @@
+# Define basic tasks related to the particular attack
 import configparser
 import xml.etree.ElementTree as ET
 
-from invoke import task
+from invoke import run, task
 from jcvmutils.functions import valid_aid
 
 BUILD_FILE = 'build.xml'
@@ -17,7 +18,7 @@ class AID(object):
         self.RID = self.AID[:10]
         self.PIX = self.AID[10:]
 
-# tasks
+# define particular tasks
 @task
 def aid(c):
     print(config['DEFAULT']['AID'])
@@ -32,8 +33,16 @@ def update_aid(c, aid_value):
     update_config(aid)
     update_build_aid(aid)
 
+@task
+def attack(c, interactive=False):
+    cmd = 'bin/scenario'
 
-# helper functions
+    if interactive:
+        cmd += ' --interactive'
+    run(cmd, pty=interactive)
+
+
+# define helper functions
 def update_config(aid):
     config['DEFAULT']['RID'] = aid.RID
     config['DEFAULT']['PIX'] = aid.PIX

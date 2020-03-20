@@ -7,10 +7,15 @@ import subprocess as sp
 
 from PyInquirer import print_json, prompt
 
-CONFIG_FILE = 'config.ini'
-
+# load the configuration
 config = configparser.ConfigParser()
-config.read(CONFIG_FILE)
+config.read('config.ini')
+
+DEFAULT_CAP = os.path.abspath(os.path.join(
+    config['PROJECT']['BUILD_DIR'],
+    'com.simple-jc212.cap',
+))
+
 
 parser = argparse.ArgumentParser(
     description='Test non-interactive scenarios'
@@ -19,7 +24,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-i', '--interactive', action='store_true')
 parser.add_argument(
         '-c', '--cap',
-        default='com.simple-jc212.cap',
+        default=DEFAULT_CAP,
      )
 
 args = parser.parse_args()
