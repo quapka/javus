@@ -76,3 +76,9 @@ General notes on a setup
 ------------------------
 In order to manage different versions of JDK use:
 $ sudo update-alternatives --config java
+
+
+Ideas
+-----
+
+Define each attack by the APDUs, that are send/receieved
