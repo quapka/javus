@@ -15,7 +15,7 @@
             <javacard jckit="${JC212}">
                 <cap output="${BUILD_DIR}/com.baload-jc212.cap" sources="src/com" aid="A100000000"
                 verify="false"
-                jca="com.baload.jc212.jca"
+                jca="${BUILD_DIR}/com.baload.jc212.jca"
                 >
                 <applet class="com.baload.InsBaload" aid="A1000000000001"/>
             </cap>
