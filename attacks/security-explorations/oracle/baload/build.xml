@@ -8,10 +8,12 @@
     <property name="JC221" value="ext/jc221_kit"/>
     <property name="JC222" value="ext/jc222_kit"/>
     <property name="JC305u3" value="ext/jc305u3_kit"/>
+    <!-- project folders -->
+    <property name="BUILD_DIR" value="build"/>
 
     <target name="com.baload.jc212">
             <javacard jckit="${JC212}">
-            <cap output="com.baload-jc212.cap" sources="src/com" aid="A100000000"
+                <cap output="${BUILD_DIR}/com.baload-jc212.cap" sources="src/com" aid="A100000000"
                 verify="false"
                 jca="com.baload.jc212.jca"
                 >
@@ -21,21 +23,21 @@
     </target>
     <target name="com.baload.jc221">
             <javacard jckit="${JC221}">
-            <cap output="com.baload-jc221.cap" sources="src/com" aid="A100000000">
+                <cap output="${BUILD_DIR}/com.baload-jc221.cap" sources="src/com" aid="A100000000">
                 <applet class="com.baload.InsBaload" aid="A1000000000001"/>
             </cap>
         </javacard>
     </target>
     <target name="com.baload.jc222">
             <javacard jckit="${JC222}">
-            <cap output="com.baload-jc222.cap" sources="src/com" aid="A100000000">
+                <cap output="${BUILD_DIR}/com.baload-jc222.cap" sources="src/com" aid="A100000000">
                 <applet class="com.baload.InsBaload" aid="A1000000000001"/>
             </cap>
         </javacard>
     </target>
     <target name="com.baload.jc305u3">
             <javacard jckit="${JC305u3}">
-            <cap output="com.baload-jc305u3.cap" sources="src/com" aid="A100000000">
+                <cap output="${BUILD_DIR}/com.baload-jc305u3.cap" sources="src/com" aid="A100000000">
                 <applet class="com.baload.InsBaload" aid="A1000000000001"/>
             </cap>
         </javacard>
