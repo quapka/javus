@@ -6,7 +6,7 @@ GP = java -jar "${GO_PATH}"
 SELECT_CMD = "00a40400"
 RID = "A100000000"
 PIX = "0001"
-AID = "A1000000000001"
+AID = $(RID)$(PIX)
 
 all: $(TARGET)
 
