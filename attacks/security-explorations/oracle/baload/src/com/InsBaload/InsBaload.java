@@ -36,8 +36,10 @@ public class InsBaload extends Applet {
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       case INS_READ:
+        // read P1 value from the APDU buffer
         value = Util.getShort(buf, ISO7816.OFFSET_P1);
         success[0] = 1;
+        // try to save a value outside of the allowed bounderies
         success[0] = success[value];
         // Util.setShort(buf, (short) (0), value);
         Util.arrayCopyNonAtomic(success, (short) 0, buf, (short) 0, msgLen);
