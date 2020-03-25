@@ -66,32 +66,132 @@ def uninstall():
     # output = sp.check_output(cmd)
     run_command(cmd)
 
-def select():
+def create_select_apdu():
     aid = config['DEFAULT']['AID']
     select_payload = '00a40400'
     select_payload += '{:02}'.format(len(aid)//2)
     select_payload += aid
-    print(select_payload)
+    return select_payload
+
+def select():
     cmd = gp + [
         '--verbose',
         '--debug',
         '--apdu',
-        select_payload,
+        create_select_apdu(),
     ]
     # output = sp.check_output(cmd)
     run_command(cmd)
 
+def validate_index(value):
+    start = None
+    end = None
+    # handle also hexadecimal input values
+    try:
+        start, end = [int(x) for x in value.split()]
+    except ValueError:
+        # apparently the index is not a range 'X Y'
+        pass
+
+    if start is not None:
+        if start < end:
+            return start, end
+        else:
+            raise ValueError('Invalid range: {} !< {}'.format(start, end))
+
+    try:
+        # index = int(value)
+        return int(value), None
+    except ValueError:
+        # value is not a range or a single index
+        pass
+
+    return value, None
+
+def create_ins_read_apdu(index):
+        return 'a004' + '{:04X}'.format(index) + '00'
+
+# def handle_index_q(answer, on_end)
+#     # 'q' for quit
+#     if type(start) == str:
+#         break
+
+#     if end is not None:
+#         for index in range(start, end):
+#             cmd[-1] = create_select_apdu(index)
+#             run_command(cmd)
+#     else:
+#         cmd[-1] = create_select_apdu(index)
+#         run_command(cmd)
+
+def ins_read():
+    cmd = gp + [
+        '--verbose',
+        '--debug',
+        '--apdu',
+        create_select_apdu(),
+    ]
+    cmd += [
+        '--apdu',
+        'a004000000',
+    ]
+
+    cont_q = {
+            'type': 'confirm',
+            'message': 'Run in continuous mode?',
+            'name': 'continuous',
+        }
+    index_q = {
+        'type': 'input',
+        'message': 'Give me an index P1P2 (or a range [0 - FFFF])',
+        'name': 'index',
+    }
+
+    answer = prompt(cont_q)
+    if answer['continuous']:
+        while True:
+            answer = prompt(index_q)
+            start, end = validate_index(answer['index'])
+
+            # 'q' for quit
+            if type(start) == str:
+                break
+
+            if end is not None:
+                for index in range(start, end):
+                    cmd[-1] = create_ins_read_apdu(index)
+                    run_command(cmd)
+            else:
+                cmd[-1] = create_ins_read_apdu(start)
+                run_command(cmd)
+    else:
+        answer = prompt(index_q)
+        start, end = validate_index(answer['index'])
+
+        if type(start) == str:
+            return
+
+        if end is not None:
+            for index in range(start, end):
+                cmd[-1] = create_ins_read_apdu(index)
+                run_command(cmd)
+        else:
+            cmd[-1] = create_ins_read_apdu(start)
+            run_command(cmd)
+
 INSTALL = 'install'
 SELECT = 'select'
+INS_READ = 'ins_read'
 UNINSTALL = 'uninstall'
 
 STEPS = {
     INSTALL: install,
     SELECT: select,
+    INS_READ: ins_read,
     UNINSTALL: uninstall,
 }
 
-questions = [
+step_qs = [
     {
         'type': 'list',
         'message': 'Which step do you want to perform?',
