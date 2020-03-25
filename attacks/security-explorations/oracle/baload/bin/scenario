@@ -100,15 +100,20 @@ questions = [
         },
 ]
 
-if args.interactive:
-    answer = prompt(questions)
-    while True:
-        if answer['step'] == 'exit':
-            break
-        STEPS[answer['step']]()
 
-        answer = prompt(questions)
-else:
-    for step, func in STEPS.items():
-        print(step)
-        func()
+def main():
+    if args.interactive:
+        answer = prompt(step_qs)
+        while True:
+            if answer['step'] == 'exit':
+                break
+            STEPS[answer['step']]()
+
+            answer = prompt(step_qs)
+    else:
+        for step, func in STEPS.items():
+            print(step)
+            func()
+
+if __name__ == '__main__':
+    main()
