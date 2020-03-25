@@ -86,22 +86,36 @@ def select():
 def validate_index(value):
     start = None
     end = None
-    # handle also hexadecimal input values
+    # handle if the input is an integer range
     try:
         start, end = [int(x) for x in value.split()]
     except ValueError:
-        # apparently the index is not a range 'X Y'
+        # apparently the index is not an integer range 'X Y'
+        pass
+    # handle if the input is a hexadecimal range
+    try:
+        start, end = [int(x, 16) for x in value.split()]
+    except ValueError:
+        # apparently the index is not an hexadecimalrange 'X Y'
         pass
 
+    # handle all possible invalid integer values
     if start is not None:
         if start < end:
             return start, end
         else:
             raise ValueError('Invalid range: {} !< {}'.format(start, end))
 
+    # handle if the input is an integer value
     try:
-        # index = int(value)
         return int(value), None
+    except ValueError:
+        # value is not a range or a single index
+        pass
+
+        # handle if the input is a hexadecimal value
+    try:
+        return int(value, 16), None
     except ValueError:
         # value is not a range or a single index
         pass
