@@ -36,6 +36,7 @@ public class InsBaload extends Applet {
         apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
       case INS_READ:
+        check_received_bytes(apdu, buf);
         // read P1 value from the APDU buffer
         value = Util.getShort(buf, ISO7816.OFFSET_P1);
         success[0] = 1;
@@ -47,6 +48,17 @@ public class InsBaload extends Applet {
         break;
       default:
         ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
+    }
+  }
+
+  public void check_received_bytes(APDU apdu, byte[] buffer) {
+    byte numBytes = buffer[ISO7816.OFFSET_LC];
+
+    // necessary for 2.1.2 versions!
+    byte byteRead = (byte) apdu.setIncomingAndReceive();
+
+    if (numBytes != byteRead) {
+      ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
     }
   }
 }
