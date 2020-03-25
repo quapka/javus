@@ -5,7 +5,7 @@ import configparser
 import os
 import subprocess as sp
 
-from PyInquirer import print_json, prompt
+from PyInquirer import prompt
 
 # load the configuration
 config = configparser.ConfigParser()
