@@ -1,5 +1,5 @@
 // converted by version 1.2
-// on Fri Mar 20 21:56:56 CET 2020
+// on Thu Mar 26 18:21:48 CET 2020
 
 .package com/baload {
 	.aid 0xA1:0x0:0x0:0x0:0x0;
@@ -41,9 +41,11 @@
 		// 12
 		virtualMethodRef 0.10.8(SS)V;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
 		// 13
-		staticMethodRef 0.16.4([BS)S;		// javacard/framework/Util.getShort([BS)S
+		virtualMethodRef 0.10.6()S;		// javacard/framework/APDU.setIncomingAndReceive()S
 		// 14
 		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
+		// 15
+		staticMethodRef 0.16.4([BS)S;		// javacard/framework/Util.getShort([BS)S
 	}
 
 	.class public InsBaload 0 extends 0.3 {		// extends javacard/framework/Applet
@@ -146,7 +148,7 @@
 
 		.method public process(Ljavacard/framework/APDU;)V 7 {
 			.stack 5;
-			.locals 2;
+			.locals 4;
 
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
@@ -160,7 +162,7 @@
 					aload_3;
 					sconst_1;
 					baload;
-					stableswitch L6 1 4 L3 L4 L6 L5;
+					stableswitch L8 1 4 L3 L4 L8 L5;
 				L3:	getfield_a_this 0;		// reference com/baload/InsBaload.success
 					sconst_0;
 					aload_3;
@@ -172,7 +174,7 @@
 					sconst_0;
 					sconst_4;
 					invokevirtual 12;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
-					goto L7;
+					goto L9;
 				L4:	getfield_a_this 1;		// reference com/baload/InsBaload.failure
 					sconst_0;
 					aload_3;
@@ -184,10 +186,23 @@
 					sconst_0;
 					sconst_4;
 					invokevirtual 12;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
-					goto L7;
+					goto L9;
 				L5:	aload_3;
+					sconst_4;
+					baload;
+					sstore 4;
+					aload_1;
+					invokevirtual 13;		// javacard/framework/APDU.setIncomingAndReceive()S
+					s2b;
+					sstore 5;
+					sload 4;
+					sload 5;
+					if_scmpeq L7;
+				L6:	sspush 26368;
+					invokestatic 14;		// javacard/framework/ISOException.throwIt(S)V
+				L7:	aload_3;
 					sconst_2;
-					invokestatic 13;		// javacard/framework/Util.getShort([BS)S
+					invokestatic 15;		// javacard/framework/Util.getShort([BS)S
 					sstore_2;
 					getfield_a_this 0;		// reference com/baload/InsBaload.success
 					sconst_0;
@@ -210,10 +225,10 @@
 					sconst_0;
 					sconst_2;
 					invokevirtual 12;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
-					goto L7;
-				L6:	sspush 27904;
+					goto L9;
+				L8:	sspush 27904;
 					invokestatic 14;		// javacard/framework/ISOException.throwIt(S)V
-				L7:	return;
+				L9:	return;
 		}
 
 	}
