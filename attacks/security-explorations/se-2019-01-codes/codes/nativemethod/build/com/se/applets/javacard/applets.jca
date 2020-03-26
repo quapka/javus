@@ -1,0 +1,406 @@
+// converted by version  [v3.0.5]
+// on Mon Mar 18 15:31:49 CET 2019
+
+.package com/se/applets {
+	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x1;
+	.version 1.0;
+
+	.imports {
+		0xA0:0x0:0x0:0x0:0x62:0x1:0x1 1.6;		//javacard/framework
+		0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x2 1.0;		//com/se/vulns
+		0xA0:0x0:0x0:0x0:0x62:0x0:0x1 1.0;		//java/lang
+	}
+
+	.applet {
+		0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x1:0x1 SEApplet;
+	}
+
+	.constantPool {
+		// 0
+		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
+		// 1
+		virtualMethodRef 0.3.1()V;		// register()V
+		// 2
+		.classRef SEApplet;
+		// 3
+		staticMethodRef SEApplet/<init>()V;
+		// 4
+		virtualMethodRef 0.10.1()[B;		// getBuffer()[B
+		// 5
+		virtualMethodRef 0.10.6()S;		// setIncomingAndReceive()S
+		// 6
+		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
+		// 7
+		virtualMethodRef 0.10.7()S;		// setOutgoing()S
+		// 8
+		virtualMethodRef 0.10.9(S)V;		// setOutgoingLength(S)V
+		// 9
+		virtualMethodRef 0.10.4(SS)V;		// sendBytes(SS)V
+		// 10
+		virtualMethodRef SEApplet/get_req(Ljavacard/framework/APDU;S)[B;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 11
+		staticMethodRef 1.0.1(IS)S;		// com/se/vulns/Test.readShort(IS)S
+		// 12
+		virtualMethodRef SEApplet/send_resp(Ljavacard/framework/APDU;S)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 13
+		staticMethodRef 1.0.2(ISS)V;		// com/se/vulns/Test.writeShort(ISS)V
+		// 14
+		virtualMethodRef SEApplet/nread_short(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 15
+		virtualMethodRef SEApplet/nwrite_short(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+	}
+
+	.class public SEApplet 0 extends 0.3 {		// extends javacard/framework/Applet
+
+		.fields {
+			private static final byte SEApplet_CLA = -128;		// B
+			private static final byte NREAD_SHORT = 16;		// B
+			private static final byte NWRITE_SHORT = 17;		// B
+		}
+
+		.publicMethodTable 7 {
+			equals(Ljava/lang/Object;)Z;
+			register()V;
+			register([BSB)V;
+			selectingApplet()Z;
+			deselect()V;
+			getShareableInterfaceObject(Ljavacard/framework/AID;B)Ljavacard/framework/Shareable;;
+			select()Z;
+			process(Ljavacard/framework/APDU;)V;
+			get_req(Ljavacard/framework/APDU;S)[B;
+			send_resp(Ljavacard/framework/APDU;S)V;
+			nread_short(Ljavacard/framework/APDU;)V;
+			nwrite_short(Ljavacard/framework/APDU;)V;
+		}
+
+		.packageMethodTable 0 {
+		}
+
+		.method protected <init>()V 0 {
+			.stack 1;
+			.locals 0;
+
+				L0:	aload_0;
+					invokespecial 0;		// javacard/framework/Applet.<init>()V
+					aload_0;
+					invokevirtual 1;		// register()V
+					return;
+		}
+
+		.method public static install([BSB)V 1 {
+			.stack 2;
+			.locals 0;
+
+				L0:	new 2;		// com/se/applets/SEApplet
+					dup;
+					invokespecial 3;		// com/se/applets/SEApplet.<init>()V
+					pop;
+					return;
+		}
+
+		.method public get_req(Ljavacard/framework/APDU;S)[B 8 {
+			.stack 2;
+			.locals 3;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_1;
+					invokevirtual 4;		// getBuffer()[B
+					astore_3;
+					aload_3;
+					sconst_4;
+					baload;
+					sstore 4;
+					aload_1;
+					invokevirtual 5;		// setIncomingAndReceive()S
+					s2b;
+					sstore 5;
+					sload 4;
+					sload_2;
+					if_scmpne L2;
+				L1:	sload 5;
+					sload_2;
+					if_scmpeq L3;
+				L2:	sspush 26368;
+					invokestatic 6;		// javacard/framework/ISOException.throwIt(S)V
+				L3:	aload_3;
+					areturn;
+		}
+
+		.method public send_resp(Ljavacard/framework/APDU;S)V 9 {
+			.stack 3;
+			.locals 1;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_1;
+					invokevirtual 7;		// setOutgoing()S
+					sstore_3;
+					sload_3;
+					sload_2;
+					if_scmpge L2;
+				L1:	sspush 26368;
+					invokestatic 6;		// javacard/framework/ISOException.throwIt(S)V
+				L2:	aload_1;
+					sload_2;
+					s2b;
+					invokevirtual 8;		// setOutgoingLength(S)V
+					aload_1;
+					sconst_5;
+					sload_2;
+					invokevirtual 9;		// sendBytes(SS)V
+					return;
+		}
+
+		.method public nread_short(Ljavacard/framework/APDU;)V 10 {
+			.stack 6;
+			.locals 5;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					aload_1;
+					bspush 6;
+					invokevirtual 10;		// get_req(Ljavacard/framework/APDU;S)[B
+					astore_2;
+					aload_2;
+					sconst_5;
+					baload;
+					s2i;
+					sipush 255;
+					iand;
+					bipush 24;
+					ishl;
+					istore_3;
+					iload_3;
+					aload_2;
+					bspush 6;
+					baload;
+					s2i;
+					sipush 255;
+					iand;
+					bipush 16;
+					ishl;
+					ior;
+					istore_3;
+					iload_3;
+					aload_2;
+					bspush 7;
+					baload;
+					s2i;
+					sipush 255;
+					iand;
+					bipush 8;
+					ishl;
+					ior;
+					istore_3;
+					iload_3;
+					aload_2;
+					bspush 8;
+					baload;
+					s2i;
+					sipush 255;
+					iand;
+					ior;
+					istore_3;
+					aload_2;
+					bspush 9;
+					baload;
+					sspush 255;
+					sand;
+					bspush 8;
+					sshl;
+					sstore 5;
+					sload 5;
+					aload_2;
+					bspush 10;
+					baload;
+					sspush 255;
+					sand;
+					sor;
+					sstore 5;
+					iload_3;
+					sload 5;
+					invokestatic 11;		// com/se/vulns/Test.readShort(IS)S
+					sstore 6;
+					aload_2;
+					sconst_5;
+					sload 6;
+					bspush 8;
+					sshr;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					bspush 6;
+					sload 6;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 12;		// send_resp(Ljavacard/framework/APDU;S)V
+					return;
+		}
+
+		.method public nwrite_short(Ljavacard/framework/APDU;)V 11 {
+			.stack 6;
+			.locals 6;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					aload_1;
+					bspush 8;
+					invokevirtual 10;		// get_req(Ljavacard/framework/APDU;S)[B
+					astore_2;
+					aload_2;
+					sconst_5;
+					baload;
+					s2i;
+					sipush 255;
+					iand;
+					bipush 24;
+					ishl;
+					istore_3;
+					iload_3;
+					aload_2;
+					bspush 6;
+					baload;
+					s2i;
+					sipush 255;
+					iand;
+					bipush 16;
+					ishl;
+					ior;
+					istore_3;
+					iload_3;
+					aload_2;
+					bspush 7;
+					baload;
+					s2i;
+					sipush 255;
+					iand;
+					bipush 8;
+					ishl;
+					ior;
+					istore_3;
+					iload_3;
+					aload_2;
+					bspush 8;
+					baload;
+					s2i;
+					sipush 255;
+					iand;
+					ior;
+					istore_3;
+					aload_2;
+					bspush 9;
+					baload;
+					sspush 255;
+					sand;
+					bspush 8;
+					sshl;
+					sstore 5;
+					sload 5;
+					aload_2;
+					bspush 10;
+					baload;
+					sspush 255;
+					sand;
+					sor;
+					sstore 5;
+					aload_2;
+					bspush 11;
+					baload;
+					sspush 255;
+					sand;
+					bspush 8;
+					sshl;
+					sstore 6;
+					sload 6;
+					aload_2;
+					bspush 12;
+					baload;
+					sspush 255;
+					sand;
+					sor;
+					sstore 6;
+					iload_3;
+					sload 5;
+					sload 6;
+					invokestatic 13;		// com/se/vulns/Test.writeShort(ISS)V
+					iload_3;
+					sload 5;
+					invokestatic 11;		// com/se/vulns/Test.readShort(IS)S
+					sstore 7;
+					aload_2;
+					sconst_5;
+					sload 7;
+					bspush 8;
+					sshr;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					bspush 6;
+					sload 7;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 12;		// send_resp(Ljavacard/framework/APDU;S)V
+					return;
+		}
+
+		.method public process(Ljavacard/framework/APDU;)V 7 {
+			.stack 2;
+			.locals 1;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_1;
+					invokevirtual 4;		// getBuffer()[B
+					astore_2;
+					aload_2;
+					sconst_0;
+					baload;
+					bspush -128;
+					if_scmpeq L2;
+				L1:	sspush 28160;
+					invokestatic 6;		// javacard/framework/ISOException.throwIt(S)V
+				L2:	aload_2;
+					sconst_1;
+					baload;
+					slookupswitch L5 2 16 L3 17 L4;
+				L3:	aload_0;
+					aload_1;
+					invokevirtual 14;		// nread_short(Ljavacard/framework/APDU;)V
+					return;
+				L4:	aload_0;
+					aload_1;
+					invokevirtual 15;		// nwrite_short(Ljavacard/framework/APDU;)V
+					return;
+				L5:	sspush 27904;
+					invokestatic 6;		// javacard/framework/ISOException.throwIt(S)V
+					return;
+		}
+
+	}
+
+}

@@ -1,0 +1,526 @@
+// converted by version  [v3.0.5]
+// on Mon Mar 18 15:31:44 CET 2019
+
+.package com/se/applets {
+	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x1;
+	.version 1.0;
+
+	.imports {
+		0xA0:0x0:0x0:0x0:0x62:0x1:0x1 1.6;		//javacard/framework
+		0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x2 1.0;		//com/se/vulns
+		0xA0:0x0:0x0:0x0:0x62:0x0:0x1 1.0;		//java/lang
+	}
+
+	.applet {
+		0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x1:0x1 SEApplet;
+	}
+
+	.constantPool {
+		// 0
+		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
+		// 1
+		virtualMethodRef 0.3.1()V;		// register()V
+		// 2
+		.classRef SEApplet;
+		// 3
+		staticMethodRef SEApplet/<init>()V;
+		// 4
+		virtualMethodRef 0.10.1()[B;		// getBuffer()[B
+		// 5
+		virtualMethodRef 0.10.6()S;		// setIncomingAndReceive()S
+		// 6
+		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
+		// 7
+		virtualMethodRef 0.10.7()S;		// setOutgoing()S
+		// 8
+		virtualMethodRef 0.10.9(S)V;		// setOutgoingLength(S)V
+		// 9
+		virtualMethodRef 0.10.4(SS)V;		// sendBytes(SS)V
+		// 10
+		virtualMethodRef SEApplet/get_req(Ljavacard/framework/APDU;S)[B;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 11
+		staticMethodRef 1.0.3()Ljava/lang/Object;;		// com/se/vulns/Test.getfield_a()Ljava/lang/Object;
+			.descriptor	Ljava/lang/Object;	2.0;
+
+		// 12
+		staticMethodRef 1.0.9(Ljava/lang/Object;S)S;		// com/se/vulns/Test.cast2short(Ljava/lang/Object;S)S
+			.descriptor	Ljava/lang/Object;	2.0;
+
+		// 13
+		virtualMethodRef SEApplet/send_resp(Ljavacard/framework/APDU;S)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 14
+		staticMethodRef 1.0.10(Ljava/lang/Object;S)Ljava/lang/Object;;		// com/se/vulns/Test.cast2obj(Ljava/lang/Object;S)Ljava/lang/Object;
+			.descriptor	Ljava/lang/Object;	2.0;
+			.descriptor	Ljava/lang/Object;	2.0;
+
+		// 15
+		staticMethodRef 1.0.4(Ljava/lang/Object;)V;		// com/se/vulns/Test.putfield_a(Ljava/lang/Object;)V
+			.descriptor	Ljava/lang/Object;	2.0;
+
+		// 16
+		staticMethodRef 1.0.1()[I;		// com/se/vulns/Test.imem()[I
+		// 17
+		staticMethodRef 1.0.5()B;		// com/se/vulns/Test.getfield_b()B
+		// 18
+		staticMethodRef 1.0.8(S)V;		// com/se/vulns/Test.putfield_s(S)V
+		// 19
+		staticMethodRef 1.0.7()S;		// com/se/vulns/Test.getfield_s()S
+		// 20
+		virtualMethodRef SEApplet/getfield_a(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 21
+		virtualMethodRef SEApplet/putfield_a(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 22
+		virtualMethodRef SEApplet/getfield_b(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 23
+		virtualMethodRef SEApplet/putfield_b(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 24
+		virtualMethodRef SEApplet/getfield_s(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+		// 25
+		virtualMethodRef SEApplet/putfield_s(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+	}
+
+	.class public SEApplet 0 extends 0.3 {		// extends javacard/framework/Applet
+
+		.fields {
+			private static final byte SEApplet_CLA = -128;		// B
+			private static final byte GETFIELD_A = 16;		// B
+			private static final byte PUTFIELD_A = 17;		// B
+			private static final byte GETFIELD_B = 18;		// B
+			private static final byte PUTFIELD_B = 19;		// B
+			private static final byte GETFIELD_S = 20;		// B
+			private static final byte PUTFIELD_S = 21;		// B
+		}
+
+		.publicMethodTable 7 {
+			equals(Ljava/lang/Object;)Z;
+			register()V;
+			register([BSB)V;
+			selectingApplet()Z;
+			deselect()V;
+			getShareableInterfaceObject(Ljavacard/framework/AID;B)Ljavacard/framework/Shareable;;
+			select()Z;
+			process(Ljavacard/framework/APDU;)V;
+			get_req(Ljavacard/framework/APDU;S)[B;
+			send_resp(Ljavacard/framework/APDU;S)V;
+			getfield_a(Ljavacard/framework/APDU;)V;
+			putfield_a(Ljavacard/framework/APDU;)V;
+			getfield_b(Ljavacard/framework/APDU;)V;
+			putfield_b(Ljavacard/framework/APDU;)V;
+			getfield_s(Ljavacard/framework/APDU;)V;
+			putfield_s(Ljavacard/framework/APDU;)V;
+		}
+
+		.packageMethodTable 0 {
+		}
+
+		.method protected <init>()V 0 {
+			.stack 1;
+			.locals 0;
+
+				L0:	aload_0;
+					invokespecial 0;		// javacard/framework/Applet.<init>()V
+					aload_0;
+					invokevirtual 1;		// register()V
+					return;
+		}
+
+		.method public static install([BSB)V 1 {
+			.stack 2;
+			.locals 0;
+
+				L0:	new 2;		// com/se/applets/SEApplet
+					dup;
+					invokespecial 3;		// com/se/applets/SEApplet.<init>()V
+					pop;
+					return;
+		}
+
+		.method public get_req(Ljavacard/framework/APDU;S)[B 8 {
+			.stack 2;
+			.locals 3;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_1;
+					invokevirtual 4;		// getBuffer()[B
+					astore_3;
+					aload_3;
+					sconst_4;
+					baload;
+					sstore 4;
+					aload_1;
+					invokevirtual 5;		// setIncomingAndReceive()S
+					s2b;
+					sstore 5;
+					sload 4;
+					sload_2;
+					if_scmpne L2;
+				L1:	sload 5;
+					sload_2;
+					if_scmpeq L3;
+				L2:	sspush 26368;
+					invokestatic 6;		// javacard/framework/ISOException.throwIt(S)V
+				L3:	aload_3;
+					areturn;
+		}
+
+		.method public send_resp(Ljavacard/framework/APDU;S)V 9 {
+			.stack 3;
+			.locals 1;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_1;
+					invokevirtual 7;		// setOutgoing()S
+					sstore_3;
+					sload_3;
+					sload_2;
+					if_scmpge L2;
+				L1:	sspush 26368;
+					invokestatic 6;		// javacard/framework/ISOException.throwIt(S)V
+				L2:	aload_1;
+					sload_2;
+					s2b;
+					invokevirtual 8;		// setOutgoingLength(S)V
+					aload_1;
+					sconst_5;
+					sload_2;
+					invokevirtual 9;		// sendBytes(SS)V
+					return;
+		}
+
+		.method public getfield_a(Ljavacard/framework/APDU;)V 10 {
+			.stack 4;
+			.locals 3;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					aload_1;
+					sconst_1;
+					invokevirtual 10;		// get_req(Ljavacard/framework/APDU;S)[B
+					astore_2;
+					invokestatic 11;		// com/se/vulns/Test.getfield_a()Ljava/lang/Object;
+					astore_3;
+					aload_3;
+					sconst_0;
+					invokestatic 12;		// com/se/vulns/Test.cast2short(Ljava/lang/Object;S)S
+					sstore 4;
+					aload_2;
+					sconst_5;
+					sload 4;
+					bspush 8;
+					sshr;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					bspush 6;
+					sload 4;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 13;		// send_resp(Ljavacard/framework/APDU;S)V
+					return;
+		}
+
+		.method public putfield_a(Ljavacard/framework/APDU;)V 11 {
+			.stack 4;
+			.locals 5;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 10;		// get_req(Ljavacard/framework/APDU;S)[B
+					astore_2;
+					aload_2;
+					sconst_5;
+					baload;
+					sspush 255;
+					sand;
+					bspush 8;
+					sshl;
+					sstore_3;
+					sload_3;
+					aload_2;
+					bspush 6;
+					baload;
+					sspush 255;
+					sand;
+					sor;
+					sstore_3;
+					aconst_null;
+					sload_3;
+					invokestatic 14;		// com/se/vulns/Test.cast2obj(Ljava/lang/Object;S)Ljava/lang/Object;
+					astore 4;
+					aload_0;
+					invokestatic 15;		// com/se/vulns/Test.putfield_a(Ljava/lang/Object;)V
+					invokestatic 16;		// com/se/vulns/Test.imem()[I
+					astore 5;
+					aload 5;
+					arraylength;
+					sstore 6;
+					aload_2;
+					sconst_5;
+					sload 6;
+					bspush 8;
+					sshr;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					bspush 6;
+					sload 6;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 13;		// send_resp(Ljavacard/framework/APDU;S)V
+					return;
+		}
+
+		.method public getfield_b(Ljavacard/framework/APDU;)V 12 {
+			.stack 3;
+			.locals 2;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					aload_1;
+					sconst_1;
+					invokevirtual 10;		// get_req(Ljavacard/framework/APDU;S)[B
+					astore_2;
+					invokestatic 17;		// com/se/vulns/Test.getfield_b()B
+					sstore_3;
+					aload_2;
+					sconst_5;
+					sload_3;
+					bastore;
+					aload_2;
+					bspush 6;
+					sload_3;
+					bastore;
+					aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 13;		// send_resp(Ljavacard/framework/APDU;S)V
+					return;
+		}
+
+		.method public putfield_b(Ljavacard/framework/APDU;)V 13 {
+			.stack 4;
+			.locals 4;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 10;		// get_req(Ljavacard/framework/APDU;S)[B
+					astore_2;
+					aload_2;
+					sconst_5;
+					baload;
+					sstore_3;
+					sload_3;
+					invokestatic 18;		// com/se/vulns/Test.putfield_s(S)V
+					invokestatic 16;		// com/se/vulns/Test.imem()[I
+					astore 4;
+					aload 4;
+					arraylength;
+					sstore 5;
+					aload_2;
+					sconst_5;
+					sload 5;
+					bspush 8;
+					sshr;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					bspush 6;
+					sload 5;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 13;		// send_resp(Ljavacard/framework/APDU;S)V
+					return;
+		}
+
+		.method public getfield_s(Ljavacard/framework/APDU;)V 14 {
+			.stack 4;
+			.locals 2;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					aload_1;
+					sconst_1;
+					invokevirtual 10;		// get_req(Ljavacard/framework/APDU;S)[B
+					astore_2;
+					invokestatic 19;		// com/se/vulns/Test.getfield_s()S
+					sstore_3;
+					aload_2;
+					sconst_5;
+					sload_3;
+					bspush 8;
+					sshr;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					bspush 6;
+					sload_3;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 13;		// send_resp(Ljavacard/framework/APDU;S)V
+					return;
+		}
+
+		.method public putfield_s(Ljavacard/framework/APDU;)V 15 {
+			.stack 4;
+			.locals 4;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 10;		// get_req(Ljavacard/framework/APDU;S)[B
+					astore_2;
+					aload_2;
+					sconst_5;
+					baload;
+					sspush 255;
+					sand;
+					bspush 8;
+					sshl;
+					sstore_3;
+					sload_3;
+					aload_2;
+					bspush 6;
+					baload;
+					sspush 255;
+					sand;
+					sor;
+					sstore_3;
+					sload_3;
+					invokestatic 18;		// com/se/vulns/Test.putfield_s(S)V
+					invokestatic 16;		// com/se/vulns/Test.imem()[I
+					astore 4;
+					aload 4;
+					arraylength;
+					sstore 5;
+					aload_2;
+					sconst_5;
+					sload 5;
+					bspush 8;
+					sshr;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_2;
+					bspush 6;
+					sload 5;
+					sspush 255;
+					sand;
+					s2b;
+					bastore;
+					aload_0;
+					aload_1;
+					sconst_2;
+					invokevirtual 13;		// send_resp(Ljavacard/framework/APDU;S)V
+					return;
+		}
+
+		.method public process(Ljavacard/framework/APDU;)V 7 {
+			.stack 2;
+			.locals 1;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_1;
+					invokevirtual 4;		// getBuffer()[B
+					astore_2;
+					aload_2;
+					sconst_0;
+					baload;
+					bspush -128;
+					if_scmpeq L2;
+				L1:	sspush 28160;
+					invokestatic 6;		// javacard/framework/ISOException.throwIt(S)V
+				L2:	aload_2;
+					sconst_1;
+					baload;
+					stableswitch L9 16 21 L3 L4 L5 L6 L7 L8;
+				L3:	aload_0;
+					aload_1;
+					invokevirtual 20;		// getfield_a(Ljavacard/framework/APDU;)V
+					return;
+				L4:	aload_0;
+					aload_1;
+					invokevirtual 21;		// putfield_a(Ljavacard/framework/APDU;)V
+					return;
+				L5:	aload_0;
+					aload_1;
+					invokevirtual 22;		// getfield_b(Ljavacard/framework/APDU;)V
+					return;
+				L6:	aload_0;
+					aload_1;
+					invokevirtual 23;		// putfield_b(Ljavacard/framework/APDU;)V
+					return;
+				L7:	aload_0;
+					aload_1;
+					invokevirtual 24;		// getfield_s(Ljavacard/framework/APDU;)V
+					return;
+				L8:	aload_0;
+					aload_1;
+					invokevirtual 25;		// putfield_s(Ljavacard/framework/APDU;)V
+					return;
+				L9:	sspush 27904;
+					invokestatic 6;		// javacard/framework/ISOException.throwIt(S)V
+					return;
+		}
+
+	}
+
+}
