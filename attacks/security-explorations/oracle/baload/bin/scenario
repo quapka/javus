@@ -27,8 +27,11 @@ parser.add_argument(
         default=DEFAULT_CAP,
      )
 
+parser.add_argument('--emv', action='store_true')
+
 args = parser.parse_args()
 cap_file = args.cap
+use_emv = args.emv
 
 
 gp = [
@@ -53,6 +56,8 @@ def install():
         '--install',
         cap_file
     ]
+    if use_emv:
+        cmd += ['--emv']
     # output = sp.check_output(cmd)
     run_command(cmd)
 
@@ -63,6 +68,8 @@ def uninstall():
         '--uninstall',
         cap_file
     ]
+    if use_emv:
+        cmd += ['--emv']
     # output = sp.check_output(cmd)
     run_command(cmd)
 
@@ -80,6 +87,8 @@ def select():
         '--apdu',
         create_select_apdu(),
     ]
+    if use_emv:
+        cmd += ['--emv']
     # output = sp.check_output(cmd)
     run_command(cmd)
 
@@ -145,6 +154,8 @@ def ins_read():
         '--apdu',
         create_select_apdu(),
     ]
+    if use_emv:
+        cmd += ['--emv']
     cmd += [
         '--apdu',
         'a004000000',
