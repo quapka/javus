@@ -7,6 +7,10 @@ public class InsBaload extends Applet {
   private static final byte INS_FAILURE = (byte) 0x02;
 
   private static final byte INS_READ = (byte) 0x04;
+  private static final byte A = (byte) 0x10;
+  private static final byte B = (byte) 0x20;
+  private static final byte C = (byte) 0x30;
+  private static final byte D = (byte) 0x40;
 
   byte[] success = {(byte) 0x01, (byte) 0x02, (byte) 0x01, (byte) 0x02};
   byte[] failure = {(byte) 0x80, (byte) 0x40, (byte) 0x80, (byte) 0x40};
@@ -52,6 +56,8 @@ public class InsBaload extends Applet {
         // Util.setShort(buf, (short) (0), value);
         Util.arrayCopyNonAtomic(success, (short) 0, buf, (short) 0, msgLen);
         apdu.setOutgoingAndSend((short) 0, (short) 2);
+        break;
+      case A:
         break;
       default:
         ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
