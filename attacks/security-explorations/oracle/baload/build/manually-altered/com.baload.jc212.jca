@@ -1,5 +1,5 @@
 // converted by version 1.2
-// on Thu Mar 26 18:21:48 CET 2020
+// on Thu Mar 26 19:04:20 CET 2020
 
 .package com/baload {
 	.aid 0xA1:0x0:0x0:0x0:0x0;
@@ -59,6 +59,10 @@
 			private static final byte INS_SUCCESS = 1;		// B
 			private static final byte INS_FAILURE = 2;		// B
 			private static final byte INS_READ = 4;		// B
+			private static final byte A = 16;		// B
+			private static final byte B = 32;		// B
+			private static final byte C = 48;		// B
+			private static final byte D = 64;		// B
 		}
 
 		.publicMethodTable 7 {
@@ -162,7 +166,7 @@
 					aload_3;
 					sconst_1;
 					baload;
-					stableswitch L8 1 4 L3 L4 L8 L5;
+					slookupswitch L9 4 1 L3 2 L4 4 L5 16 L8;
 				L3:	getfield_a_this 0;		// reference com/baload/InsBaload.success
 					sconst_0;
 					aload_3;
@@ -174,7 +178,7 @@
 					sconst_0;
 					sconst_4;
 					invokevirtual 12;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
-					goto L9;
+					goto L10;
 				L4:	getfield_a_this 1;		// reference com/baload/InsBaload.failure
 					sconst_0;
 					aload_3;
@@ -186,7 +190,7 @@
 					sconst_0;
 					sconst_4;
 					invokevirtual 12;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
-					goto L9;
+					goto L10;
 				L5:	aload_3;
 					sconst_4;
 					baload;
@@ -225,10 +229,28 @@
 					sconst_0;
 					sconst_2;
 					invokevirtual 12;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
-					goto L9;
-				L8:	sspush 27904;
+					goto L10;
+				L8:	getfield_a_this 0;
+                                        sconst_0;
+				        getfield_a_this 0;
+                                        sspush 255;
+                                        baload;
+                                        bastore;
+					getfield_a_this 0;		// reference com/baload/InsBaload.success
+					sconst_0;
+					aload_3;
+					sconst_0;
+					getfield_s_this 3;		// short com/baload/InsBaload.msgLen
+					invokestatic 11;		// javacard/framework/Util.arrayCopyNonAtomic([BS[BSS)S
+					pop;
+					aload_1;
+					sconst_0;
+					sconst_2;
+					invokevirtual 12;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+                                        goto L10;
+				L9:	sspush 27904;
 					invokestatic 14;		// javacard/framework/ISOException.throwIt(S)V
-				L9:	return;
+				L10:	return;
 		}
 
 	}
