@@ -48,19 +48,19 @@ As in other areas common terms are abbreviated, this seemingly reduces the space
     \item[AID] Application ID (RID concatenated with PIX)
     \item[APDU] Application Protocol Data Unit
     \item[ATR] Answer to Reset
-    \item[Applet] Java Card applet
+    \item[Applet] JavaCard applet
     \item[BCV] Byte Code Verifier
     \item[CAD] Card Acceptance Device, e.g. terminal
     \item[CAP] Converted Applet
     \item[DAP] Data Authentication Pattern
     \item[DDA] Dynamic Data Authentication (also RSA)
     \item[EMV] Europay-Mastercard-Visa
-    \item[JC] Java Card
-    \item[JCC] Java Card Converter
-    \item[JCRE] Java Card Runtime Environment
-    \item[JCRMI] Java Card Remote Method Invocation
-    \item[JCSystem] Java Card System
-    \item[JCVM] Java Card Virtual Machine
+    \item[JC] JavaCard
+    \item[JCC] JavaCard Converter
+    \item[JCRE] JavaCard Runtime Environment
+    \item[JCRMI] JavaCard Remote Method Invocation
+    \item[JCSystem] JavaCard System
+    \item[JCVM] JavaCard Virtual Machine
     \item[PCD] Proximity Coupling Device
     \item[PED] Pin Entry Device
     \item[PICC] Proximity Card
@@ -109,7 +109,7 @@ Smaller examples of the previous rules can appear also inline, but usually will 
 
 \section{Process of analysis}
 
-As with any other analysis of a hardware devices the problem of non-deterministic behaviour arises. This means, that from time to time the devices don't respond as expected, require hard reset or might just stop working altogether. This is even more true with the analysis of Smart cards/Java cards, because they try to be defensive and prevent malicious user from gaining data/secrets he's not allowed to see.
+As with any other analysis of a hardware devices the problem of non-deterministic behaviour arises. This means, that from time to time the devices don't respond as expected, require hard reset or might just stop working altogether. This is even more true with the analysis of smartcards/JavaCards, because they try to be defensive and prevent malicious user from gaining data/secrets he's not allowed to see.
 
 Doing the analysis in real-time, that is running the various attacks many many times and analysing the data on the fly might result in unexpected failures -- maybe reaching the write limit on the EEPROM or getting the card into locked state or simply not responding due to too many packets exchanged. It was also observed, that some of the applets used during the analysis could have been installed, but not uninstalled ([TODO comment on this more with examples and potential hypothesis why is it happening]).
 
@@ -121,7 +121,7 @@ This subsection will present some of the tools used during the analysis.
 
 \subsubsection{GlobalPlatformPro}
 
-The communication between the smart card and the work station (regular PC/notebook) is managed through a built-in or external reader, commonly called Card Acceptance Device (CAD). Instead of sending raw bytes to the device we can take advantage of already implemented open source solution GlobalPlatformPro (see \url{https://github.com/martinpaljak/GlobalPlatformPro}). This tool does some of the heavy work for us and allows to (un)install particular applet, send a Application Protocol Data Unit (APDU) packet to the running applet etc. See \ref{lst:gp-list-command} for and example of listing the applets installed on a particular card:
+The communication between the smartcard and the work station (regular PC/notebook) is managed through a built-in or external reader, commonly called Card Acceptance Device (CAD). Instead of sending raw bytes to the device we can take advantage of already implemented open source solution GlobalPlatformPro (see \url{https://github.com/martinpaljak/GlobalPlatformPro}). This tool does some of the heavy work for us and allows to (un)install particular applet, send a Application Protocol Data Unit (APDU) packet to the running applet etc. See \ref{lst:gp-list-command} for and example of listing the applets installed on a particular card:
 \begin{lstlisting}[
     language=bash,
     caption={Example output using GlobalPlatformPro},
@@ -152,7 +152,7 @@ PKG: A000000033 (LOADED)
 
 As discussed above the communication with the card poses some challenges. To overcome them partially a script \texttt{record.py} was developed. This Python script makes it possible to record the communication and saves it in a local Mongo database (MongoDB). MongoDB is NoSQL -- which in practice means, that we don't have to worry that much about the structure of the records in the database. Each record in the database is similar to dictionary structure from Python. In simple terms, dictionary stores pairs of objects, first object is called a key and the corresponding second object from the pair is called the value. Different records in the database don't have to have the same keys -- this allows us to change what we record about the communication with the card, without the worry of having the trouble of missing data from the past (this is rather a technical detail, because if the missing data is needed for the analysis, we need to redo the experiments).
 
-Say, that we want to record the communication with the card during the installation of the applet. Obvious things to record are the GlobalPlatformPro commmand, the identifier of the smart card (e.g. dedicated name) the name of the applet, the hash of the applet (more robust identification, for later matching), the standard output and the standard error from the GlobalPlatformPro. For the other commands (when during a particular attack we send some crafted APDU) it can be the actual APDU, the duration of the communication ([TODO reference some comments on side-channel analysis, that the duration might be way off in absolute numbers, but still interesting when seen relatively and compared to other cards/commands]).
+Say, that we want to record the communication with the card during the installation of the applet. Obvious things to record are the GlobalPlatformPro commmand, the identifier of the smartcard (e.g. dedicated name) the name of the applet, the hash of the applet (more robust identification, for later matching), the standard output and the standard error from the GlobalPlatformPro. For the other commands (when during a particular attack we send some crafted APDU) it can be the actual APDU, the duration of the communication ([TODO reference some comments on side-channel analysis, that the duration might be way off in absolute numbers, but still interesting when seen relatively and compared to other cards/commands]).
 
 To give an example we can take the A.1-illegal-cast-of-a-short-to-a-reference ([TODO \textit{legally} reference Sergei Volokitin work]) attack and record what happens if we send the instruction \texttt{INS{\textunderscore}READ} meant for reading parts of the memory (see \ref{lst:gp-ins-read-command}, [TODO reference details in the attack]).
 
@@ -253,7 +253,7 @@ record --name "$\dollar$CARD$\_$NAME"\
 
 \subsection{Gathering data}
 
-For a given attack we've created a \texttt{scenario.sh} script (as explained above), that we've then ran against several smart cards (around ten). Each stage of a particular attack had to be manually inspected and a automated checker had to be devised, that assess, whether the stage of the attack for a given card was successful, unsuccessful or unknown. In this context success is measured from the point of view of the malicious user attacker, that is, reading out parts of a memory is deemed a success, whereas getting error is unsuccessful -- the adversary got caught by the card and stopped.
+For a given attack we've created a \texttt{scenario.sh} script (as explained above), that we've then ran against several smartcards (around ten). Each stage of a particular attack had to be manually inspected and a automated checker had to be devised, that assess, whether the stage of the attack for a given card was successful, unsuccessful or unknown. In this context success is measured from the point of view of the malicious user attacker, that is, reading out parts of a memory is deemed a success, whereas getting error is unsuccessful -- the adversary got caught by the card and stopped.
 
 Because the communication output of GlobalPlatformPro is textual we've again created a Python package and then a script for each attack, that inspects the various outputs of the stages and performs the check using regular expressions.
 
