@@ -20,6 +20,10 @@
   <property name="JC305u3" value="${SDKS_DIR}/jc305u3_kit"/>
   <property name="JC310B43" value="${SDKS_DIR}/jc310b43_kit"/>
   <!-- List the targets for all versions of SDKs -->
+  <!-- Explanation of the shortcuts in the names -->
+  <!-- %n - common name of the entity, either applet class or package -->
+  <!-- %p - package name -->
+  <!-- %j - targeted JavaCard version -->
   <target name="jc211">
     <javacard jckit="${JC211}">
       <!-- Verification is not supported JavaCard version 211 -->
