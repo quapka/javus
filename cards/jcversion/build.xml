@@ -2,6 +2,8 @@
 <project name="JCVersion" default="default" basedir=".">
         <description>Builds, tests, and runs the project JCVersion.</description>
         <property name="SDKS_DIR" value="oracle_javacard_sdks"/>
+        <property name="BUILD_DIR" value="build"/>
+        <property name="SRC_DIR" value="src"/>
         <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="${SDKS_DIR}/ant-javacard.jar"/>
         <property name="RID" value="0011223344"/>
         <property name="PIX" value="AABB"/>
@@ -20,14 +22,14 @@
 
     <target name="javacardversion">
         <javacard jckit="${JC222}">
-            <cap output="com.javacardversion-222.cap" sources="src/com" aid="${RID}">
+            <cap output="${BUILD_DIR}/com.javacardversion-222.cap" sources="${SRC_DIR}/com" aid="${RID}">
                 <applet class="javacardversion.JCVersion" aid="${AID}"/>
             </cap>
         </javacard>
     </target>
     <target name="com.javacardversion.jc212">
             <javacard jckit="${JC212}">
-                <cap output="javacardversion-jc212.cap" sources="src/com" aid="${RID}"
+                <cap output="${BUILD_DIR}/javacardversion-jc212.cap" sources="${SRC_DIR}/com" aid="${RID}"
                 verify="false">
                 <applet class="javacardversion.JCVersion" aid="${AID}"/>
             </cap>
@@ -35,21 +37,21 @@
     </target>
     <target name="com.javacardversion.jc221">
             <javacard jckit="${JC221}">
-                <cap output="javacardversion-jc221.cap" sources="src/com" aid="${RID}">
+                <cap output="${BUILD_DIR}/javacardversion-jc221.cap" sources="${SRC_DIR}/com" aid="${RID}">
                     <applet class="javacardversion.JCVersion" aid="${AID}"/>
             </cap>
         </javacard>
     </target>
     <target name="com.javacardversion.jc222">
             <javacard jckit="${JC222}">
-                <cap output="javacardversion-jc222.cap" sources="src/com" aid="${RID}">
+                <cap output="${BUILD_DIR}/javacardversion-jc222.cap" sources="${SRC_DIR}/com" aid="${RID}">
                     <applet class="javacardversion.JCVersion" aid="${AID}"/>
             </cap>
         </javacard>
     </target>
     <target name="com.javacardversion.jc305u3">
             <javacard jckit="${JC305u3}">
-                <cap output="javacardversion-jc305u3.cap" sources="src/com" aid="${RID}">
+                <cap output="${BUILD_DIR}/javacardversion-jc305u3.cap" sources="${SRC_DIR}/com" aid="${RID}">
                     <applet class="javacardversion.JCVersion" aid="${AID}"/>
             </cap>
         </javacard>
