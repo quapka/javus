@@ -20,7 +20,7 @@
   <property name="JC305u3" value="${SDKS_DIR}/jc305u3_kit"/>
   <property name="JC310B43" value="${SDKS_DIR}/jc310b43_kit"/>
   <!-- List the targets for all versions of SDKs -->
-  <target name="${JC211}">
+  <target name="jc211">
     <javacard jckit="${JC211}">
       <!-- Verification is not supported JavaCard version 211 -->
       <cap output="${BUILD_DIR}/%p-%n-%j.cap" sources="${SRC_DIR}/com" aid="${RID}" verify="false">
