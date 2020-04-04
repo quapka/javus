@@ -23,7 +23,7 @@
   <target name="${JC211}">
     <javacard jckit="${JC211}">
       <!-- Verification is not supported JavaCard version 211 -->
-      <cap output="${BUILD_DIR}/%p-$n-%j.cap" sources="${SRC_DIR}/com" aid="${RID}" verify="false">
+      <cap output="${BUILD_DIR}/%p-%n-%j.cap" sources="${SRC_DIR}/com" aid="${RID}" verify="false">
         <applet class="javacardversion.JCVersion" aid="${AID}"/>
       </cap>
     </javacard>
