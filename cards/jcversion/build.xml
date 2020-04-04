@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JCVersion" default="default" basedir=".">
         <description>Builds, tests, and runs the project JCVersion.</description>
-    <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ext/ant-javacard.jar"/>
-    <!-- <property name="JC222" value="ext/java_card_kit-2_2_2"/> -->
-    <property name="JC212" value="ext/jc212_kit"/>
-    <property name="JC221" value="ext/jc221_kit"/>
-    <property name="JC222" value="ext/jc222_kit"/>
-    <property name="JC305u3" value="ext/jc305u3_kit"/>
+        <property name="SDKS_DIR" value="oracle_javacard_sdks"/>
+        <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="${SDKS_DIR}/ant-javacard.jar"/>
+        <!-- Define different versions of JavaCard SDKs -->
+        <property name="JC211" value="${SDKS_DIR}/jc211_kit"/>
+        <property name="JC212" value="${SDKS_DIR}/jc212_kit"/>
+        <property name="JC221" value="${SDKS_DIR}/jc221_kit"/>
+        <property name="JC222" value="${SDKS_DIR}/jc222_kit"/>
+        <property name="JC303" value="${SDKS_DIR}/jc303_kit"/>
+        <property name="JC304" value="${SDKS_DIR}/jc304_kit"/>
+        <property name="JC305u1" value="${SDKS_DIR}/jc305u1_kit"/>
+        <property name="JC305u2" value="${SDKS_DIR}/jc305u2_kit"/>
+        <property name="JC305u3" value="${SDKS_DIR}/jc305u3_kit"/>
+        <property name="JC310B43" value="${SDKS_DIR}/jc310b43_kit"/>
+
     <target name="javacardversion">
         <javacard jckit="${JC222}">
             <cap output="com.javacardversion-222.cap" sources="src/com" aid="0011223344">
