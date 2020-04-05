@@ -1,14 +1,13 @@
-// converted by version  [v3.0.5]
-// on Sun Apr 05 20:13:38 CEST 2020
+// converted by version 1.1
+// on Sun Apr 05 20:10:23 CEST 2020
 
 .package com/se/applets {
 	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x1;
 	.version 0.0;
 
 	.imports {
-		0xA0:0x0:0x0:0x0:0x62:0x1:0x1 1.6;		//javacard/framework
+		0xA0:0x0:0x0:0x0:0x62:0x1:0x1 1.0;		//javacard/framework
 		0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x2 0.0;		//com/se/vulns
-		0xA0:0x0:0x0:0x0:0x62:0x0:0x1 1.0;		//java/lang
 	}
 
 	.applet {
@@ -21,7 +20,7 @@
 		// 1
 		instanceFieldRef int[] SEApplet/imem;
 		// 2
-		.classRef SEApplet;
+		classRef SEApplet;
 		// 3
 		staticMethodRef SEApplet/<init>()V;
 		// 4
@@ -31,23 +30,23 @@
 		// 6
 		staticMethodRef 1.0.2()[B;		// com/se/vulns/Cast.bmem()[B
 		// 7
-		virtualMethodRef 0.3.1()V;		// register()V
+		virtualMethodRef 0.3.1()V;		// javacard/framework/Applet.register()V
 		// 8
 		staticMethodRef 1.0.3()[I;		// com/se/vulns/Cast.imem()[I
 		// 9
 		staticMethodRef 1.0.4()V;		// com/se/vulns/Cast.cleanup()V
 		// 10
-		virtualMethodRef 0.10.1()[B;		// getBuffer()[B
+		virtualMethodRef 0.10.1()[B;		// javacard/framework/APDU.getBuffer()[B
 		// 11
-		virtualMethodRef 0.10.6()S;		// setIncomingAndReceive()S
+		virtualMethodRef 0.10.6()S;		// javacard/framework/APDU.setIncomingAndReceive()S
 		// 12
 		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
 		// 13
-		virtualMethodRef 0.10.7()S;		// setOutgoing()S
+		virtualMethodRef 0.10.7()S;		// javacard/framework/APDU.setOutgoing()S
 		// 14
-		virtualMethodRef 0.10.9(S)V;		// setOutgoingLength(S)V
+		virtualMethodRef 0.10.9(S)V;		// javacard/framework/APDU.setOutgoingLength(S)V
 		// 15
-		virtualMethodRef 0.10.4(SS)V;		// sendBytes(SS)V
+		virtualMethodRef 0.10.4(SS)V;		// javacard/framework/APDU.sendBytes(SS)V
 		// 16
 		virtualMethodRef SEApplet/get_req(Ljavacard/framework/APDU;S)[B;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
@@ -63,7 +62,7 @@
 		// 20
 		virtualMethodRef SEApplet/cleanup()V;
 		// 21
-		virtualMethodRef 0.3.3()Z;		// selectingApplet()Z
+		virtualMethodRef 0.3.3()Z;		// javacard/framework/Applet.selectingApplet()Z
 		// 22
 		virtualMethodRef SEApplet/ping(Ljavacard/framework/APDU;)V;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
@@ -138,7 +137,7 @@
 				L0:	aload_0;
 					invokespecial 4;		// javacard/framework/Applet.<init>()V
 					aload_0;
-					invokevirtual 7;		// register()V
+					invokevirtual 7;		// javacard/framework/Applet.register()V
 					return;
 		}
 
@@ -202,14 +201,14 @@
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 				L0:	aload_1;
-					invokevirtual 10;		// getBuffer()[B
+					invokevirtual 10;		// javacard/framework/APDU.getBuffer()[B
 					astore_3;
 					aload_3;
 					sconst_4;
 					baload;
 					sstore 4;
 					aload_1;
-					invokevirtual 11;		// setIncomingAndReceive()S
+					invokevirtual 11;		// javacard/framework/APDU.setIncomingAndReceive()S
 					s2b;
 					sstore 5;
 					sload 4;
@@ -231,7 +230,7 @@
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 				L0:	aload_1;
-					invokevirtual 13;		// setOutgoing()S
+					invokevirtual 13;		// javacard/framework/APDU.setOutgoing()S
 					sstore_3;
 					sload_3;
 					sload_2;
@@ -241,11 +240,11 @@
 				L2:	aload_1;
 					sload_2;
 					s2b;
-					invokevirtual 14;		// setOutgoingLength(S)V
+					invokevirtual 14;		// javacard/framework/APDU.setOutgoingLength(S)V
 					aload_1;
 					sconst_5;
 					sload_2;
-					invokevirtual 15;		// sendBytes(SS)V
+					invokevirtual 15;		// javacard/framework/APDU.sendBytes(SS)V
 					return;
 		}
 
@@ -258,7 +257,7 @@
 				L0:	aload_0;
 					aload_1;
 					sconst_2;
-					invokevirtual 16;		// get_req(Ljavacard/framework/APDU;S)[B
+					invokevirtual 16;		// com/se/applets/SEApplet.get_req(Ljavacard/framework/APDU;S)[B
 					astore_2;
 					aload_2;
 					sconst_5;
@@ -271,7 +270,7 @@
 					aload_0;
 					aload_1;
 					sconst_2;
-					invokevirtual 17;		// send_resp(Ljavacard/framework/APDU;S)V
+					invokevirtual 17;		// com/se/applets/SEApplet.send_resp(Ljavacard/framework/APDU;S)V
 					return;
 		}
 
@@ -284,10 +283,10 @@
 				L0:	aload_0;
 					aload_1;
 					sconst_2;
-					invokevirtual 16;		// get_req(Ljavacard/framework/APDU;S)[B
+					invokevirtual 16;		// com/se/applets/SEApplet.get_req(Ljavacard/framework/APDU;S)[B
 					astore_2;
 					aload_0;
-					invokevirtual 18;		// bmem()[B
+					invokevirtual 18;		// com/se/applets/SEApplet.bmem()[B
 					astore_3;
 					bipush 64;
 					istore 4;
@@ -312,7 +311,7 @@
 					aload_1;
 					iload 4;
 					i2s;
-					invokevirtual 17;		// send_resp(Ljavacard/framework/APDU;S)V
+					invokevirtual 17;		// com/se/applets/SEApplet.send_resp(Ljavacard/framework/APDU;S)V
 					return;
 		}
 
@@ -325,10 +324,10 @@
 				L0:	aload_0;
 					aload_1;
 					sconst_2;
-					invokevirtual 16;		// get_req(Ljavacard/framework/APDU;S)[B
+					invokevirtual 16;		// com/se/applets/SEApplet.get_req(Ljavacard/framework/APDU;S)[B
 					astore_2;
 					aload_0;
-					invokevirtual 19;		// imem()[I
+					invokevirtual 19;		// com/se/applets/SEApplet.imem()[I
 					astore_3;
 					aload_2;
 					sconst_5;
@@ -351,7 +350,7 @@
 					aload_0;
 					aload_1;
 					sconst_2;
-					invokevirtual 17;		// send_resp(Ljavacard/framework/APDU;S)V
+					invokevirtual 17;		// com/se/applets/SEApplet.send_resp(Ljavacard/framework/APDU;S)V
 					return;
 		}
 
@@ -364,10 +363,10 @@
 				L0:	aload_0;
 					aload_1;
 					sconst_3;
-					invokevirtual 16;		// get_req(Ljavacard/framework/APDU;S)[B
+					invokevirtual 16;		// com/se/applets/SEApplet.get_req(Ljavacard/framework/APDU;S)[B
 					astore_2;
 					aload_0;
-					invokevirtual 19;		// imem()[I
+					invokevirtual 19;		// com/se/applets/SEApplet.imem()[I
 					astore_3;
 					aload_2;
 					sconst_5;
@@ -487,7 +486,7 @@
 					aload_1;
 					iload 6;
 					i2s;
-					invokevirtual 17;		// send_resp(Ljavacard/framework/APDU;S)V
+					invokevirtual 17;		// com/se/applets/SEApplet.send_resp(Ljavacard/framework/APDU;S)V
 					return;
 		}
 
@@ -500,10 +499,10 @@
 				L0:	aload_0;
 					aload_1;
 					bspush 6;
-					invokevirtual 16;		// get_req(Ljavacard/framework/APDU;S)[B
+					invokevirtual 16;		// com/se/applets/SEApplet.get_req(Ljavacard/framework/APDU;S)[B
 					astore_2;
 					aload_0;
-					invokevirtual 19;		// imem()[I
+					invokevirtual 19;		// com/se/applets/SEApplet.imem()[I
 					astore_3;
 					aload_2;
 					sconst_5;
@@ -605,7 +604,7 @@
 					aload_0;
 					aload_1;
 					sconst_4;
-					invokevirtual 17;		// send_resp(Ljavacard/framework/APDU;S)V
+					invokevirtual 17;		// com/se/applets/SEApplet.send_resp(Ljavacard/framework/APDU;S)V
 					return;
 		}
 
@@ -618,13 +617,13 @@
 				L0:	aload_0;
 					aload_1;
 					sconst_2;
-					invokevirtual 16;		// get_req(Ljavacard/framework/APDU;S)[B
+					invokevirtual 16;		// com/se/applets/SEApplet.get_req(Ljavacard/framework/APDU;S)[B
 					astore_2;
 					aload_0;
-					invokevirtual 19;		// imem()[I
+					invokevirtual 19;		// com/se/applets/SEApplet.imem()[I
 					astore_3;
 					aload_0;
-					invokevirtual 20;		// cleanup()V
+					invokevirtual 20;		// com/se/applets/SEApplet.cleanup()V
 					aload_2;
 					sconst_5;
 					aload_3;
@@ -646,7 +645,7 @@
 					aload_0;
 					aload_1;
 					sconst_2;
-					invokevirtual 17;		// send_resp(Ljavacard/framework/APDU;S)V
+					invokevirtual 17;		// com/se/applets/SEApplet.send_resp(Ljavacard/framework/APDU;S)V
 					return;
 		}
 
@@ -657,18 +656,18 @@
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 				L0:	aload_0;
-					invokevirtual 21;		// selectingApplet()Z
+					invokevirtual 21;		// javacard/framework/Applet.selectingApplet()Z
 					ifeq L2;
 				L1:	return;
 				L2:	aload_1;
-					invokevirtual 10;		// getBuffer()[B
+					invokevirtual 10;		// javacard/framework/APDU.getBuffer()[B
 					astore_2;
 					aload_2;
 					sconst_4;
 					baload;
 					sstore_3;
 					aload_1;
-					invokevirtual 11;		// setIncomingAndReceive()S
+					invokevirtual 11;		// javacard/framework/APDU.setIncomingAndReceive()S
 					s2b;
 					sstore 4;
 					sload_3;
@@ -689,27 +688,27 @@
 					stableswitch L13 16 21 L7 L8 L9 L10 L11 L12;
 				L7:	aload_0;
 					aload_1;
-					invokevirtual 22;		// ping(Ljavacard/framework/APDU;)V
+					invokevirtual 22;		// com/se/applets/SEApplet.ping(Ljavacard/framework/APDU;)V
 					return;
 				L8:	aload_0;
 					aload_1;
-					invokevirtual 23;		// status(Ljavacard/framework/APDU;)V
+					invokevirtual 23;		// com/se/applets/SEApplet.status(Ljavacard/framework/APDU;)V
 					return;
 				L9:	aload_0;
 					aload_1;
-					invokevirtual 24;		// setup(Ljavacard/framework/APDU;)V
+					invokevirtual 24;		// com/se/applets/SEApplet.setup(Ljavacard/framework/APDU;)V
 					return;
 				L10:	aload_0;
 					aload_1;
-					invokevirtual 25;		// read_mem(Ljavacard/framework/APDU;)V
+					invokevirtual 25;		// com/se/applets/SEApplet.read_mem(Ljavacard/framework/APDU;)V
 					return;
 				L11:	aload_0;
 					aload_1;
-					invokevirtual 26;		// write_mem(Ljavacard/framework/APDU;)V
+					invokevirtual 26;		// com/se/applets/SEApplet.write_mem(Ljavacard/framework/APDU;)V
 					return;
 				L12:	aload_0;
 					aload_1;
-					invokevirtual 27;		// cleanup(Ljavacard/framework/APDU;)V
+					invokevirtual 27;		// com/se/applets/SEApplet.cleanup(Ljavacard/framework/APDU;)V
 					return;
 				L13:	sspush 27904;
 					invokestatic 12;		// javacard/framework/ISOException.throwIt(S)V
