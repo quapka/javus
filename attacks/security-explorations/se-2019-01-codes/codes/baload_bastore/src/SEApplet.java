@@ -21,214 +21,214 @@
 
 package com.se.applets;
 
-import javacard.framework.*;
 import com.se.vulns.*;
+import javacard.framework.*;
 
 public class SEApplet extends Applet {
-    private final static byte SEApplet_CLA      = (byte)0x80;
+    private static final byte SEApplet_CLA = (byte) 0x80;
 
-    private final static byte PING              = (byte)0x10;
-    private final static byte STATUS            = (byte)0x11;
-    private final static byte SETUP             = (byte)0x12;
-    private final static byte READ_MEM          = (byte)0x13;
-    private final static byte WRITE_MEM         = (byte)0x14;
-    private final static byte CLEANUP           = (byte)0x15;
-    
-    private static final short BUFLEN           = 64;
+    private static final byte PING = (byte) 0x10;
+    private static final byte STATUS = (byte) 0x11;
+    private static final byte SETUP = (byte) 0x12;
+    private static final byte READ_MEM = (byte) 0x13;
+    private static final byte WRITE_MEM = (byte) 0x14;
+    private static final byte CLEANUP = (byte) 0x15;
+
+    private static final short BUFLEN = 64;
 
     private static byte expidx = 1;
 
     private byte[] bmem;
     private int[] imem;
 
-    protected SEApplet() {       
-      register();
+    protected SEApplet() {
+        register();
     }
 
     public static void install(byte[] bArray, short bOffset, byte bLength) {
-      new SEApplet();
+        new SEApplet();
     }
 
     public byte[] bmem() {
-     if (bmem==null) {
-      switch(expidx) {
-       case 1:
-	bmem=Cast.bmem();
-	break;
-      }
-     }
+        if (bmem == null) {
+            switch (expidx) {
+                case 1:
+                    bmem = Cast.bmem();
+                    break;
+            }
+        }
 
-     return bmem;
+        return bmem;
     }
 
     public int[] imem() {
-     if (imem==null) {
-      switch(expidx) {
-       case 1:
-	imem=Cast.imem();
-	break;
-      }
-     }
+        if (imem == null) {
+            switch (expidx) {
+                case 1:
+                    imem = Cast.imem();
+                    break;
+            }
+        }
 
-     return imem;
+        return imem;
     }
 
     public void cleanup() {
-     if (imem!=null) {
-      switch(expidx) {
-       case 1:
-	Cast.cleanup();
-	break;
-      }
-     }
+        if (imem != null) {
+            switch (expidx) {
+                case 1:
+                    Cast.cleanup();
+                    break;
+            }
+        }
     }
 
-    public byte[] get_req(APDU apdu,short size) {
-      byte[] buffer=apdu.getBuffer();
+    public byte[] get_req(APDU apdu, short size) {
+        byte[] buffer = apdu.getBuffer();
 
-      byte numBytes=buffer[ISO7816.OFFSET_LC];
-      byte byteRead=(byte)(apdu.setIncomingAndReceive());
+        byte numBytes = buffer[ISO7816.OFFSET_LC];
+        byte byteRead = (byte) (apdu.setIncomingAndReceive());
 
-      if ((numBytes!=size)||(byteRead!=size)) {
-        ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
-      }
+        if ((numBytes != size) || (byteRead != size)) {
+            ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+        }
 
-      return buffer;
+        return buffer;
     }
 
-    public void send_resp(APDU apdu,short size) {
-      short availBytes=apdu.setOutgoing();
+    public void send_resp(APDU apdu, short size) {
+        short availBytes = apdu.setOutgoing();
 
-      if (availBytes<size) {
-       ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
-      }
+        if (availBytes < size) {
+            ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+        }
 
-      apdu.setOutgoingLength((byte)size);
-      apdu.sendBytes((short)5,(short)size);
+        apdu.setOutgoingLength((byte) size);
+        apdu.sendBytes((short) 5, (short) size);
     }
 
     public void ping(APDU apdu) {
-     byte buf[]=get_req(apdu,(short)2);
+        byte buf[] = get_req(apdu, (short) 2);
 
-     buf[ISO7816.OFFSET_CDATA+0]=(byte)0x12;
-     buf[ISO7816.OFFSET_CDATA+1]=(byte)0x34;
+        buf[ISO7816.OFFSET_CDATA + 0] = (byte) 0x12;
+        buf[ISO7816.OFFSET_CDATA + 1] = (byte) 0x34;
 
-     send_resp(apdu,(short)2);
+        send_resp(apdu, (short) 2);
     }
 
     public void status(APDU apdu) {
-     byte buf[]=get_req(apdu,(short)2);
+        byte buf[] = get_req(apdu, (short) 2);
 
-     byte mem[]=bmem();
+        byte mem[] = bmem();
 
-     int len=64;
+        int len = 64;
 
-     for(short i=0;i<len;i++) {
-      buf[(short)(ISO7816.OFFSET_CDATA+i)]=(byte)mem[i];
-     }
+        for (short i = 0; i < len; i++) {
+            buf[(short) (ISO7816.OFFSET_CDATA + i)] = (byte) mem[i];
+        }
 
-     send_resp(apdu,(short)len);
+        send_resp(apdu, (short) len);
     }
 
     public void setup(APDU apdu) {
-     byte buf[]=get_req(apdu,(short)2);
+        byte buf[] = get_req(apdu, (short) 2);
 
-     int mem[]=imem();
+        int mem[] = imem();
 
-     buf[(short)(ISO7816.OFFSET_CDATA+0)]=(byte)((mem.length>>8)&0xff);
-     buf[(short)(ISO7816.OFFSET_CDATA+1)]=(byte)((mem.length)&0xff);
+        buf[(short) (ISO7816.OFFSET_CDATA + 0)] = (byte) ((mem.length >> 8) & 0xff);
+        buf[(short) (ISO7816.OFFSET_CDATA + 1)] = (byte) ((mem.length) & 0xff);
 
-     send_resp(apdu,(short)2);
+        send_resp(apdu, (short) 2);
     }
 
     public void read_mem(APDU apdu) {
-     byte buf[]=get_req(apdu,(short)3);
+        byte buf[] = get_req(apdu, (short) 3);
 
-     int mem[]=imem();
+        int mem[] = imem();
 
-     int off=(((int)buf[ISO7816.OFFSET_CDATA+0])&0xff)<<(int)8;
-     off|=(((int)buf[ISO7816.OFFSET_CDATA+1])&0xff);
+        int off = (((int) buf[ISO7816.OFFSET_CDATA + 0]) & 0xff) << (int) 8;
+        off |= (((int) buf[ISO7816.OFFSET_CDATA + 1]) & 0xff);
 
-     int len=(((int)buf[ISO7816.OFFSET_CDATA+2])&0xff);
-     len&=0xfc;
+        int len = (((int) buf[ISO7816.OFFSET_CDATA + 2]) & 0xff);
+        len &= 0xfc;
 
-     if (len>BUFLEN) len=BUFLEN;
+        if (len > BUFLEN) len = BUFLEN;
 
-     for(int i=0;i<len>>2;i++) {
-      int v=mem[(short)(off+i)];
-      buf[(short)(ISO7816.OFFSET_CDATA+i*4+0)]=(byte)((v>>24)&0xff);
-      buf[(short)(ISO7816.OFFSET_CDATA+i*4+1)]=(byte)((v>>16)&0xff);
-      buf[(short)(ISO7816.OFFSET_CDATA+i*4+2)]=(byte)((v>>8)&0xff);
-      buf[(short)(ISO7816.OFFSET_CDATA+i*4+3)]=(byte)((v)&0xff);
-     }
+        for (int i = 0; i < len >> 2; i++) {
+            int v = mem[(short) (off + i)];
+            buf[(short) (ISO7816.OFFSET_CDATA + i * 4 + 0)] = (byte) ((v >> 24) & 0xff);
+            buf[(short) (ISO7816.OFFSET_CDATA + i * 4 + 1)] = (byte) ((v >> 16) & 0xff);
+            buf[(short) (ISO7816.OFFSET_CDATA + i * 4 + 2)] = (byte) ((v >> 8) & 0xff);
+            buf[(short) (ISO7816.OFFSET_CDATA + i * 4 + 3)] = (byte) ((v) & 0xff);
+        }
 
-     send_resp(apdu,(short)len);
+        send_resp(apdu, (short) len);
     }
 
     public void write_mem(APDU apdu) {
-     byte buf[]=get_req(apdu,(short)6);
+        byte buf[] = get_req(apdu, (short) 6);
 
-     int mem[]=imem();
+        int mem[] = imem();
 
-     int off=(((int)buf[ISO7816.OFFSET_CDATA+0])&0xff)<<(int)8;
-     off|=(((int)buf[ISO7816.OFFSET_CDATA+1])&0xff);
+        int off = (((int) buf[ISO7816.OFFSET_CDATA + 0]) & 0xff) << (int) 8;
+        off |= (((int) buf[ISO7816.OFFSET_CDATA + 1]) & 0xff);
 
-     int val=(((int)buf[ISO7816.OFFSET_CDATA+2])&0xff)<<(int)24;
-     val|=(((int)buf[ISO7816.OFFSET_CDATA+3])&0xff)<<(int)16;
-     val|=(((int)buf[ISO7816.OFFSET_CDATA+4])&0xff)<<(int)8;
-     val|=(((int)buf[ISO7816.OFFSET_CDATA+5])&0xff);
+        int val = (((int) buf[ISO7816.OFFSET_CDATA + 2]) & 0xff) << (int) 24;
+        val |= (((int) buf[ISO7816.OFFSET_CDATA + 3]) & 0xff) << (int) 16;
+        val |= (((int) buf[ISO7816.OFFSET_CDATA + 4]) & 0xff) << (int) 8;
+        val |= (((int) buf[ISO7816.OFFSET_CDATA + 5]) & 0xff);
 
-     mem[(short)(off)]=val;
+        mem[(short) (off)] = val;
 
-     buf[(short)(ISO7816.OFFSET_CDATA+0)]=(byte)((val>>24)&0xff);
-     buf[(short)(ISO7816.OFFSET_CDATA+1)]=(byte)((val>>16)&0xff);
-     buf[(short)(ISO7816.OFFSET_CDATA+2)]=(byte)((val>>8)&0xff);
-     buf[(short)(ISO7816.OFFSET_CDATA+3)]=(byte)((val)&0xff);
+        buf[(short) (ISO7816.OFFSET_CDATA + 0)] = (byte) ((val >> 24) & 0xff);
+        buf[(short) (ISO7816.OFFSET_CDATA + 1)] = (byte) ((val >> 16) & 0xff);
+        buf[(short) (ISO7816.OFFSET_CDATA + 2)] = (byte) ((val >> 8) & 0xff);
+        buf[(short) (ISO7816.OFFSET_CDATA + 3)] = (byte) ((val) & 0xff);
 
-     send_resp(apdu,(short)4);
+        send_resp(apdu, (short) 4);
     }
 
     public void cleanup(APDU apdu) {
-     byte buf[]=get_req(apdu,(short)2);
+        byte buf[] = get_req(apdu, (short) 2);
 
-     int mem[]=imem();
+        int mem[] = imem();
 
-     cleanup();
+        cleanup();
 
-     buf[(short)(ISO7816.OFFSET_CDATA+0)]=(byte)((mem.length>>8)&0xff);
-     buf[(short)(ISO7816.OFFSET_CDATA+1)]=(byte)((mem.length)&0xff);
+        buf[(short) (ISO7816.OFFSET_CDATA + 0)] = (byte) ((mem.length >> 8) & 0xff);
+        buf[(short) (ISO7816.OFFSET_CDATA + 1)] = (byte) ((mem.length) & 0xff);
 
-     send_resp(apdu,(short)2);
+        send_resp(apdu, (short) 2);
     }
 
     public void process(APDU apdu) {
-      byte[] buffer=apdu.getBuffer();
+        byte[] buffer = apdu.getBuffer();
 
-      if (buffer[ISO7816.OFFSET_CLA]!=SEApplet_CLA) {
-       ISOException.throwIt(ISO7816.SW_CLA_NOT_SUPPORTED);
-      }
+        if (buffer[ISO7816.OFFSET_CLA] != SEApplet_CLA) {
+            ISOException.throwIt(ISO7816.SW_CLA_NOT_SUPPORTED);
+        }
 
-      switch (buffer[ISO7816.OFFSET_INS]) {
-        case PING:
-         ping(apdu);
-         return;
-        case STATUS:
-         status(apdu);
-         return;
-        case SETUP:
-         setup(apdu);
-         return;
-        case READ_MEM:
-         read_mem(apdu);
-         return;
-        case WRITE_MEM:
-         write_mem(apdu);
-         return;
-        case CLEANUP:
-         cleanup(apdu);
-         return;
-        default:
-         ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
-      }
+        switch (buffer[ISO7816.OFFSET_INS]) {
+            case PING:
+                ping(apdu);
+                return;
+            case STATUS:
+                status(apdu);
+                return;
+            case SETUP:
+                setup(apdu);
+                return;
+            case READ_MEM:
+                read_mem(apdu);
+                return;
+            case WRITE_MEM:
+                write_mem(apdu);
+                return;
+            case CLEANUP:
+                cleanup(apdu);
+                return;
+            default:
+                ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
+        }
     }
 }
