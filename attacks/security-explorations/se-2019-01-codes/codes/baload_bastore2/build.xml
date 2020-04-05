@@ -45,6 +45,7 @@
     <!-- %n - common name of the entity, either applet class or package -->
     <!-- %p - package name -->
     <!-- %j - targeted JavaCard version -->
+    <!-- TODO add classes attribute (for generated classes) -->
     <target name="jc211">
         <javacard jckit="${JC211}">
             <!-- Verification is not supported JavaCard version 211 -->
