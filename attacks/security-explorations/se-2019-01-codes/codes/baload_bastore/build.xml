@@ -1,78 +1,108 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="BaloadBastore" default="default" basedir=".">
-  <description>Builds, tests, and runs the project BaloadBastore.</description>
-  <property name="SDKS_DIR" value="oracle_javacard_sdks"/>
-  <property name="BUILD_DIR" value="build"/>
-  <property name="SRC_DIR" value="src"/>
-  <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="${SDKS_DIR}/ant-javacard.jar"/>
-  <property name="RID" value="A000000062"/>
-  <property name="PIX" value="AAB03010C0101B"/>
-  <property name="AID" value="${RID}${PIX}"/>
-  <!-- Define different versions of JavaCard SDKs -->
-  <property name="JC211" value="${SDKS_DIR}/jc211_kit"/>
-  <property name="JC212" value="${SDKS_DIR}/jc212_kit"/>
-  <property name="JC221" value="${SDKS_DIR}/jc221_kit"/>
-  <property name="JC222" value="${SDKS_DIR}/jc222_kit"/>
-  <property name="JC303" value="${SDKS_DIR}/jc303_kit"/>
-  <property name="JC304" value="${SDKS_DIR}/jc304_kit"/>
-  <property name="JC305u1" value="${SDKS_DIR}/jc305u1_kit"/>
-  <property name="JC305u2" value="${SDKS_DIR}/jc305u2_kit"/>
-  <property name="JC305u3" value="${SDKS_DIR}/jc305u3_kit"/>
-  <property name="JC310B43" value="${SDKS_DIR}/jc310b43_kit"/>
-  <!-- List the targets for all versions of SDKs -->
-  <!-- Explanation of the shortcuts in the names -->
-  <!-- %n - common name of the entity, either applet class or package -->
-  <!-- %p - package name -->
-  <!-- %j - targeted JavaCard version -->
-  <target name="jc211">
-    <javacard jckit="${JC211}">
-      <!-- Verification is not supported JavaCard version 211 -->
-      <cap output="${BUILD_DIR}/%p-%n-%j.cap" sources="${SRC_DIR}/com" aid="${RID}" verify="false">
-        <applet class="javacardversion.JCVersion" aid="${AID}"/>
-      </cap>
-    </javacard>
-  </target>
-  <!-- <target name="default"> -->
-  <!--   <javacard jckit="${JC212}"> -->
-  <!--     <!-1- Verification is not supported JavaCard version 211 -1-> -->
-  <!--     <cap output="${BUILD_DIR}/%p-$n-%j.cap" sources="${SRC_DIR}/com" aid="${RID}" verify="false"> -->
-  <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
-  <!--     </cap> -->
-  <!--   </javacard> -->
-  <!-- </target> -->
-  <!-- <target name="javacardversion"> -->
-  <!--   <javacard jckit="${JC222}"> -->
-  <!--     <cap output="${BUILD_DIR}/com.javacardversion-222.cap" sources="${SRC_DIR}/com" aid="${RID}"> -->
-  <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
-  <!--     </cap> -->
-  <!--   </javacard> -->
-  <!-- </target> -->
-  <!-- <target name="com.javacardversion.jc212"> -->
-  <!--   <javacard jckit="${JC212}"> -->
-  <!--     <cap output="${BUILD_DIR}/javacardversion-jc212.cap" sources="${SRC_DIR}/com" aid="${RID}" verify="false"> -->
-  <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
-  <!--     </cap> -->
-  <!--   </javacard> -->
-  <!-- </target> -->
-  <!-- <target name="com.javacardversion.jc221"> -->
-  <!--   <javacard jckit="${JC221}"> -->
-  <!--     <cap output="${BUILD_DIR}/javacardversion-jc221.cap" sources="${SRC_DIR}/com" aid="${RID}"> -->
-  <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
-  <!--     </cap> -->
-  <!--   </javacard> -->
-  <!-- </target> -->
-  <!-- <target name="com.javacardversion.jc222"> -->
-  <!--   <javacard jckit="${JC222}"> -->
-  <!--     <cap output="${BUILD_DIR}/javacardversion-jc222.cap" sources="${SRC_DIR}/com" aid="${RID}"> -->
-  <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
-  <!--     </cap> -->
-  <!--   </javacard> -->
-  <!-- </target> -->
-  <!-- <target name="com.javacardversion.jc305u3"> -->
-  <!--   <javacard jckit="${JC305u3}"> -->
-  <!--     <cap output="${BUILD_DIR}/javacardversion-jc305u3.cap" sources="${SRC_DIR}/com" aid="${RID}"> -->
-  <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
-  <!--     </cap> -->
-  <!--   </javacard> -->
-  <!-- </target> -->
+<?xml version="1.0" encoding="utf-8"?>
+<project name="BaloadBastore"
+         default="default"
+         basedir=".">
+    <description>Builds, tests, and runs the project
+    BaloadBastore.</description>
+    <property name="SDKS_DIR"
+              value="oracle_javacard_sdks" />
+    <property name="BUILD_DIR"
+              value="build" />
+    <property name="SRC_DIR"
+              value="src" />
+    <taskdef name="javacard"
+             classname="pro.javacard.ant.JavaCard"
+             classpath="${SDKS_DIR}/ant-javacard.jar" />
+    <property name="RID"
+              value="A000000062" />
+    <property name="PIX"
+              value="AAB03010C0101B" />
+    <property name="AID"
+              value="${RID}${PIX}" />
+    <!-- Define different versions of JavaCard SDKs -->
+    <property name="JC211"
+              value="${SDKS_DIR}/jc211_kit" />
+    <property name="JC212"
+              value="${SDKS_DIR}/jc212_kit" />
+    <property name="JC221"
+              value="${SDKS_DIR}/jc221_kit" />
+    <property name="JC222"
+              value="${SDKS_DIR}/jc222_kit" />
+    <property name="JC303"
+              value="${SDKS_DIR}/jc303_kit" />
+    <property name="JC304"
+              value="${SDKS_DIR}/jc304_kit" />
+    <property name="JC305u1"
+              value="${SDKS_DIR}/jc305u1_kit" />
+    <property name="JC305u2"
+              value="${SDKS_DIR}/jc305u2_kit" />
+    <property name="JC305u3"
+              value="${SDKS_DIR}/jc305u3_kit" />
+    <property name="JC310B43"
+              value="${SDKS_DIR}/jc310b43_kit" />
+    <!-- List the targets for all versions of SDKs -->
+    <!-- Explanation of the shortcuts in the names -->
+    <!-- %n - common name of the entity, either applet class or package -->
+    <!-- %p - package name -->
+    <!-- %j - targeted JavaCard version -->
+    <target name="jc211">
+        <javacard jckit="${JC211}">
+            <!-- Verification is not supported JavaCard version 211 -->
+            <cap output="${BUILD_DIR}"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="${RID}"
+                 verify="false"
+                 ints="true"
+                 export="build">
+                <applet class="com.se.applets.SEApplet"
+                        aid="${AID}" />
+            </cap>
+            <!-- <cap output="${BUILD_DIR}/%p-%n-%j.cap" sources="${SRC_DIR}" aid="${RID}" verify="false" ints="true" export="build"> -->
+            <!--   <applet class="com.se.applets.SEApplet" aid="${AID}"/> -->
+        </javacard>
+    </target>
+    <!-- <target name="default"> -->
+    <!--   <javacard jckit="${JC212}"> -->
+    <!--     <!-1- Verification is not supported JavaCard version 211 -1-> -->
+    <!--     <cap output="${BUILD_DIR}/%p-$n-%j.cap" sources="${SRC_DIR}/com" aid="${RID}" verify="false"> -->
+    <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
+    <!--     </cap> -->
+    <!--   </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="javacardversion"> -->
+    <!--   <javacard jckit="${JC222}"> -->
+    <!--     <cap output="${BUILD_DIR}/com.javacardversion-222.cap" sources="${SRC_DIR}/com" aid="${RID}"> -->
+    <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
+    <!--     </cap> -->
+    <!--   </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="com.javacardversion.jc212"> -->
+    <!--   <javacard jckit="${JC212}"> -->
+    <!--     <cap output="${BUILD_DIR}/javacardversion-jc212.cap" sources="${SRC_DIR}/com" aid="${RID}" verify="false"> -->
+    <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
+    <!--     </cap> -->
+    <!--   </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="com.javacardversion.jc221"> -->
+    <!--   <javacard jckit="${JC221}"> -->
+    <!--     <cap output="${BUILD_DIR}/javacardversion-jc221.cap" sources="${SRC_DIR}/com" aid="${RID}"> -->
+    <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
+    <!--     </cap> -->
+    <!--   </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="com.javacardversion.jc222"> -->
+    <!--   <javacard jckit="${JC222}"> -->
+    <!--     <cap output="${BUILD_DIR}/javacardversion-jc222.cap" sources="${SRC_DIR}/com" aid="${RID}"> -->
+    <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
+    <!--     </cap> -->
+    <!--   </javacard> -->
+    <!-- </target> -->
+    <!-- <target name="com.javacardversion.jc305u3"> -->
+    <!--   <javacard jckit="${JC305u3}"> -->
+    <!--     <cap output="${BUILD_DIR}/javacardversion-jc305u3.cap" sources="${SRC_DIR}/com" aid="${RID}"> -->
+    <!--       <applet class="javacardversion.JCVersion" aid="${AID}"/> -->
+    <!--     </cap> -->
+    <!--   </javacard> -->
+    <!-- </target> -->
 </project>
