@@ -1,1 +1,4 @@
 Make `pipenv shell` locate the Pipfile in working dirs or directories above - works only for two level nesting.
+
+Ask about GlobalPlatform Pro versions
+     - track them in the analysis and among the cards?
