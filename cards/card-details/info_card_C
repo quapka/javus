@@ -1,0 +1,37 @@
+GlobalPlatformPro v20.01.23-0-g5ad373b
+Running on Linux 5.3.0-45-generic amd64, Java 1.8.0_242 by Private Build
+Reader: Alcor Micro AU9560 00 00
+ATR: 3B7B1800000031C06477E30300829000
+More information about your card:
+    http://smartcard-atr.appspot.com/parse?ATR=3B7B1800000031C06477E30300829000
+
+CPLC: ICFabricator=2050
+      ICType=5000
+      OperatingSystemID=4041
+      OperatingSystemReleaseDate=4091 (2014-04-01)
+      OperatingSystemReleaseLevel=005F
+      ICFabricationDate=7158 (2017-06-07)
+      ICSerialNumber=00000330
+      ICBatchIdentifier=0000
+      ICModuleFabricator=1912
+      ICModulePackagingDate=7158 (2017-06-07)
+      ICCManufacturer=1913
+      ICEmbeddingDate=7158 (2017-06-07)
+      ICPrePersonalizer=0000
+      ICPrePersonalizationEquipmentDate=0000 (2010-01-01)
+      ICPrePersonalizationEquipmentID=00000000
+      ICPersonalizer=0000
+      ICPersonalizationDate=0000 (2010-01-01)
+      ICPersonalizationEquipmentID=00000000
+
+Card Data: 
+Tag 6: 1.2.840.114283.1
+-> Global Platform card
+Tag 60: 1.2.840.114283.2.2.1.1
+-> GP Version: 2.1.1
+Tag 63: 1.2.840.114283.3
+Tag 64: 1.2.840.114283.4.1.5
+-> GP SCP01 i=05
+Card Capabilities: 
+Version: 255 (0xFF) ID:   1 (0x01) type: DES3 length:  16 
+Key version suggests factory keys
