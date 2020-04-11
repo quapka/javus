@@ -4,8 +4,9 @@
          basedir=".">
     <description>Builds, tests, and runs the project
     BaloadBastore.</description>
+    <property environment="env"/>
     <property name="project.root"
-              value="${basedir}/../../../../../" />
+        value="${env.JCVM_ANALYSIS_HOME}" />
     <property name="SDKS_DIR"
               value="oracle_javacard_sdks" />
     <property name="BUILD_DIR"
