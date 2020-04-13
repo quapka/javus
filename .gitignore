@@ -32,3 +32,5 @@ ignore/
 # ignore intermediate TeX files
 *.aux
 *.out
+
+*._ctags
