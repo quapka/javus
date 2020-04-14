@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="BaloadBastore"
+<project name="ArrayCopy"
          default="default"
          basedir=".">
     <description>Builds, tests, and runs the project
-    BaloadBastore.</description>
-    <property environment="env"/>
+    ArrayCopy.</description>
     <property name="project.root"
         value="${env.JCVM_ANALYSIS_HOME}" />
     <property name="SDKS_DIR"
