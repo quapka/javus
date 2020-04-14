@@ -4,8 +4,9 @@
          basedir=".">
     <description>Builds, tests, and runs the project
     ArrayCopy.</description>
+    <property environment="env" />
     <property name="project.root"
-        value="${env.JCVM_ANALYSIS_HOME}" />
+              value="${env.JCVM_ANALYSIS_HOME}" />
     <property name="SDKS_DIR"
               value="oracle_javacard_sdks" />
     <property name="BUILD_DIR"
@@ -19,7 +20,7 @@
     <property name="AID"
               value="${RID}${PIX}" />
     <!-- Define different versions of JavaCard SDKs -->
-    <property file="${project.root}/lib/jcversions.properties"/>
+    <property file="${project.root}/lib/jcversions.properties" />
     <!-- Define Ant JavaCard task -->
     <taskdef name="javacard"
              classname="pro.javacard.ant.JavaCard"
