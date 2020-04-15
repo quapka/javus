@@ -13,6 +13,8 @@ def load_versions():
     config.read("config.ini")
     return config["BUILD"]["versions"].split(",")
 
+VERSIONS = load_versions()
+
 
 def ant_clean(ver):
     target = ver + "-clean"
@@ -29,7 +31,7 @@ def gen_vuln_cap(ver):
     sp.check_output(["pipenv", "run", "./build.py", ver])
 
 
-@pytest.mark.parametrize("ver", load_versions())
+@pytest.mark.parametrize("ver", VERSIONS)
 def test_ant_clean_version_empties_build_dir(ver):
     ant_clean(ver)
     assert ver not in os.listdir(BUILD_DIR)
@@ -59,7 +61,7 @@ def get_expected_build_dir(ver):
     return build_structure
 
 
-@pytest.mark.parametrize("ver", load_versions())
+@pytest.mark.parametrize("ver", VERSIONS)
 def test_ant_build_versions(ver):
     ant_clean(ver)
 
@@ -69,8 +71,8 @@ def test_ant_build_versions(ver):
     assert get_expected_build_dir(ver) == list(os.walk(ver_dir))
 
 
-# @pytest.mark.parametrize("ver", load_versions())
-@pytest.mark.parametrize("ver", load_versions())
+# @pytest.mark.parametrize("ver", VERSIONS)
+@pytest.mark.parametrize("ver", VERSIONS)
 def test_presence_of_generated_vulns_new_cap(ver):
     ant_clean(ver)
     ant_build(ver)
