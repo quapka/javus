@@ -1,0 +1,3 @@
+All targets fail with:
+  [convert] error: line 108: com.se.applets.SEApplet: unsupported int type array index, must cast array index to type short or byte.
+
