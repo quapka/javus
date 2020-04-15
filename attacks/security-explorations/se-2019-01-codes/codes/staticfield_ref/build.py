@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import subprocess as sp
 import configparser
 import os
@@ -8,7 +9,7 @@ import os
 def get_versions():
     config = configparser.ConfigParser()
     config.read("config.ini")
-    return config["BUILD"]["versions"].split()
+    return config["BUILD"]["versions"].split(",")
 
 
 def get_directory():
@@ -17,7 +18,7 @@ def get_directory():
     return directory
 
 
-def build_version(ver):
+def _build_version(ver):
     vulns_dir = os.path.realpath(
         os.path.join(get_directory(), "build", ver, "com", "se", "vulns", "javacard",)
     )
@@ -35,21 +36,34 @@ def build_version(ver):
         cap_file,
         exp_file,
         new_cap_file,
-        "1",
-        "0",
+        "2",
+        "08",
     ]
-    output = sp.check_output(cmd, stderr=sp.STDOUT,).decode("utf8")
-    if "Exception" in output:
-        print("Problem with version", ver)
-
-    # print(output)
+    output = sp.check_output(cmd).decode("utf8")
+    print(output)
     os.chdir(wd)
 
 
-def build_all_versions():
-    for ver in get_versions():
-        build_version(ver)
+def build_versions(versions=None):
+    if versions is None:
+        versions = get_versions()
+
+    for ver in versions:
+        print("Building:", ver)
+        _build_version(ver)
 
 
 if __name__ == "__main__":
-    build_all_versions()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "versions", nargs="*",
+    )
+
+    args = parser.parse_args()
+    if args.versions:
+        versions = args.versions
+    else:
+        versions = None
+
+    build_versions(versions=versions)
