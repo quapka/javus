@@ -33,49 +33,49 @@
     <!-- %j - targeted JavaCard version -->
     <!-- TODO add classes attribute (for generated classes) -->
     <target name="all"
-            depends="jc211,jc212,jc221,jc222,jc303,jc304,jc305u1,jc305u2,jc305u3,jc310b43">
+            depends="jc212,jc221,jc222,jc303,jc304,jc305u1,jc305u2,jc305u3">
     </target>
     <target name="clean-all"
-            depends="jc211-clean,jc212-clean,jc221-clean,jc222-clean,jc303-clean,jc304-clean,jc305u1-clean,jc305u2-clean,jc305u3-clean,jc310b43-clean">
+            depends="jc212-clean,jc221-clean,jc222-clean,jc303-clean,jc304-clean,jc305u1-clean,jc305u2-clean,jc305u3-clean">
     </target>
-    <!-- JavaCard 211 version targets -->
-    <target name="jc211-clean">
-        <delete dir="${BUILD_DIR}/jc211" />
-    </target>
-    <target name="jc211-bootstrap">
-        <mkdir dir="${BUILD_DIR}/jc211/com/se/vulns/javacard" />
-        <mkdir dir="${BUILD_DIR}/jc211/com/se/applets/javacard" />
-    </target>
-    <target name="jc211"
-            depends="jc211-clean,jc211-bootstrap">
-        <javacard jckit="${JC211}">
-            <!-- Verification is not supported JavaCard version 211 -->
-            <!-- Build the vulnerable part -->
-            <cap output="${BUILD_DIR}/jc211/com/se/vulns/javacard/vulns.cap"
-                 package="com.se.vulns"
-                 sources="${SRC_DIR}"
-                 aid="A00000006203010C02"
-                 verify="false"
-                 ints="true"
-                 export="${BUILD_DIR}/jc211"
-                 jca="${BUILD_DIR}/jc211/com/se/vulns/javacard/vulns.jca">
-            </cap>
-            <!-- Build the actual applet that is going to be run -->
-            <cap output="${BUILD_DIR}/jc211/com/se/applets/javacard/applets.cap"
-                 package="com.se.applets"
-                 sources="${SRC_DIR}"
-                 aid="A00000006203010C01"
-                 verify="false"
-                 ints="true"
-                 export="${BUILD_DIR}/jc211"
-                 jca="${BUILD_DIR}/jc211/com/se/applets/javacard/applets.jca">
+    <!-- <!-1- JavaCard 211 version targets -1-> -->
+    <!-- <target name="jc211-clean"> -->
+    <!--     <delete dir="${BUILD_DIR}/jc211" /> -->
+    <!-- </target> -->
+    <!-- <target name="jc211-bootstrap"> -->
+    <!--     <mkdir dir="${BUILD_DIR}/jc211/com/se/vulns/javacard" /> -->
+    <!--     <mkdir dir="${BUILD_DIR}/jc211/com/se/applets/javacard" /> -->
+    <!-- </target> -->
+    <!-- <target name="jc211" -->
+    <!--         depends="jc211-clean,jc211-bootstrap"> -->
+    <!--     <javacard jckit="${JC211}"> -->
+    <!--         <!-1- Verification is not supported JavaCard version 211 -1-> -->
+    <!--         <!-1- Build the vulnerable part -1-> -->
+    <!--         <cap output="${BUILD_DIR}/jc211/com/se/vulns/javacard/vulns.cap" -->
+    <!--              package="com.se.vulns" -->
+    <!--              sources="${SRC_DIR}" -->
+    <!--              aid="A00000006203010C02" -->
+    <!--              verify="false" -->
+    <!--              ints="true" -->
+    <!--              export="${BUILD_DIR}/jc211" -->
+    <!--              jca="${BUILD_DIR}/jc211/com/se/vulns/javacard/vulns.jca"> -->
+    <!--         </cap> -->
+    <!--         <!-1- Build the actual applet that is going to be run -1-> -->
+    <!--         <cap output="${BUILD_DIR}/jc211/com/se/applets/javacard/applets.cap" -->
+    <!--              package="com.se.applets" -->
+    <!--              sources="${SRC_DIR}" -->
+    <!--              aid="A00000006203010C01" -->
+    <!--              verify="false" -->
+    <!--              ints="true" -->
+    <!--              export="${BUILD_DIR}/jc211" -->
+    <!--              jca="${BUILD_DIR}/jc211/com/se/applets/javacard/applets.jca"> -->
 
-                <applet class="com.se.applets.SEApplet"
-                        aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc211" />
-            </cap>
-        </javacard>
-    </target>
+    <!--             <applet class="com.se.applets.SEApplet" -->
+    <!--                     aid="A00000006203010C0101" /> -->
+    <!--             <import exps="${BUILD_DIR}/jc211" /> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
     <!-- JavaCard 212 version targets -->
     <target name="jc212-clean">
         <delete dir="${BUILD_DIR}/jc212" />
@@ -380,42 +380,42 @@
             </cap>
         </javacard>
     </target>
-    <!-- JavaCard 310b43 version targets -->
-    <target name="jc310b43-clean">
-        <delete dir="${BUILD_DIR}/jc310b43" />
-    </target>
-    <target name="jc310b43-bootstrap">
-        <mkdir dir="${BUILD_DIR}/jc310b43/com/se/vulns/javacard" />
-        <mkdir dir="${BUILD_DIR}/jc310b43/com/se/applets/javacard" />
-    </target>
-    <target name="jc310b43"
-            depends="jc310b43-clean,jc310b43-bootstrap">
-        <javacard jckit="${JC310b43}">
-            <!-- Verification is not supported JavaCard version 310b43 -->
-            <!-- Build the vulnerable part -->
-            <cap output="${BUILD_DIR}/jc310b43/com/se/vulns/javacard/vulns.cap"
-                 package="com.se.vulns"
-                 sources="${SRC_DIR}"
-                 aid="A00000006203010C02"
-                 verify="false"
-                 ints="true"
-                 export="${BUILD_DIR}/jc310b43"
-                 jca="${BUILD_DIR}/jc310b43/com/se/vulns/javacard/vulns.jca">
-            </cap>
-            <!-- Build the actual applet that is going to be run -->
-            <cap output="${BUILD_DIR}/jc310b43/com/se/applets/javacard/applets.cap"
-                 package="com.se.applets"
-                 sources="${SRC_DIR}"
-                 aid="A00000006203010C01"
-                 verify="false"
-                 ints="true"
-                 export="${BUILD_DIR}/jc310b43"
-                 jca="${BUILD_DIR}/jc310b43/com/se/applets/javacard/applets.jca">
+    <!-- <!-1- JavaCard 310b43 version targets -1-> -->
+    <!-- <target name="jc310b43-clean"> -->
+    <!--     <delete dir="${BUILD_DIR}/jc310b43" /> -->
+    <!-- </target> -->
+    <!-- <target name="jc310b43-bootstrap"> -->
+    <!--     <mkdir dir="${BUILD_DIR}/jc310b43/com/se/vulns/javacard" /> -->
+    <!--     <mkdir dir="${BUILD_DIR}/jc310b43/com/se/applets/javacard" /> -->
+    <!-- </target> -->
+    <!-- <target name="jc310b43" -->
+    <!--         depends="jc310b43-clean,jc310b43-bootstrap"> -->
+    <!--     <javacard jckit="${JC310b43}"> -->
+    <!--         <!-1- Verification is not supported JavaCard version 310b43 -1-> -->
+    <!--         <!-1- Build the vulnerable part -1-> -->
+    <!--         <cap output="${BUILD_DIR}/jc310b43/com/se/vulns/javacard/vulns.cap" -->
+    <!--              package="com.se.vulns" -->
+    <!--              sources="${SRC_DIR}" -->
+    <!--              aid="A00000006203010C02" -->
+    <!--              verify="false" -->
+    <!--              ints="true" -->
+    <!--              export="${BUILD_DIR}/jc310b43" -->
+    <!--              jca="${BUILD_DIR}/jc310b43/com/se/vulns/javacard/vulns.jca"> -->
+    <!--         </cap> -->
+    <!--         <!-1- Build the actual applet that is going to be run -1-> -->
+    <!--         <cap output="${BUILD_DIR}/jc310b43/com/se/applets/javacard/applets.cap" -->
+    <!--              package="com.se.applets" -->
+    <!--              sources="${SRC_DIR}" -->
+    <!--              aid="A00000006203010C01" -->
+    <!--              verify="false" -->
+    <!--              ints="true" -->
+    <!--              export="${BUILD_DIR}/jc310b43" -->
+    <!--              jca="${BUILD_DIR}/jc310b43/com/se/applets/javacard/applets.jca"> -->
 
-                <applet class="com.se.applets.SEApplet"
-                        aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc310b43" />
-            </cap>
-        </javacard>
-    </target>
+    <!--             <applet class="com.se.applets.SEApplet" -->
+    <!--                     aid="A00000006203010C0101" /> -->
+    <!--             <import exps="${BUILD_DIR}/jc310b43" /> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
 </project>
