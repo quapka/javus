@@ -1,0 +1,51 @@
+// converted by version  [v3.0.5]
+// on Wed Apr 15 16:48:51 CEST 2020
+
+.package com/se/vulns {
+	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x2;
+	.version 0.0;
+
+	.imports {
+		0xA0:0x0:0x0:0x0:0x62:0x0:0x1 1.0;		//java/lang
+	}
+
+	.constantPool {
+		// 0
+		staticMethodRef 0.0.0()V;		// java/lang/Object.<init>()V
+		// 1
+		staticFieldRef short Test/dummy;
+	}
+
+	.class public Test 0 extends 0.0 {		// extends java/lang/Object
+
+		.fields {
+			public static short dummy 0 = 4660;		// S
+		}
+
+		.publicMethodTable 1 {
+			equals(Ljava/lang/Object;)Z;
+		}
+
+		.packageMethodTable 0 {
+		}
+
+		.method public <init>()V 0 {
+			.stack 1;
+			.locals 0;
+
+				L0:	aload_0;
+					invokespecial 0;		// java/lang/Object.<init>()V
+					return;
+		}
+
+		.method public static get_static()S 1 {
+			.stack 1;
+			.locals 0;
+
+				L0:	getstatic_s 1;		// short com/se/vulns/Test.dummy
+					sreturn;
+		}
+
+	}
+
+}
