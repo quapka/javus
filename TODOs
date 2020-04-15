@@ -7,3 +7,14 @@ Results analysis
 
 Ownership of code
     - put all licences together and go though them
+
+TODO: Add test build for JDK 7 and 8
+TODO: jc310 does not work for baload-bastore
+    and most probably all other
+
+Give a table of compilation warnings
+Verification results etc.
+
+How to work out additional jc versions
+Make it work with JDK 1.7
+    Exception in thread "main" java.lang.UnsupportedClassVersionError: org/apache/tools/ant/launch/Launcher : Unsupported major.minor version 52.0
