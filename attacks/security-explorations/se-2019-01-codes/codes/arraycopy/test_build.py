@@ -5,47 +5,77 @@ import pytest
 import os
 import subprocess as sp
 
-BUILD_DIR = 'build'
+BUILD_DIR = "build"
+
 
 def load_versions():
     config = configparser.ConfigParser()
-    config.read('config.ini')
-    return config['BUILD']['versions'].split(',')
-
-# def test_emptiness():
-#     versions = load_versions()
-#     for ver in versions:
-#         _test_build_dir(ver)
-
-# TODO refactor to make it dynamic
-# class TestEmptinessOfBuildFolder():
-
-expected_files = [('build/jc211', ['com'], ['vulns.jar', 'applets.jar']),
- ('build/jc211/com', ['se'], []),
- ('build/jc211/com/se', ['vulns', 'applets'], []),
- ('build/jc211/com/se/vulns', ['javacard'], []),
- ('build/jc211/com/se/vulns/javacard',
-  [],
-  ['vulns.exp', 'vulns.cap', 'vulns.jca']),
- ('build/jc211/com/se/applets', ['javacard'], []),
- ('build/jc211/com/se/applets/javacard',
-  [],
-  ['applets.cap', 'applets.exp', 'applets.jca'])]
+    config.read("config.ini")
+    return config["BUILD"]["versions"].split(",")
 
 
-@pytest.mark.parametrize(
-        'ver', load_versions()
-    )
-def test_ant_clean_versions(ver):
-    target = ver + '-clean'
-    sp.check_output(['ant', target])
+def ant_clean(ver):
+    target = ver + "-clean"
+    # clean the build directory
+    sp.check_output(["ant", target])
+
+
+def ant_build(ver):
+    sp.check_output(["ant", ver])
+
+
+def gen_vuln_cap(ver):
+    # generate the vulnerable/malicious CAP file
+    sp.check_output(["pipenv", "run", "./build.py", ver])
+
+
+@pytest.mark.parametrize("ver", load_versions())
+def test_ant_clean_version_empties_build_dir(ver):
+    ant_clean(ver)
     assert ver not in os.listdir(BUILD_DIR)
 
-@pytest.mark.parametrize(
-        'ver', load_versions()
-    )
-def test_ant_build_versions(ver):
-    sp.check_output(['ant', ver])
-    ver_dir = os.path.join(BUILD_DIR, ver)
 
-    for path, dirs, files in os.walk(ver_dir):
+def get_expected_build_dir(ver):
+    # TODO this test probably won't work on Windows
+    # due to the paths
+    build_structure = [
+        ("build/" + ver, ["com"], ["vulns.jar", "applets.jar"]),
+        ("build/" + ver + "/com", ["se"], []),
+        ("build/" + ver + "/com/se", ["vulns", "applets"], []),
+        ("build/" + ver + "/com/se/vulns", ["javacard"], []),
+        (
+            "build/" + ver + "/com/se/vulns/javacard",
+            [],
+            ["vulns.exp", "vulns.cap", "vulns.jca"],
+        ),
+        ("build/" + ver + "/com/se/applets", ["javacard"], []),
+        (
+            "build/" + ver + "/com/se/applets/javacard",
+            [],
+            ["applets.cap", "applets.exp", "applets.jca"],
+        ),
+    ]
+
+    return build_structure
+
+
+@pytest.mark.parametrize("ver", load_versions())
+def test_ant_build_versions(ver):
+    ant_clean(ver)
+
+    ant_build(ver)
+
+    ver_dir = os.path.join(BUILD_DIR, ver)
+    assert get_expected_build_dir(ver) == list(os.walk(ver_dir))
+
+
+# @pytest.mark.parametrize("ver", load_versions())
+@pytest.mark.parametrize("ver", load_versions())
+def test_presence_of_generated_vulns_new_cap(ver):
+    ant_clean(ver)
+    ant_build(ver)
+
+    gen_vuln_cap(ver)
+
+    vulns_dir = os.path.join(BUILD_DIR, ver, "com", "se", "vulns", "javacard")
+    assert "vulns.new.cap" in os.listdir(vulns_dir)
