@@ -35,7 +35,7 @@ def build_version(ver):
         cap_file,
         exp_file,
         new_cap_file,
-        "1",
+        "4",
         "0",
     ]
     output = sp.check_output(cmd, stderr=sp.STDOUT,).decode("utf8")
