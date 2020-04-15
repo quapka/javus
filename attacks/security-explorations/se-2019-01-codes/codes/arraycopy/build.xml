@@ -19,6 +19,7 @@
               value="AAB03010C0101B" />
     <property name="AID"
               value="${RID}${PIX}" />
+    <!-- Load global build properties -->
     <!-- Define different versions of JavaCard SDKs -->
     <property file="${project.root}/lib/jcversions.properties" />
     <!-- Define Ant JavaCard task -->
