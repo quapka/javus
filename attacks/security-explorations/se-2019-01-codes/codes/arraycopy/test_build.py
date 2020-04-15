@@ -5,6 +5,8 @@ import pytest
 import os
 import subprocess as sp
 
+import zipfile
+
 BUILD_DIR = "build"
 
 
@@ -12,6 +14,7 @@ def load_versions():
     config = configparser.ConfigParser()
     config.read("config.ini")
     return config["BUILD"]["versions"].split(",")
+
 
 VERSIONS = load_versions()
 
@@ -81,3 +84,16 @@ def test_presence_of_generated_vulns_new_cap(ver):
 
     vulns_dir = os.path.join(BUILD_DIR, ver, "com", "se", "vulns", "javacard")
     assert "vulns.new.cap" in os.listdir(vulns_dir)
+
+
+@pytest.mark.parametrize("ver", VERSIONS)
+def test_sanity_check_on_vulns_new_cap(ver):
+    # if the generated cap file is not unzippable it
+    # means, it's not generated properly
+    # it would raise BadZipFile exception, other exceptions mean
+    # different failure
+    new_cap_file = os.path.join(
+        BUILD_DIR, ver, "com", "se", "vulns", "javacard", "vulns.new.cap"
+    )
+
+    zp = zipfile.ZipFile(new_cap_file)
