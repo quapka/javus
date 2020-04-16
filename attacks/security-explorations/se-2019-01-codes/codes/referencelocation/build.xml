@@ -147,7 +147,7 @@
 
                 <applet class="com.se.applets.SEApplet"
                         aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc212" />
+                <import exps="${BUILD_DIR}/jc221" />
             </cap>
         </javacard>
     </target>
@@ -185,7 +185,7 @@
 
                 <applet class="com.se.applets.SEApplet"
                         aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc212" />
+                <import exps="${BUILD_DIR}/jc222" />
             </cap>
         </javacard>
     </target>
@@ -223,7 +223,7 @@
 
                 <applet class="com.se.applets.SEApplet"
                         aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc212" />
+                <import exps="${BUILD_DIR}/jc303" />
             </cap>
         </javacard>
     </target>
@@ -261,7 +261,7 @@
 
                 <applet class="com.se.applets.SEApplet"
                         aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc212" />
+                <import exps="${BUILD_DIR}/jc304" />
             </cap>
         </javacard>
     </target>
@@ -299,7 +299,7 @@
 
                 <applet class="com.se.applets.SEApplet"
                         aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc212" />
+                <import exps="${BUILD_DIR}/jc305u1" />
             </cap>
         </javacard>
     </target>
@@ -337,7 +337,7 @@
 
                 <applet class="com.se.applets.SEApplet"
                         aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc212" />
+                <import exps="${BUILD_DIR}/jc305u2" />
             </cap>
         </javacard>
     </target>
@@ -375,7 +375,7 @@
 
                 <applet class="com.se.applets.SEApplet"
                         aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc212" />
+                <import exps="${BUILD_DIR}/jc305u3" />
             </cap>
         </javacard>
     </target>
@@ -413,7 +413,7 @@
 
                 <applet class="com.se.applets.SEApplet"
                         aid="A00000006203010C0101" />
-                <import exps="${BUILD_DIR}/jc212" />
+                <import exps="${BUILD_DIR}/jc310b43" />
             </cap>
         </javacard>
     </target>
