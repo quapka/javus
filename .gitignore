@@ -34,3 +34,8 @@ ignore/
 *.out
 
 *._tags
+
+*.jar
+*.cap
+*.exp
+*.jca
