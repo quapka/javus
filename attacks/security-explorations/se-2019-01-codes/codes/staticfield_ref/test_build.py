@@ -97,3 +97,28 @@ def test_sanity_check_on_vulns_new_cap(ver):
     )
 
     zp = zipfile.ZipFile(new_cap_file)
+
+
+@pytest.mark.parametrize("ver", VERSIONS)
+def test_creating_vulnerable_cap(ver):
+    ant_clean(ver)
+    assert ver not in os.listdir(BUILD_DIR)
+
+    ant_build(ver)
+    ver_dir = os.path.join(BUILD_DIR, ver)
+    assert get_expected_build_dir(ver) == list(os.walk(ver_dir))
+
+    gen_vuln_cap(ver)
+
+    vulns_dir = os.path.join(BUILD_DIR, ver, "com", "se", "vulns", "javacard")
+    assert "vulns.new.cap" in os.listdir(vulns_dir)
+
+    # if the generated cap file is not unzippable it
+    # means, it's not generated properly
+    # it would raise BadZipFile exception, other exceptions mean
+    # different failure
+    new_cap_file = os.path.join(
+        BUILD_DIR, ver, "com", "se", "vulns", "javacard", "vulns.new.cap"
+    )
+
+    zp = zipfile.ZipFile(new_cap_file)
