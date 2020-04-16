@@ -6,10 +6,12 @@ import configparser
 import os
 
 
-def get_versions():
-    config = configparser.ConfigParser()
-    config.read("config.ini")
-    return config["BUILD"]["versions"].split(",")
+config = configparser.ConfigParser()
+config.read("config.ini")
+
+VERSIONS = config["BUILD"]["versions"].split(",")
+GENIDX = config["BUILD"]["genidx"]
+GENARG = config["BUILD"]["genarg"]
 
 
 def get_directory():
@@ -36,8 +38,8 @@ def _build_version(ver):
         cap_file,
         exp_file,
         new_cap_file,
-        "1",
-        "0",
+        GENIDX,
+        GENARG,
     ]
     output = sp.check_output(cmd).decode("utf8")
     print(output)
@@ -46,7 +48,7 @@ def _build_version(ver):
 
 def build_versions(versions=None):
     if versions is None:
-        versions = get_versions()
+        versions = VERSIONS
 
     for ver in versions:
         print("Building:", ver)
