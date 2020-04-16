@@ -18,3 +18,6 @@ Verification results etc.
 How to work out additional jc versions
 Make it work with JDK 1.7
     Exception in thread "main" java.lang.UnsupportedClassVersionError: org/apache/tools/ant/launch/Launcher : Unsupported major.minor version 52.0
+
+Add ant target to build build dir
+and make other depend on it
