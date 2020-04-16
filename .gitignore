@@ -33,4 +33,4 @@ ignore/
 *.aux
 *.out
 
-*._ctags
+*._tags
