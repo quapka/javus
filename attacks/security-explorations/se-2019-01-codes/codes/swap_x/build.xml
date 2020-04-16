@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="BaloadBastore"
+         default="default"
+         basedir=".">
+    <description>Builds, tests, and runs the project
+    BaloadBastore.</description>
+    <property environment="env"/>
+    <property name="project.root"
+        value="${env.JCVM_ANALYSIS_HOME}" />
+    <property name="SDKS_DIR"
+              value="oracle_javacard_sdks" />
+    <property name="BUILD_DIR"
+              value="${basedir}/build" />
+    <property name="SRC_DIR"
+              value="src" />
+    <property name="RID"
+              value="A000000062" />
+    <property name="PIX"
+              value="AAB03010C0101B" />
+    <property name="AID"
+              value="${RID}${PIX}" />
+    <!-- Define different versions of JavaCard SDKs -->
+    <property file="${project.root}/lib/jcversions.properties"/>
+    <!-- Define Ant JavaCard task -->
+    <taskdef name="javacard"
+             classname="pro.javacard.ant.JavaCard"
+             classpath="${project.root}/lib/ant-javacard.jar" />
+    <!-- List the targets for all versions of SDKs -->
+    <!-- Explanation of the shortcuts in the names -->
+    <!-- %n - common name of the entity, either applet class or package -->
+    <!-- %p - package name -->
+    <!-- %j - targeted JavaCard version -->
+    <!-- TODO add classes attribute (for generated classes) -->
+    <target name="all"
+            depends="jc211,jc212,jc221,jc222,jc303,jc304,jc305u1,jc305u2,jc305u3,jc310b43">
+    </target>
+    <target name="clean-all"
+            depends="jc211-clean,jc212-clean,jc221-clean,jc222-clean,jc303-clean,jc304-clean,jc305u1-clean,jc305u2-clean,jc305u3-clean,jc310b43-clean">
+    </target>
+    <!-- JavaCard 211 version targets -->
+    <target name="jc211-clean">
+        <delete dir="${BUILD_DIR}/jc211" />
+    </target>
+    <target name="jc211-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc211/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc211/com/se/applets/javacard" />
+    </target>
+    <target name="jc211"
+            depends="jc211-clean,jc211-bootstrap">
+        <javacard jckit="${JC211}">
+            <!-- Verification is not supported JavaCard version 211 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc211/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc211"
+                 jca="${BUILD_DIR}/jc211/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc211/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc211"
+                 jca="${BUILD_DIR}/jc211/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc211" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 212 version targets -->
+    <target name="jc212-clean">
+        <delete dir="${BUILD_DIR}/jc212" />
+    </target>
+    <target name="jc212-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc212/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc212/com/se/applets/javacard" />
+    </target>
+    <target name="jc212"
+            depends="jc212-clean,jc212-bootstrap">
+        <javacard jckit="${JC212}">
+            <!-- Verification is not supported JavaCard version 212 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc212/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc212"
+                 jca="${BUILD_DIR}/jc212/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc212/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc212"
+                 jca="${BUILD_DIR}/jc212/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 221 version targets -->
+    <target name="jc221-clean">
+        <delete dir="${BUILD_DIR}/jc221" />
+    </target>
+    <target name="jc221-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc221/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc221/com/se/applets/javacard" />
+    </target>
+    <target name="jc221"
+            depends="jc221-clean,jc221-bootstrap">
+        <javacard jckit="${JC221}">
+            <!-- Verification is not supported JavaCard version 221 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc221/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc221"
+                 jca="${BUILD_DIR}/jc221/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc221/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc221"
+                 jca="${BUILD_DIR}/jc221/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 222 version targets -->
+    <target name="jc222-clean">
+        <delete dir="${BUILD_DIR}/jc222" />
+    </target>
+    <target name="jc222-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc222/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc222/com/se/applets/javacard" />
+    </target>
+    <target name="jc222"
+            depends="jc222-clean,jc222-bootstrap">
+        <javacard jckit="${JC222}">
+            <!-- Verification is not supported JavaCard version 222 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc222/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc222"
+                 jca="${BUILD_DIR}/jc222/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc222/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc222"
+                 jca="${BUILD_DIR}/jc222/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 303 version targets -->
+    <target name="jc303-clean">
+        <delete dir="${BUILD_DIR}/jc303" />
+    </target>
+    <target name="jc303-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc303/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc303/com/se/applets/javacard" />
+    </target>
+    <target name="jc303"
+            depends="jc303-clean,jc303-bootstrap">
+        <javacard jckit="${JC303}">
+            <!-- Verification is not supported JavaCard version 303 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc303/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc303"
+                 jca="${BUILD_DIR}/jc303/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc303/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc303"
+                 jca="${BUILD_DIR}/jc303/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 304 version targets -->
+    <target name="jc304-clean">
+        <delete dir="${BUILD_DIR}/jc304" />
+    </target>
+    <target name="jc304-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc304/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc304/com/se/applets/javacard" />
+    </target>
+    <target name="jc304"
+            depends="jc304-clean,jc304-bootstrap">
+        <javacard jckit="${JC304}">
+            <!-- Verification is not supported JavaCard version 304 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc304/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc304"
+                 jca="${BUILD_DIR}/jc304/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc304/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc304"
+                 jca="${BUILD_DIR}/jc304/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 304 version targets -->
+    <target name="jc305u1-clean">
+        <delete dir="${BUILD_DIR}/jc305u1" />
+    </target>
+    <target name="jc305u1-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc305u1/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc305u1/com/se/applets/javacard" />
+    </target>
+    <target name="jc305u1"
+            depends="jc305u1-clean,jc305u1-bootstrap">
+        <javacard jckit="${JC305u1}">
+            <!-- Verification is not supported JavaCard version 305u1 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc305u1/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc305u1"
+                 jca="${BUILD_DIR}/jc305u1/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc305u1/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc305u1"
+                 jca="${BUILD_DIR}/jc305u1/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 305u2 version targets -->
+    <target name="jc305u2-clean">
+        <delete dir="${BUILD_DIR}/jc305u2" />
+    </target>
+    <target name="jc305u2-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc305u2/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc305u2/com/se/applets/javacard" />
+    </target>
+    <target name="jc305u2"
+            depends="jc305u2-clean,jc305u2-bootstrap">
+        <javacard jckit="${JC305u2}">
+            <!-- Verification is not supported JavaCard version 305u2 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc305u2/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc305u2"
+                 jca="${BUILD_DIR}/jc305u2/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc305u2/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc305u2"
+                 jca="${BUILD_DIR}/jc305u2/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 305u3 version targets -->
+    <target name="jc305u3-clean">
+        <delete dir="${BUILD_DIR}/jc305u3" />
+    </target>
+    <target name="jc305u3-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc305u3/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc305u3/com/se/applets/javacard" />
+    </target>
+    <target name="jc305u3"
+            depends="jc305u3-clean,jc305u3-bootstrap">
+        <javacard jckit="${JC305u3}">
+            <!-- Verification is not supported JavaCard version 305u3 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc305u3/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc305u3"
+                 jca="${BUILD_DIR}/jc305u3/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc305u3/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc305u3"
+                 jca="${BUILD_DIR}/jc305u3/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+    <!-- JavaCard 310b43 version targets -->
+    <target name="jc310b43-clean">
+        <delete dir="${BUILD_DIR}/jc310b43" />
+    </target>
+    <target name="jc310b43-bootstrap">
+        <mkdir dir="${BUILD_DIR}/jc310b43/com/se/vulns/javacard" />
+        <mkdir dir="${BUILD_DIR}/jc310b43/com/se/applets/javacard" />
+    </target>
+    <target name="jc310b43"
+            depends="jc310b43-clean,jc310b43-bootstrap">
+        <javacard jckit="${JC310b43}">
+            <!-- Verification is not supported JavaCard version 310b43 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${BUILD_DIR}/jc310b43/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C02"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc310b43"
+                 jca="${BUILD_DIR}/jc310b43/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${BUILD_DIR}/jc310b43/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${SRC_DIR}"
+                 aid="A00000006203010C01"
+                 verify="false"
+                 ints="true"
+                 export="${BUILD_DIR}/jc310b43"
+                 jca="${BUILD_DIR}/jc310b43/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="A00000006203010C0101" />
+                <import exps="${BUILD_DIR}/jc212" />
+            </cap>
+        </javacard>
+    </target>
+</project>
