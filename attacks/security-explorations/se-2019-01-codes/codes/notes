@@ -1,0 +1,33 @@
+arraycopy
+    - ant all works
+    - Problem with version jc212
+        - probably missing Manifest file
+    - Problem with version jc310b43
+
+arrayops
+    - cant ant all
+
+baload_bastore
+    - ant all works
+    - Problem with version jc212
+        - probably missing Manifest file
+    - Problem with version jc310b43
+
+localvars
+    - cant ant all
+
+nativemethod
+    - ant all works
+    - Problem with version jc310b43
+
+referencelocation:
+    - ant all works
+    - Problem with version jc310b43
+
+staticfield_ref:
+    - ant all works
+    - Problem with version jc310b43
+
+swap_x:
+    - ant all works
+    - Problem with version jc310b43
