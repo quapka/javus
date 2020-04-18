@@ -6,6 +6,7 @@ GP = java -jar "${GO_PATH}"
 SELECT_CMD = "00a40400"
 RID = "0011223344"
 PIX = "AABB"
+DATA_LEN= "07"
 AID = "0011223344AABB"
 
 all: $(TARGET)
@@ -36,6 +37,6 @@ uninstall:
 	$(GP) --uninstall $(TARGET).cap --verbose --debug $(emv)
 
 apdu:
-	$(GP) --verbose --debug --apdu $(SELECT_CMD)<DATA_LEN>$(AID) $(emv)
+	$(GP) --verbose --debug --apdu $(SELECT_CMD)$(DATA_LEN)$(AID) $(emv)
 
 deploy: $(TARGET) install apdu
