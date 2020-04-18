@@ -5,14 +5,14 @@
     <description>Builds, tests, and runs the project
     JCVersion.</description>
     <property name="SDKS_DIR"
-              value="oracle_javacard_sdks" />
+              value="../../oracle_javacard_sdks" />
     <property name="BUILD_DIR"
               value="build" />
     <property name="SRC_DIR"
               value="src" />
     <taskdef name="javacard"
              classname="pro.javacard.ant.JavaCard"
-             classpath="${SDKS_DIR}/ant-javacard.jar" />
+             classpath="../../lib/ant-javacard.jar" />
     <property name="RID"
               value="0011223344" />
     <property name="PIX"
@@ -20,6 +20,7 @@
     <property name="AID"
               value="${RID}${PIX}" />
     <!-- Define different versions of JavaCard SDKs -->
+    <!-- <property file="../../lib/jcversions.xml" /> -->
     <property name="JC211"
               value="${SDKS_DIR}/jc211_kit" />
     <property name="JC212"
@@ -75,17 +76,17 @@
             </cap>
         </javacard>
     </target>
-    <target name="com.javacardversion.jc212">
-        <javacard jckit="${JC212}">
-            <cap output="${BUILD_DIR}/javacardversion-jc212.cap"
-                 sources="${SRC_DIR}/com"
-                 aid="${RID}"
-                 verify="false">
-                <applet class="javacardversion.JCVersion"
-                        aid="${AID}" />
-            </cap>
-        </javacard>
-    </target>
+    <!-- <target name="com.javacardversion.jc212"> -->
+    <!--     <javacard jckit="${JC212}"> -->
+    <!--         <cap output="${BUILD_DIR}/javacardversion-jc212.cap" -->
+    <!--              sources="${SRC_DIR}/com" -->
+    <!--              aid="${RID}" -->
+    <!--              verify="false"> -->
+    <!--             <applet class="javacardversion.JCVersion" -->
+    <!--                     aid="${AID}" /> -->
+    <!--         </cap> -->
+    <!--     </javacard> -->
+    <!-- </target> -->
     <target name="com.javacardversion.jc221">
         <javacard jckit="${JC221}">
             <cap output="${BUILD_DIR}/javacardversion-jc221.cap"
