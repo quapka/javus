@@ -202,7 +202,21 @@ public class SEApplet extends Applet {
     }
 
     public void process(APDU apdu) {
+        // Added
+        if (selectingApplet()) {
+            return;
+        }
+
         byte[] buffer = apdu.getBuffer();
+        byte numBytes = buffer[ISO7816.OFFSET_LC];
+
+        // necessary for 2.1.2 versions!
+        byte byteRead = (byte) apdu.setIncomingAndReceive();
+
+        if (numBytes != byteRead) {
+            ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+        }
+        // End
 
         if (buffer[ISO7816.OFFSET_CLA] != SEApplet_CLA) {
             ISOException.throwIt(ISO7816.SW_CLA_NOT_SUPPORTED);
