@@ -20,13 +20,17 @@ VERSIONS = load_versions()
 
 
 def ant_clean(ver):
-    target = ver + "-clean"
+    # target = ver + "-clean"
     # clean the build directory
-    sp.check_output(["ant", target])
+    sp.check_output(["ant", "-Dversion=" + ver, "clean"])
+
+
+def ant_bootstrap(ver):
+    sp.check_output(["ant", "-Dversion=" + ver, "bootstrap"])
 
 
 def ant_build(ver):
-    sp.check_output(["ant", ver])
+    sp.check_output(["ant", "-Dversion=" + ver, "build"])
 
 
 def gen_vuln_cap(ver):
@@ -34,10 +38,10 @@ def gen_vuln_cap(ver):
     sp.check_output(["pipenv", "run", "./build.py", ver])
 
 
-@pytest.mark.parametrize("ver", VERSIONS)
-def test_ant_clean_version_empties_build_dir(ver):
-    ant_clean(ver)
-    assert ver not in os.listdir(BUILD_DIR)
+# @pytest.mark.parametrize("ver", VERSIONS)
+# def test_ant_clean_version_empties_build_dir(ver):
+#     ant_clean(ver)
+#     assert ver not in os.listdir(BUILD_DIR)
 
 
 def get_expected_build_dir(ver):
@@ -64,45 +68,48 @@ def get_expected_build_dir(ver):
     return build_structure
 
 
-@pytest.mark.parametrize("ver", VERSIONS)
-def test_ant_build_versions(ver):
-    ant_clean(ver)
+# @pytest.mark.parametrize("ver", VERSIONS)
+# def test_ant_build_versions(ver):
+#     ant_clean(ver)
 
-    ant_build(ver)
+#     ant_build(ver)
 
-    ver_dir = os.path.join(BUILD_DIR, ver)
-    assert get_expected_build_dir(ver) == list(os.walk(ver_dir))
+#     ver_dir = os.path.join(BUILD_DIR, ver)
+#     assert get_expected_build_dir(ver) == list(os.walk(ver_dir))
+
+
+# # @pytest.mark.parametrize("ver", VERSIONS)
+# @pytest.mark.parametrize("ver", VERSIONS)
+# def test_presence_of_generated_vulns_new_cap(ver):
+#     ant_clean(ver)
+#     ant_build(ver)
+
+#     gen_vuln_cap(ver)
+
+#     vulns_dir = os.path.join(BUILD_DIR, ver, "com", "se", "vulns", "javacard")
+#     assert "vulns.new.cap" in os.listdir(vulns_dir)
 
 
 # @pytest.mark.parametrize("ver", VERSIONS)
-@pytest.mark.parametrize("ver", VERSIONS)
-def test_presence_of_generated_vulns_new_cap(ver):
-    ant_clean(ver)
-    ant_build(ver)
+# def test_sanity_check_on_vulns_new_cap(ver):
+#     # if the generated cap file is not unzippable it
+#     # means, it's not generated properly
+#     # it would raise BadZipFile exception, other exceptions mean
+#     # different failure
+#     new_cap_file = os.path.join(
+#         BUILD_DIR, ver, "com", "se", "vulns", "javacard", "vulns.new.cap"
+#     )
 
-    gen_vuln_cap(ver)
-
-    vulns_dir = os.path.join(BUILD_DIR, ver, "com", "se", "vulns", "javacard")
-    assert "vulns.new.cap" in os.listdir(vulns_dir)
-
-
-@pytest.mark.parametrize("ver", VERSIONS)
-def test_sanity_check_on_vulns_new_cap(ver):
-    # if the generated cap file is not unzippable it
-    # means, it's not generated properly
-    # it would raise BadZipFile exception, other exceptions mean
-    # different failure
-    new_cap_file = os.path.join(
-        BUILD_DIR, ver, "com", "se", "vulns", "javacard", "vulns.new.cap"
-    )
-
-    zp = zipfile.ZipFile(new_cap_file)
+#     zp = zipfile.ZipFile(new_cap_file)
 
 
 @pytest.mark.parametrize("ver", VERSIONS)
 def test_creating_vulnerable_cap(ver):
     ant_clean(ver)
     assert ver not in os.listdir(BUILD_DIR)
+
+    ant_bootstrap(ver)
+    assert ver in os.listdir(BUILD_DIR)
 
     ant_build(ver)
     ver_dir = os.path.join(BUILD_DIR, ver)

@@ -1,0 +1,15 @@
+<project>
+    <macrodef name="iterate">
+        <attribute name="target" />
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="codes"
+                         includes="*/build.xml" />
+            </subant>
+        </sequential>
+    </macrodef>
+    <target name="build-all-attacks">
+        <iterate target="build-all-versions" />
+    </target>
+    <!-- more targets -->
+</project>
