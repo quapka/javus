@@ -1,5 +1,3 @@
-Make `pipenv shell` locate the Pipfile in working dirs or directories above - works only for two level nesting.
-
 Ask about GlobalPlatform Pro versions
      - track them in the analysis and among the cards?
 
@@ -21,3 +19,5 @@ Make it work with JDK 1.7
 
 Add ant target to build build dir
 and make other depend on it
+
+put RID, PIX, AID into config (package etc variants)
