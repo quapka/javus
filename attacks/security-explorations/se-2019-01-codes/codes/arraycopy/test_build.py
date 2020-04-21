@@ -36,7 +36,7 @@ def ant_build(ver):
 
 def gen_vuln_cap(ver):
     # generate the vulnerable/malicious CAP file
-    sp.check_output(["pipenv", "run", "./build.py", ver])
+    sp.check_output(["pipenv", "run", "./generate.py", ver])
 
 
 def get_expected_build_dir(ver):

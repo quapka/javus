@@ -20,7 +20,7 @@ def get_directory():
     return directory
 
 
-def _build_version(ver):
+def _generate_version(ver):
     vulns_dir = os.path.realpath(
         os.path.join(get_directory(), "build", ver, "com", "se", "vulns", "javacard",)
     )
@@ -46,13 +46,13 @@ def _build_version(ver):
     os.chdir(wd)
 
 
-def build_versions(versions=None):
+def generate_versions(versions=None):
     if versions is None:
         versions = VERSIONS
 
     for ver in versions:
         print("Building:", ver)
-        _build_version(ver)
+        _generate_version(ver)
 
 
 if __name__ == "__main__":
@@ -68,4 +68,4 @@ if __name__ == "__main__":
     else:
         versions = None
 
-    build_versions(versions=versions)
+    generate_versions(versions=versions)
