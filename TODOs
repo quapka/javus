@@ -22,3 +22,5 @@ Add ant target to build build dir
 and make other depend on it
 
 put RID, PIX, AID into config (package etc variants)
+
+TODO: How to write log messages
