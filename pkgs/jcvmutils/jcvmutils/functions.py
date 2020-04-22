@@ -5,6 +5,7 @@ def is_hex(value):
     except ValueError:
         return False
 
+
 def valid_aid(aid):
     # split into pairs/bytes
     try:
