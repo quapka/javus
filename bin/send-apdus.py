@@ -23,11 +23,8 @@ class SendAPDUs(CommunicateWithCard):
     def add_options(self):
         super().add_options()
         self.parser.add_argument(
-            "-i", "--input-file", help="input scr file",
+            "-i", "--input-file", help="input scr file", required=True,
         )
-        # self.parser.add_argument(
-        #         '-a', '--aid', help='Applet aid'
-        # )
 
     def parse_options(self):
         super().parse_options()
@@ -49,6 +46,7 @@ class SendAPDUs(CommunicateWithCard):
                 values = line.strip(";").split()
                 # import pudb; pudb.set_trace()
                 payload = [int(x, 16) for x in values]
+                print("".join(["{:02x}".format(x) for x in payload]))
                 self.payloads.append(payload)
 
     def send_apdus(self):
@@ -68,8 +66,9 @@ class SendAPDUs(CommunicateWithCard):
 
     def print_response(self, response):
         data, sw1, sw2 = response
+        print(data, sw1, sw2)
         line = "{:02X}{:02X}".format(sw1, sw2)
-        line += " ".join(["{:02X}".format(x) for x in data])
+        line += ": " + " ".join(["{:02X}".format(x) for x in data])
         print(line)
 
     def select(self):
@@ -82,7 +81,7 @@ class SendAPDUs(CommunicateWithCard):
 
     def run(self):
         self.create_apdus()
-        self.send_apdus()
+        # self.send_apdus()
 
 
 if __name__ == "__main__":
