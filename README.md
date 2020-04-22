@@ -82,3 +82,8 @@ Ideas
 -----
 
 Define each attack by the APDUs, that are send/receieved
+
+Installation
+------------
+
+`pipenv install pkgs/jcvmutils`
