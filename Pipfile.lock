@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a2a5e53dd9c681052724e77a7b04517ea0f0805320c4213c456082dac0c46f2f"
+            "sha256": "7b3c47d1ace75935cba1d439d480b3539dd6309efb76f5ead3f1d3191ddc5ca5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -55,6 +55,10 @@
             ],
             "index": "pypi",
             "version": "==1.4.1"
+        },
+        "jcvmutils": {
+            "editable": true,
+            "path": "./pkgs/jcvmutils"
         },
         "prompt-toolkit": {
             "hashes": [
