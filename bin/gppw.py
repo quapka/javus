@@ -40,16 +40,16 @@ class Diversifier(enum.Enum):
     KDF3 = enum.auto()
 
     @classmethod
-    def get_flag(diversifer):
-        if diversifer == self.NONE:
+    def get_flag(cls, diversifier):
+        if diversifier == cls.NONE:
             return ""
-        if diversifer == self.UNDETECTED:
+        if diversifier == cls.UNDETECTED:
             return ""
-        if diversifer == self.EMV:
+        if diversifier == cls.EMV:
             return "--emv"
-        if diversifer == self.VISA2:
+        if diversifier == cls.VISA2:
             return "--visa2"
-        if diversifer == self.KDF3:
+        if diversifier == cls.KDF3:
             return "--kdf3"
 
 
@@ -72,6 +72,7 @@ class GlobalPlatformProWrapper(object):
             self.gp_path,
         ]
         # TODO add the diversifier here, it is probably the safest option
+        cmd += [Diversifier.get_flag(self.diversifier)]
         return cmd
 
     def process_config(self):
@@ -136,6 +137,7 @@ class GlobalPlatformProWrapper(object):
         cmd += ["--install"]
 
     def uninstall(self):
+        cmd = self.gp_prefix()
         cmd += ["--uninstall"]
 
 
