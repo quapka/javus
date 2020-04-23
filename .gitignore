@@ -28,6 +28,8 @@ ignore/
 *.pyc
 *.pyo
 *.egg-info/
+pkgs/jcvmutils/dist
+pkgs/jcvmutils/build
 
 # ignore intermediate TeX files
 *.aux
