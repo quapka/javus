@@ -49,8 +49,14 @@ if int(PY_VERSION[0]) < 3:
     sys.exit(Erorr.UNSUPPORTED_PYTHON_VERSION)
 
 
-class PreAnalysis(object):
-    def __init__(self):
+class PreAnalysisManager(object):
+    # make sure, that all the attacks are build
+    # and have the scenario.py or whatever to run them
+    pass
+
+    def run(self):
+        # install the JCVersion applet
+        # save the version somewhere
         pass
 
 
@@ -62,6 +68,7 @@ class AnalysisManager(CommandLineApp):
         super().__init__()
 
     def add_options(self):
+        # TODO add option for making copy of the attack CAP files for later investigation
         super().add_options()
         self.parser.add_argument(
             "-c", "--config-file", default="config.ini", type=self.validate_config,
@@ -74,7 +81,7 @@ class AnalysisManager(CommandLineApp):
 
     def validate_config(self, value):
         if not os.path.exists(value):
-            raise argparse.ArgumentParserError(
+            raise argparse.ArgumentTypeError(
                 "Can't open the configuration file '{}'. "
                 "Does it exists or do you have the right permission?".format(value)
             )
@@ -86,6 +93,8 @@ class AnalysisManager(CommandLineApp):
         self.gp = GlobalPlatformProWrapper(log_verbosity=self.verbosity)
 
 
+class PostAnalysisManager(object):
+    pass
 
 
 class CardState(object):
@@ -149,6 +158,20 @@ class CardState(object):
                     item[_type]["ITEMS"][name].extend(values)
                 else:
                     item[_type]["ITEMS"][name].append(value)
+
+
+class CardAnalysis(object):
+    # object representing a card during the analysis
+    # basically a card can go from one state to another if a GlobalPlatformCall is performed on it. E.g. listing, installing etc.
+    # Being defensies and cautious we can, hopefully log each weird behaviour
+    def __init__(self):
+        self.states = None
+
+    def update(self, state):
+        if self.states is None:
+            self.states = [state]
+        else:
+            self.states.append(state)
 
 
 if __name__ == "__main__":
