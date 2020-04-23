@@ -111,7 +111,7 @@ class GlobalPlatformProWrapper(object):
                 "The value '{}' is not recognized as valid diversifier.".format(value)
             )
 
-    def run_gp_command(self, commands):
+    def run_gp_command(self, command):
         cmd = self.gp_prefix()
         # def add_flags(self):
         if self.verbose:
