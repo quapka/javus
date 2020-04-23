@@ -42,7 +42,7 @@ LOG_LEVELS = [
 PY_VERSION_TUPLE = platform.python_version_tuple()
 PY_VERSION = platform.python_version()
 
-if PY_VERSION[0] < 3:
+if int(PY_VERSION[0]) < 3:
     print("Unsupported python version: {}".format(PY_VERSION))
     print("Try using Python 3.6")
     sys.exit(Erorr.UNSUPPORTED_PYTHON_VERSION)
