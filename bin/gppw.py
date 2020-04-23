@@ -9,6 +9,11 @@ import configparser
 import subprocess
 import enum
 import logging
+import re
+
+from smartcard import ATR
+
+# FIXME what if no card/reader is present?
 
 log = logging.getLogger(__file__)
 # TODO add handler for printing
@@ -52,28 +57,45 @@ class Diversifier(enum.Enum):
         if diversifier == cls.KDF3:
             return "--kdf3"
 
+    @classmethod
+    def special(cls):
+        # create a list of not NONE diversifiers
+        return [cls.EMV, cls.VISA2, cls.KDF3]
+
 
 class GlobalPlatformProWrapper(object):
-    def __init__(self, config, dry_run=False, log_verbosity=logging.CRITICAL):
+    DIVERSIFIER_ERROR_MSG = (
+        "DO NOT RE-TRY THE SAME COMMAND/KEYS OR YOU MAY BRICK YOUR CARD"
+    )
+
+    def __init__(
+        self, config, card_types=None, dry_run=False, log_verbosity=logging.CRITICAL
+    ):
+        # TODO split by init args and other
         self.verbose = True
         self.debug = True
         self.config = config
+        self.card_types = card_types
         self.diversifier = Diversifier.UNDETECTED
-        # path to the GlobalPlatformPro.jar
         self.gp_path = None
         self.dry_run = dry_run
         self.version = None
+        self.atr = None
+        self.init_gp_list_output = ""
 
         log.setLevel(log_verbosity)
 
-    def gp_prefix(self, add_diversifier=True):
+        # load necessery configurations
+        self.process_config()
+
+    def gp_prefix(self):
         cmd = [
             "java",
             "-jar",
             self.gp_path,
         ]
         # TODO add the diversifier here, it is probably the safest option
-        if add_diversifier:
+        if self.diversifier != Diversifier.UNDETECTED:
             cmd += [Diversifier.get_flag(self.diversifier)]
         return cmd
 
@@ -92,9 +114,25 @@ class GlobalPlatformProWrapper(object):
             log.critical("Config [PATHS] section does not contain path to 'gp.jar'.")
             raise RuntimeError("Incomplete configuration.")
 
+    def determine_diversifier(self):
+        log.debug("Try to determine the diversifier for the card.")
         self.load_diversifier_from_config()
+        if self.diversifier != Diversifier.UNDETECTED:
+            return
+
+        self.guess_diversifier()
+        if self.diversifier != Diversifier.UNDETECTED:
+            return
+
+        # TODO which configuration file
+        log.critical("Cannot determine the card diversifier")
+        raise ValueError(
+            "Cannot determine the card diversifier. "
+            "If you know it, set it directly in the configuration file"
+        )
 
     def load_diversifier_from_config(self):
+        log.debug("Loading diversifier value from the configuration")
         try:
             value = self.config["CARD"]["diversifier"]
         except KeyError:
@@ -105,23 +143,58 @@ class GlobalPlatformProWrapper(object):
         value = value.strip()
         value = value.upper()
         try:
-            diversifier = Diversifier[value]
+            self.diversifier = Diversifier[value]
+            log.debug(
+                "Diversifier {} loaded from the configuration".format(self.diversifier)
+            )
         except KeyError:
             log.warning(
                 "The value '{}' is not recognized as valid diversifier.".format(value)
             )
+            return
 
-    def run_gp_command(self, command):
+    def infer_diversifier(self):
+        log.debug("Try to infer the diversifier from predefined list of known cards.")
+        if self.atr is None:
+            log.info("Cannot infer diversifier, 'self.atr' is None")
+            return
+        # iterate over know ATR values and load their diversifier
+        for known_atr in self.card_types.sections():
+            if self.same_atr(self.atr, known_atr):
+                try:
+                    div = self.card_types[known_atr]["diversifier"]
+                    log.info("Missing 'diversifier=value' pair")
+                except KeyError:
+                    continue
+
+                try:
+                    self.diversifier = Diversifier[div]
+                    # stop looking for other matches, there shouldn't be any anyway
+                    break
+                except KeyError:
+                    continue
+
+    @staticmethod
+    def same_atr(first, second):
+        # TODO use smartcard.ATR
+        clean_first = first.replace(" ", "").upper()
+        clean_second = second.replace(" ", "").upper()
+        return clean_first == clean_second
+
+    # TODO when and how to save to database?
+    def run(self, options):
         cmd = self.gp_prefix()
         # def add_flags(self):
         if self.verbose:
             cmd += ["--verbose"]
         if self.debug:
             cmd += ["--debug"]
-        if self.diversifier:
-            pass
 
-    def determine_diversifier(self):
+        cmd.extend(options)
+        proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return proc
+
+    def guess_diversifier(self):
         # try to avoid bricking the card in case the diversifier
         # has been already detected!
         if self.diversifier != Diversifier.UNDETECTED:
@@ -131,24 +204,37 @@ class GlobalPlatformProWrapper(object):
                 )
             )
             return
-        # TODO load know ATRs for EMV and VISA2
-        # FIXME finish!
-
-        # first try EMV diversifier
-        cmd = self.gp_prefix()
-        cmd += ["--list", "--emv"]
-
-        proc = subprocess.check_output(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+        # first try `$ gp --list` without diversifier
+        proc = self.run(["--list"])
         if proc.returncode == 0:
-            log.debug("Card diversifier assumed to be EMV.")
-            # safe to assume, that the card uses EMV diversifier
-            self.diversifier = Diversifier.EMV
+            self.diversifier = Diversifier.NONE
+            log.debug("{} diversifier is used.".format(self.diversifier.name))
             return
 
+        # before running other commmand a potentially harming the card
+        # we can try to grep for the ATR in the previous output and compare it to known EMV ATRs
+        list_output = proc.stdout.decode("utf8")
+        self.atr = self.find_atr(list_output)
+
+        self.infer_diversifier()
+        if self.diversifier != Diversifier.UNDETECTED:
+            return
+
+        for div in Diversifier.special():
+            options = ["--list", Diversifier.get_flag(div)]
+            proc = self.run(options)
+            output = "\n".join([proc.stdout.decode("utf8"), proc.stderr.decode("utf8")])
+            if proc.returncode != 0 or self.DIVERSIFIER_ERROR_MSG in output:
+                log.warning(
+                    "Tried {} as diversifier, but it is not correct".format(div.name)
+                )
+                continue
+
+            self.diversifier = div
+            break
+
     def read_gp_version(self):
-        cmd = self.gp_prefix(add_diversifier=False)
+        cmd = self.gp_prefix()
         cmd += ["--version"]
 
         proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -161,12 +247,42 @@ class GlobalPlatformProWrapper(object):
         """
         Calling $ gp --help as a sanity checking, that gp is working properly
         """
-        cmd = self.gp_prefix(add_diversifier=False)
+        cmd = self.gp_prefix()
         cmd += ["--help"]
         proc = subprocess.run(cmd)
 
         if proc.returncode == 0:
             self.works = True
+
+    # def get_atr(self, gp_verbose_output=None):
+    #     # be cautious in case we have already an ATR
+    #     # no need to call it again and potentially brick the card
+    #     if self.atr is not None:
+    #         return
+    #     # in case we have a verbose gp output we can attempt to match the ATR
+    #     if gp_verbose_output is not None:
+    #         self.atr = self.find_atr(gp_verbose_output)
+    #     # otherwise we match for it from output of '--list' command
+    #     cmd = self.gp_prefix()
+    #     cmd += ["--list"]
+    #     proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #     # should not matter what the return code is
+    #     self.atr = self.find_atr(proc.stdout)
+
+    def find_atr(self, string):
+        # fragile and naive way of getting the ATR, but does the job
+        match = re.search(r"ATR: ([A-Z0-9]+)", string)
+        if match:
+            return match.group(1)
+        return None
+
+    def install(self, path_to_applet):
+        cmd = self.gp_prefix()
+        cmd += ["--install"]
+
+    def uninstall(self, path_to_applet):
+        cmd = self.gp_prefix()
+        cmd += ["--uninstall"]
 
 
 if __name__ == "__main__":
