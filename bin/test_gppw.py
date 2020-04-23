@@ -68,3 +68,15 @@ def test_for_specific_gp_version():
 
     gp.read_gp_version()
     assert gp.version == "GlobalPlatformPro v20.01.23-0-g5ad373b"
+
+
+def test_that_gp_is_working():
+    config = configparser.ConfigParser()
+    config["PATHS"] = {
+        "gp.jar": "/home/qup/projects/fi/crocs/GlobalPlatformPro/gp.jar",
+    }
+    gp = GlobalPlatformProWrapper(config=config, dry_run=False)
+    gp.process_config()
+
+    gp.verify_gp()
+    assert gp.works == True

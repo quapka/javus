@@ -157,6 +157,17 @@ class GlobalPlatformProWrapper(object):
         if proc.returncode in [0, 1]:
             self.version = proc.stdout.decode("utf8").split("\n")[0]
 
+    def verify_gp(self):
+        """
+        Calling $ gp --help as a sanity checking, that gp is working properly
+        """
+        cmd = self.gp_prefix(add_diversifier=False)
+        cmd += ["--help"]
+        proc = subprocess.run(cmd)
+
+        if proc.returncode == 0:
+            self.works = True
+
 
 if __name__ == "__main__":
     pass
