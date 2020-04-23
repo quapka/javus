@@ -10,6 +10,8 @@ import subprocess
 import enum
 import logging
 import re
+import os
+
 
 from smartcard import ATR
 
@@ -276,13 +278,15 @@ class GlobalPlatformProWrapper(object):
             return match.group(1)
         return None
 
-    def install(self, path_to_applet):
-        cmd = self.gp_prefix()
-        cmd += ["--install"]
+    def install(self, applet_path):
+        if not os.path.exists(applet_path):
+            log.error("Cannot find the file {}".applet_path)
+        self.run(["--install", applet_path])
 
-    def uninstall(self, path_to_applet):
-        cmd = self.gp_prefix()
-        cmd += ["--uninstall"]
+    def uninstall(self, applet_path):
+        if not os.path.exists(applet_path):
+            log.error("Cannot find the file {}".applet_path)
+        self.run(["--uninstall", applet_path])
 
 
 if __name__ == "__main__":
