@@ -78,7 +78,20 @@ class GlobalPlatformProWrapper(object):
         return cmd
 
     def process_config(self):
-        self.gp_path = self.config["PATHS"]["gp.jar"]
+        # TODO to re-raise or not to re-raise
+        # custom exceptions or configparser exceptions?
+        try:
+            section = self.config["PATHS"]
+        except KeyError:
+            log.critical("Config does not contain 'PATHS' section. Please, add it.")
+            raise RuntimeError("Incomplete configuration.")
+
+        try:
+            self.gp_path = section["gp.jar"]
+        except KeyError:
+            log.critical("Config [PATHS] section does not contain path to 'gp.jar'.")
+            raise RuntimeError("Incomplete configuration.")
+
         self.load_diversifier_from_config()
 
     def load_diversifier_from_config(self):

@@ -6,7 +6,7 @@ from gppw import GlobalPlatformProWrapper
 from gppw import Diversifier
 
 
-def test_gp_prefix():
+def test__gp_prefix__from_config():
     config = configparser.ConfigParser()
     config["PATHS"] = {
         "gp.jar": "/path/to/the/gp.jar",
@@ -14,6 +14,14 @@ def test_gp_prefix():
     gp = GlobalPlatformProWrapper(config=config, dry_run=True)
     gp.process_config()
     assert gp.gp_prefix() == ["java", "-jar", "/path/to/the/gp.jar", ""]
+
+
+def test__gp_prefix__when_missing_in_config():
+    config = configparser.ConfigParser()
+    config["PATHS"] = {}
+    gp = GlobalPlatformProWrapper(config=config, dry_run=True)
+    with pytest.raises(RuntimeError):
+        gp.process_config()
 
 
 @pytest.mark.parametrize(
