@@ -2,6 +2,8 @@
 
 from jcvmutils.utils import MongoConnection
 from jcvmutils.utils import CommandLineApp
+
+from gppw import GlobalPlatformProWrapper
 import configparser
 import os
 import argparse
@@ -80,7 +82,7 @@ class AnalysisManager(CommandLineApp):
         config = configparser.ConfigParser(self.config_file)
 
     def run(self):
-        self.gpw = GlobalPlatformWrapper()
+        self.gp = GlobalPlatformProWrapper(log_verbosity=self.verbosity)
 
 
 if __name__ == "__main__":
