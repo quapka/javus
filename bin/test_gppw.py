@@ -42,3 +42,21 @@ def test_gp_prefix_with_diversifier(div, str_div):
 
 # def test_detecting_diversifier_from_config():
 #     raise ValueError
+
+# TODO live tests
+
+
+# FIXME add pytest.ini with custom markers
+# FIXME needs live config
+# FIXME should be reimplemented as pytest check rather
+# @pytest.mark.live
+def test_for_specific_gp_version():
+    config = configparser.ConfigParser()
+    config["PATHS"] = {
+        "gp.jar": "/home/qup/projects/fi/crocs/GlobalPlatformPro/gp.jar",
+    }
+    gp = GlobalPlatformProWrapper(config=config, dry_run=False)
+    gp.process_config()
+
+    gp.read_gp_version()
+    assert gp.version == "GlobalPlatformPro v20.01.23-0-g5ad373b"

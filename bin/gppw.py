@@ -62,6 +62,7 @@ class GlobalPlatformProWrapper(object):
         # path to the GlobalPlatformPro.jar
         self.gp_path = None
         self.dry_run = dry_run
+        self.version = None
 
         log.setLevel(log_verbosity)
 
@@ -133,13 +134,15 @@ class GlobalPlatformProWrapper(object):
             self.diversifier = Diversifier.EMV
             return
 
-    def install(self):
-        cmd = self.gp_prefix()
-        cmd += ["--install"]
+    def read_gp_version(self):
+        cmd = self.gp_prefix(add_diversifier=False)
+        cmd += ["--version"]
 
-    def uninstall(self):
-        cmd = self.gp_prefix()
-        cmd += ["--uninstall"]
+        proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # the version of GlobalPlatformPro used during the analysis has a bug in the CLI
+        # more information at: https://github.com/martinpaljak/GlobalPlatformPro/issues/217
+        if proc.returncode in [0, 1]:
+            self.version = proc.stdout.decode("utf8").split("\n")[0]
 
 
 if __name__ == "__main__":
