@@ -65,14 +65,15 @@ class GlobalPlatformProWrapper(object):
 
         log.setLevel(log_verbosity)
 
-    def gp_prefix(self):
+    def gp_prefix(self, add_diversifier=True):
         cmd = [
             "java",
             "-jar",
             self.gp_path,
         ]
         # TODO add the diversifier here, it is probably the safest option
-        cmd += [Diversifier.get_flag(self.diversifier)]
+        if add_diversifier:
+            cmd += [Diversifier.get_flag(self.diversifier)]
         return cmd
 
     def process_config(self):
