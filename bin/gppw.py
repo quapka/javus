@@ -286,4 +286,25 @@ class GlobalPlatformProWrapper(object):
 
 
 if __name__ == "__main__":
-    pass
+    # this part is not meant to be run standalone, but it is here for the
+    # ease of development and testing
+    import argparse
+    import configparser
+    import logging
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config-file", default="config.ini")
+    parser.add_argument("-t", "--card-types-file", default="types.ini")
+
+    args = parser.parse_args()
+
+    config = configparser.ConfigParser()
+    config.read(args.config_file)
+
+    card_types = configparser.ConfigParser()
+    card_types.read(args.card_types_file)
+
+    gp = GlobalPlatformProWrapper(
+        config=config, card_types=card_types, log_verbosity=logging.DEBUG
+    )
+    gp.determine_diversifier()
