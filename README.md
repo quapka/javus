@@ -87,3 +87,20 @@ Installation
 ------------
 
 `pipenv install pkgs/jcvmutils`
+
+Scenario of an individual attack
+--------------------------------
+
+steps:
+    - [build attacks]
+    - [registry attacks]
+    - assess states (which applets are installed)
+        - get jcversion
+
+    for attack:
+        - install applets
+            - and veritfy, that they have been added
+            - diff
+        - run the read mem commands and get their outputs
+        - uninstall
+        - check differences agains the first state
