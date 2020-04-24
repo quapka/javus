@@ -42,3 +42,6 @@ pkgs/jcvmutils/build
 *.cap
 *.exp
 *.jca
+
+# ignore the results of the analysis
+analysis-results/
