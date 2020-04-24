@@ -1,0 +1,24 @@
+Warning: no keys given, using default test key 404142434445464748494A4B4C4D4E4F
+ISD: A000000003000000 (OP_READY)
+     Privs:   SecurityDomain, CardLock, CardTerminate, CardReset, CVMManagement
+
+APP: A00000006303010C0101 (SELECTABLE)
+     Privs:   
+
+APP: A00000006203010C0101 (SELECTABLE)
+     Privs:   
+
+PKG: A00000006303010C02 (LOADED)
+     Version: 0.0
+
+PKG: A00000006303010C01 (LOADED)
+     Version: 0.0
+     Applet:  A00000006303010C0101
+
+PKG: A00000006203010C02 (LOADED)
+     Version: 0.0
+
+PKG: A00000006203010C01 (LOADED)
+     Version: 0.0
+     Applet:  A00000006203010C0101
+
