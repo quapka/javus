@@ -45,3 +45,6 @@ pkgs/jcvmutils/build
 
 # ignore the results of the analysis
 analysis-results/
+
+# ignore per user configuration files
+user-config.ini
