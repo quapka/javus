@@ -61,6 +61,14 @@ class PreAnalysisManager(object):
 
 
 class AnalysisManager(CommandLineApp):
+    APP_DESCRIPTION = """
+    [DISCLAIMER] Running this analysis can potentially dammage (brick/lock) your card!
+    By using this tool you acknowledge this fact and use the tool on your on risk.
+    This tool is meant to be used for analysis and research on spare JavaCards in order
+    to infer something about the level of the security of the JavaCard Virtual Machine
+    implementation it is running.
+    """
+
     def __init__(self):
         self.config = None
         self.config_file = None
