@@ -97,13 +97,16 @@ class PostAnalysisManager(object):
     pass
 
 
+# TODO add logging everywhere
 class CardState(object):
     # basically a parsed output from `gp --list`
     def __init__(self, raw):
         self.raw = raw
-        self.pkgs = None
-        self.applets = None
+        self.isds = []
+        self.pkgs = []
+        self.applets = []
         self._items = None
+        self.parseable = False
 
     def _parse_raw(self):
         if self._items is not None:
@@ -158,6 +161,24 @@ class CardState(object):
                     item[_type]["ITEMS"][name].extend(values)
                 else:
                     item[_type]["ITEMS"][name].append(value)
+
+    def process(self):
+        # parse the raw output of `gp --list`
+        try:
+            self._parse_raw()
+            self.parseable = True
+        except Exception:
+            log.warning("The card state coult not be parsed properly")
+            self.parseable = False
+
+        # FIXME the next few lines are ugly, but will do for now
+        for item in self._items:
+            if list(item.keys()) == ["APP"]:
+                self.applets.append(item)
+            if list(item.keys()) == ["PKG"]:
+                self.pkgs.append(item)
+            if list(item.keys()) == ["ISD"]:
+                self.isds.append(item)
 
 
 class CardAnalysis(object):
