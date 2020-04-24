@@ -30,6 +30,7 @@ ignore/
 *.egg-info/
 pkgs/jcvmutils/dist
 pkgs/jcvmutils/build
+.coverage
 
 # ignore intermediate TeX files
 *.aux
