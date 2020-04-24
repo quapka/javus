@@ -104,3 +104,19 @@ steps:
         - run the read mem commands and get their outputs
         - uninstall
         - check differences agains the first state
+
+Testing
+-------
+Runs *tests* about the Python project.
+```
+pytest -c tests/pytest.ini tests
+```
+
+Checking
+--------
+
+Runs *checks*, whether the various applets etc. can be build properly,
+so that the analysis is ready to be run.
+```
+pytest -c checks/check.ini checks
+```
