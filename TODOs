@@ -24,3 +24,6 @@ and make other depend on it
 put RID, PIX, AID into config (package etc variants)
 
 TODO: How to write log messages
+
+TODO: Add to source code files
+# -*- coding: utf-8 -*-
