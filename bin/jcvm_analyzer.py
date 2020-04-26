@@ -72,7 +72,8 @@ class AnalysisManager(CommandLineApp):
     def __init__(self):
         self.config = None
         self.config_file = None
-        self.gpw = None
+        self.gp = None
+        self.card = None
         super().__init__()
 
     def add_options(self):
@@ -80,6 +81,23 @@ class AnalysisManager(CommandLineApp):
         super().add_options()
         self.parser.add_argument(
             "-c", "--config-file", default="config.ini", type=self.validate_config,
+        )
+        self.parser.add_argument(
+            "-r",
+            "--rebuild",
+            default=False,
+            action="store_true",
+            help=(
+                "When set, each used applet will be rebuild before installing and "
+                "running. If no card is present this effectively rebuilds all attacks."
+            ),
+        )
+        self.parser.add_argument(
+            "-l",
+            "--long-description",
+            default=False,
+            action="store_true",
+            help="Will display long description of the tool and end.",
         )
 
     def parse_options(self):
@@ -99,6 +117,20 @@ class AnalysisManager(CommandLineApp):
 
     def run(self):
         self.gp = GlobalPlatformProWrapper(log_verbosity=self.verbosity)
+        # TODO make sure we only have one card in the reader
+        self.card = Card()
+        sel.get_jc_version(self.card)
+
+    def get_jc_version(self, card):
+        # ordered from the newests
+        jc_applets = []
+        for applet in jc_applets:
+            if self.gp.install(applet):
+                break
+
+    def run_attack(self):
+        for attack in self.active_attacks:
+            pass
 
 
 class PostAnalysisManager(object):
@@ -189,12 +221,16 @@ class CardState(object):
                 self.isds.append(item)
 
 
-class CardAnalysis(object):
+class Card(object):
     # object representing a card during the analysis
     # basically a card can go from one state to another if a GlobalPlatformCall is performed on it. E.g. listing, installing etc.
     # Being defensies and cautious we can, hopefully log each weird behaviour
+    # TODO
+    # install an applet
+    # execute applet/attack steps
     def __init__(self):
         self.states = None
+        self.jcversion = None
 
     def update(self, state):
         if self.states is None:
