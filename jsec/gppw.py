@@ -290,12 +290,12 @@ class GlobalPlatformProWrapper(object):
     def install(self, applet_path):
         if not os.path.exists(applet_path):
             log.error("Cannot find the file {}".applet_path)
-        self.run(["--install", applet_path])
+        return self.run(["--install", applet_path])
 
     def uninstall(self, applet_path):
         if not os.path.exists(applet_path):
             log.error("Cannot find the file {}".applet_path)
-        self.run(["--uninstall", applet_path])
+        return self.run(["--uninstall", applet_path])
 
 
 if __name__ == "__main__":
