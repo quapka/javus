@@ -199,8 +199,12 @@ class GlobalPlatformProWrapper(object):
             cmd += ["--debug"]
 
         cmd.extend(options)
-        log.debug("Run the following command: {}".format("".join(cmd)))
-        proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if self.dry_run:
+            log.info("--dry-run is set, not calling %s", " ".join(cmd))
+            proc = None
+        else:
+            log.debug("Run the command: %s", " ".join(cmd))
+            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return proc
 
     def guess_diversifier(self):
@@ -245,6 +249,7 @@ class GlobalPlatformProWrapper(object):
         cmd = self.gp_prefix()
         cmd += ["--version"]
 
+        # FIXME add --dry-run
         proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # the version of GlobalPlatformPro used during the analysis has a bug in the CLI
         # more information at: https://github.com/martinpaljak/GlobalPlatformPro/issues/217
@@ -257,6 +262,7 @@ class GlobalPlatformProWrapper(object):
         """
         cmd = self.gp_prefix()
         cmd += ["--help"]
+        # FIXME add --dry-run
         proc = subprocess.run(cmd)
 
         if proc.returncode == 0:

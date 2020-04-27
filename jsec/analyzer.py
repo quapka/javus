@@ -106,10 +106,25 @@ class AnalysisManager(CommandLineApp):
             help="Will display long description of the tool and end.",
         )
 
+        self.parser.add_argument(
+            "-n",
+            "--dry-run",
+            default=False,
+            action="store_true",
+            help="No external programs are called, useful when developing the analyzer",
+        )
+
     def parse_options(self):
         super().parse_options()
         if self.args.config_file is not None:
             self.config_file = self.args.config_file
+
+        if self.args.dry_run is not None:
+            print(
+                "[Note] --dry-run was set, no external commands are called "
+                "and no report is created"
+            )
+            self.dry_run = self.args.dry_run
 
     def validate_config(self, value):
         if not os.path.exists(value):
