@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "89fb6776f981522a56070ade9f1506029f8c4782d00240a338d3532307ca5e63"
+            "sha256": "23b60040ded78777c0b7bed241cf6131994e9f13d5c1f47d7e8ad41c112d90f3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -257,6 +257,10 @@
             ],
             "markers": "python_version < '3.8'",
             "version": "==1.6.0"
+        },
+        "jcvmutils": {
+            "editable": true,
+            "path": "./pkgs/jcvmutils"
         },
         "more-itertools": {
             "hashes": [
