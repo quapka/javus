@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from jcvmutils.utils import MongoConnection
-from jcvmutils.utils import CommandLineApp
+from utils import MongoConnection
+from utils import CommandLineApp
 
 # from jcvmutils.utils import LOG_LEVELS
 import configparser
