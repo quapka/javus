@@ -15,8 +15,8 @@ import re
 
 from pathlib import Path
 
-DATA_PATH = Path(__file__) / "data"
 
+from settings import DATA
 from gppw import GlobalPlatformProWrapper
 from utils import MongoConnection
 from utils import CommandLineApp
