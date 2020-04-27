@@ -9,6 +9,8 @@ import time
 
 import pymongo
 
+from contextlib import contextmanager
+
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()
 formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s: %(message)s")
@@ -122,6 +124,26 @@ class CommandLineApp(object):
 
     def run(self):
         raise NotImplementedError("The method 'run' has not bee implemented!")
+
+
+# kudos to:
+# https://stackoverflow.com/questions/431684/how-do-i-change-the-working-directory-in-python/13197763#13197763
+@contextmanager
+def cd(new_path):
+    old_path = os.getcwd()
+    log.debug("Save old path: %s", old_path)
+    try:
+        log.debug("Change directory to: %s", new_path)
+        # no yield for now, as there is no need for additional information
+        os.chdir(new_path)
+        yield old_path
+    finally:
+        # the old directory might also be remove, however there isn't
+        # good and logical thing to do, so in that case the exception will be
+        # thrown
+        # FIXME Ceesjan taught to not to use format in logging!!!
+        log.debug("Switch back to old path: %s", old_path)
+        os.chdir(old_path)
 
 
 if __name__ == "__main__":
