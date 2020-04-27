@@ -1,4 +1,4 @@
-from jsec.jsec.functions import is_hex, valid_aid
+from jsec.functions import is_hex, valid_aid
 
 
 def test__is_hex__with_valid_value():

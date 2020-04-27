@@ -6,7 +6,7 @@ import pymongo
 from dominate.tags import body, caption, link, table, tbody, td, th, tr
 from dominate.util import raw
 
-from jsec.jsec.utils import CommandLineApp
+from jsec.utils import CommandLineApp
 
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()

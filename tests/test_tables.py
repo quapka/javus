@@ -1,5 +1,5 @@
 import pytest
-from jsec.jsec.tables import Table
+from jsec.tables import Table
 
 # FIXME using argparse down the rabbit hole create a problem with pytest
 # the sys.args are being propagated

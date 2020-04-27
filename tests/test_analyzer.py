@@ -1,6 +1,6 @@
 import pytest
 
-from jsec.jsec.analyzer import CardState
+from jsec.analyzer import CardState
 
 
 def test___parse_raw__with_correct_pkg():

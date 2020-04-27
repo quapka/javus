@@ -1,6 +1,6 @@
 import os
 
-from jsec.jsec.settings import get_project_root
+from jsec.settings import get_project_root
 from pathlib import Path
 
 

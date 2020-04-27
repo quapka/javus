@@ -18,12 +18,12 @@ import re
 from pathlib import Path
 
 
-from settings import DATA
-from gppw import GlobalPlatformProWrapper
-from utils import MongoConnection
-from utils import CommandLineApp
-from utils import cd
-from utils import Error
+from jsec.settings import DATA
+from jsec.gppw import GlobalPlatformProWrapper
+from jsec.utils import MongoConnection
+from jsec.utils import CommandLineApp
+from jsec.utils import cd
+from jsec.utils import Error
 
 # FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
@@ -76,6 +76,7 @@ class PreAnalysisManager:
             scenario.execute_stages(version)
 
 
+# FIXME give disclaimer and ask about consent
 class App(CommandLineApp):
     APP_DESCRIPTION = """
     [DISCLAIMER] Running this analysis can potentially dammage (brick/lock) your card!
