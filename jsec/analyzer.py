@@ -4,6 +4,7 @@ from jcvmutils.utils import MongoConnection
 from jcvmutils.utils import CommandLineApp
 
 from jsec.jsec.gppw import GlobalPlatformProWrapper
+# FIXME use isort
 import configparser
 import os
 import argparse
@@ -22,10 +23,14 @@ from pathlib import Path
 DATA_PATH = Path(__file__) / "data"
 
 
+# FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
 # [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)
+# TODO add docstrings
+
 # TODO determine the level of defensive approach? E.g. when guessing emv
 
+# FIXME think through the hierarchy of the different loggers
 # TODO put into separate file config
 log = logging.getLogger(__file__)
 # TODO add handler for printing
@@ -75,6 +80,7 @@ class AnalysisManager(CommandLineApp):
     """
 
     def __init__(self):
+        # FIXME group self.args according to meaning
         self.config = None
         self.config_file = None
         self.gp = None

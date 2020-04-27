@@ -31,6 +31,7 @@ class Error(enum.Enum):
     UNSUPPORTED_PYTHON_VERSION = -1
 
 
+# FIXME put into utils.py
 class LogLevels(enum.Enum):
     DEBUG = logging.DEBUG
     INFO = logging.INFO

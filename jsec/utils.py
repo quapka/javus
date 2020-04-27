@@ -15,6 +15,7 @@ formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s: %(message)s")
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
+# FIXME use enum and allow 'debug' as value for --verbose
 LOG_LEVELS = [
     logging.DEBUG,
     logging.INFO,
@@ -105,6 +106,7 @@ class CommandLineApp(object):
         )
 
     def validate_verbosity(self, value):
+        # FIXME use enum.Enum - already in gppw.py
         try:
             value = int(value)
         except ValueError:
