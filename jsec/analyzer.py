@@ -52,21 +52,26 @@ if int(PY_VERSION[0]) < 3:
 class PreAnalysisManager(object):
     # make sure, that all the attacks are build
     # and have the scenario.py or whatever to run them
-    def __init__(sefl, card, gp):
+    def __init__(self, card, gp):
         self.gp = gp
         self.card = card
 
-    def run(self, card):
+    def run(self):
         # install the JCVersion applet
         # save the version somewhere
-        pass
+        self.get_jc_version()
 
-    def get_jc_version(self, card):
+    def get_jc_version(self):
         # ordered from the newests
         config = configparser.ConfigParser()
-        config.read(DATA_PATH / "jcversion/config")
+        path = DATA / "jcversion/config.ini"
+        config.read(path)
+        # FIXME make sure the versions are oredered
+        versions = config["BUILD"]["versions"].split(",")
 
-        card.execute_steps(config["STAGES"])
+        for version in versions:
+            scenario = ScenarioHandler(config, self.gp, workdir=DATA / "jcversion")
+            scenario.execute_stages(version)
 
 
 class App(CommandLineApp):
@@ -91,7 +96,7 @@ class App(CommandLineApp):
         # TODO add option for making copy of the attack CAP files for later investigation
         super().add_options()
         self.parser.add_argument(
-            "-c", "--config-file", default="config.ini", type=self.validate_config,
+            "-c", "--config-file", default="user-config.ini", type=self.validate_config,
         )
         self.parser.add_argument(
             "-r",
@@ -134,22 +139,32 @@ class App(CommandLineApp):
     def validate_config(self, value):
         if not os.path.exists(value):
             raise argparse.ArgumentTypeError(
-                "Can't open the configuration file '{}'. "
-                "Does it exists or do you have the right permission?".format(value)
+                "\nError: Can't open the configuration file '{}'. "
+                "Does it exists and do you have the permission to read it?".format(
+                    value
+                )
             )
+        return Path(value)
 
     def load_configuration(self):
-        config = configparser.ConfigParser(self.config_file)
+        self.config = configparser.ConfigParser()
+        self.config.read(self.config_file)
 
     def run(self):
-        self.gp = GlobalPlatformProWrapper(log_verbosity=self.verbosity)
-        # TODO make sure we only have one card in the reader
-        self.card = Card(gp=self.gp)
-        sel.get_jc_version(self.card)
+        self.load_configuration()
 
-    def run_attack(self):
-        for attack in self.active_attacks:
-            pass
+        self.gp = GlobalPlatformProWrapper(
+            config=self.config, dry_run=self.dry_run, log_verbosity=self.verbosity,
+        )
+        # FIXME make sure we only have one card in the reader
+        self.card = Card()
+        prem = PreAnalysisManager(self.card, self.gp)
+        prem.run()
+        # sel.get_jc_version(self.card)
+
+    # def run_attack(self):
+    #     for attack in self.active_attacks:
+    #         pass
 
 
 class PostAnalysisManager(object):
@@ -258,14 +273,42 @@ class Card(object):
             self.states.append(state)
 
 
-class AppManager(object):
-    def __init__(self):
-        pass
+# class AppManager(object):
+#     def __init__(self):
+#         pass
 
-    def run(self):
-        card = Card()
+#     def run(self):
+#         card = Card()
+#         gp = GlobalPlatformProWrapper()
+#         PreAnalysisManager(gp, card)
 
-        PreAnalysisManager(gp, card)
+
+class ScenarioHandler(object):
+    def __init__(self, config, gp, workdir):
+        self.stages = config["STAGES"]
+        self.gp = gp
+        self.workdir = workdir
+        self.installed_version = None
+
+    def execute_stages(self, version):
+        self.installed_version = None
+        for stage, value in self.stages.items():
+            stage = stage.upper()
+            if stage == "INSTALL":
+                log.info("Attempt to install version: %s", version)
+                with cd(self.workdir):
+                    self.gp.install(value.format(version=version))
+            if stage.startswith("SEND"):
+                pass
+            if stage == "UNINSTALL":
+                if version == self.installed_version:
+                    with cd(self.workdir):
+                        log.info("Uninstall version: %s", version)
+                        self.gp.uninstall(value.format(version=version))
+                log.warning(
+                    "Attempt to uninstall version '%s', that was not installed.",
+                    version,
+                )
 
 
 if __name__ == "__main__":
