@@ -69,7 +69,7 @@ class PreAnalysisManager(object):
         card.execute_steps(config["STAGES"])
 
 
-class AnalysisManager(CommandLineApp):
+class App(CommandLineApp):
     APP_DESCRIPTION = """
     [DISCLAIMER] Running this analysis can potentially dammage (brick/lock) your card!
     By using this tool you acknowledge this fact and use the tool on your on risk.
@@ -269,4 +269,5 @@ class AppManager(object):
 
 
 if __name__ == "__main__":
-    app = AnalysisManager()
+    app = App()
+    app.run()
