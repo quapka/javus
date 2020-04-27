@@ -15,7 +15,7 @@ setup(
     url="",
     packages=["jsec"],
     # TODO there will be scripts
-    scripts=[],
+    scripts=["scripts/jsec"],
     # TODO add package_data and/or data_files
     # TODO figure out testing with disutils
 )
