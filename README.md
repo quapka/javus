@@ -120,3 +120,8 @@ so that the analysis is ready to be run.
 ```
 pytest -c checks/check.ini checks
 ```
+
+Contribution
+------------
+
+https://www.pypa.io/en/latest/code-of-conduct/
