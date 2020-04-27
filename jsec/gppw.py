@@ -201,6 +201,7 @@ class GlobalPlatformProWrapper(object):
             cmd += ["--debug"]
 
         cmd.extend(options)
+        log.debug("Run the following command: {}".format("".join(cmd)))
         proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return proc
 
