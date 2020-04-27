@@ -13,3 +13,16 @@ def get_project_root():
         if env_root != relative_root:
             return env_root
     return relative_root
+
+
+def get_project_src():
+    return get_project_root() / "jsec"
+
+
+def get_project_data():
+    return get_project_src() / "data"
+
+
+PROJECT_ROOT = get_project_root()
+PROJECT_SRC = get_project_src()
+DATA = get_project_data()
