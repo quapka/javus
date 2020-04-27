@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     # FIXME name?
-    name="Jsec",
+    name="jsec",
     version="0.1.0",
     # TODO Does it match the diploma thesis name?
     description="JavaCard Virtual Machine Security",
