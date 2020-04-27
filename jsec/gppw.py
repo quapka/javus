@@ -156,12 +156,10 @@ class GlobalPlatformProWrapper(object):
         try:
             self.diversifier = Diversifier[value]
             log.debug(
-                "Diversifier {} loaded from the configuration".format(self.diversifier)
+                "Diversifier '%s' loaded from the configuration", self.diversifier
             )
         except KeyError:
-            log.warning(
-                "The value '{}' is not recognized as valid diversifier.".format(value)
-            )
+            log.warning("The value '%s' is not recognized as valid diversifier.", value)
             return
 
     def infer_diversifier(self):
@@ -210,16 +208,15 @@ class GlobalPlatformProWrapper(object):
         # has been already detected!
         if self.diversifier != Diversifier.UNDETECTED:
             log.debug(
-                "Card diversifier already detected ({}). Not detecting it again.".format(
-                    self.diversifier.name
-                )
+                "Card diversifier already detected (%s). Not detecting it again.",
+                self.diversifier.name,
             )
             return
         # first try `$ gp --list` without diversifier
         proc = self.run(["--list"])
         if proc.returncode == 0:
             self.diversifier = Diversifier.NONE
-            log.debug("{} diversifier is used.".format(self.diversifier.name))
+            log.debug("'%s' diversifier is used.", self.diversifier.name)
             return
 
         # before running other commmand a potentially harming the card
@@ -237,7 +234,7 @@ class GlobalPlatformProWrapper(object):
             output = "\n".join([proc.stdout.decode("utf8"), proc.stderr.decode("utf8")])
             if proc.returncode != 0 or self.DIVERSIFIER_ERROR_MSG in output:
                 log.warning(
-                    "Tried {} as diversifier, but it is not correct".format(div.name)
+                    "Tried '%s' as diversifier, but it is not correct", div.name
                 )
                 continue
 
@@ -289,12 +286,12 @@ class GlobalPlatformProWrapper(object):
 
     def install(self, applet_path):
         if not os.path.exists(applet_path):
-            log.error("Cannot find the file {}".applet_path)
+            log.error("Cannot open or incorrect permission set on: '%s'", applet_path)
         return self.run(["--install", applet_path])
 
     def uninstall(self, applet_path):
         if not os.path.exists(applet_path):
-            log.error("Cannot find the file {}".applet_path)
+            log.error("Cannot open or incorrect permission set on: '%s'", applet_path)
         return self.run(["--uninstall", applet_path])
 
 

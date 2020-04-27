@@ -83,8 +83,17 @@ class CommandLineApp(object):
         self.add_options()
         self.parse_options()
 
-        log.setLevel(self.verbosity)
-        log.debug("Logging level changed")
+        self.setup_logging()
+
+    def setup_logging(self, target_log=None):
+        if target_log is None:
+            target_log = log
+        old = logging.getLevelName(target_log.level)
+        new = logging.getLevelName(self.verbosity)
+        target_log.setLevel(self.verbosity)
+        log.debug(
+            "logging level for %s changed from %s to %s ", target_log.name, old, new
+        )
 
     def add_options(self):
         levels = ", ".join([str(lvl) for lvl in LOG_LEVELS])
@@ -99,7 +108,7 @@ class CommandLineApp(object):
         try:
             value = int(value)
         except ValueError:
-            raise argparse.ArgumentTypeError("verbosity is not and integer")
+            raise argparse.ArgumentTypeError("verbosity is not an integer")
         if value not in LOG_LEVELS:
             raise argparse.ArgumentTypeError("verbosity level not from expected range")
         return value

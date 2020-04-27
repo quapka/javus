@@ -44,7 +44,7 @@ class CommunicateWithCard(CommandLineApp):
         log.debug("Loading smartcard readers")
         self.readers = readers()
         names = " ".join(["'" + str(r) + "'" for r in self.readers])
-        log.debug("Loaded: {}".format(names))
+        log.debug("Loaded: %s ", names)
 
     # def add_options(self):
     #     super().add_options()
@@ -82,7 +82,7 @@ class CommunicateWithCard(CommandLineApp):
 
             cards.append(con)
             atr = bytes(con.getATR()).hex()
-            log.debug("A card [ATR: {}] has been connected".format(atr))
+            log.debug("A card [ATR: %s] has been connected", atr)
 
         if len(cards) < 1:
             log.error("No cards have been detected! Insert only one card.")

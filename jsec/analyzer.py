@@ -34,16 +34,6 @@ formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s: %(message)s")
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
-# FIXME move to enum
-LOG_LEVELS = [
-    logging.DEBUG,
-    logging.INFO,
-    logging.WARNING,
-    logging.ERROR,
-    logging.CRITICAL,
-]
-
-
 # TODO might not work properly for future Python versions
 # subprocess .run has changed in 3.7
 PY_VERSION_TUPLE = platform.python_version_tuple()
@@ -90,6 +80,7 @@ class AnalysisManager(CommandLineApp):
         self.gp = None
         self.card = None
         super().__init__()
+        self.setup_logging(log)
 
     def add_options(self):
         # TODO add option for making copy of the attack CAP files for later investigation
