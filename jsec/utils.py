@@ -26,6 +26,11 @@ LOG_LEVELS = [
     logging.CRITICAL,
 ]
 
+
+class Error(enum.Enum):
+    UNSUPPORTED_PYTHON_VERSION = -1
+
+
 # kudos to: https://medium.com/@ramojol/python-context-managers-and-the-with-statement-8f53d4d9f87
 class MongoConnection(object):
     def __init__(

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 
+# TODO add docstrings
+# pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name
 # FIXME use isort
 import configparser
 import os
@@ -21,11 +23,11 @@ from gppw import GlobalPlatformProWrapper
 from utils import MongoConnection
 from utils import CommandLineApp
 from utils import cd
+from utils import Error
 
 # FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
 # [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)
-# TODO add docstrings
 
 # TODO determine the level of defensive approach? E.g. when guessing emv
 
@@ -46,10 +48,10 @@ PY_VERSION = platform.python_version()
 if int(PY_VERSION[0]) < 3:
     print("Unsupported python version: {}".format(PY_VERSION))
     print("Try using Python 3.6")
-    sys.exit(Erorr.UNSUPPORTED_PYTHON_VERSION)
+    sys.exit(Error.UNSUPPORTED_PYTHON_VERSION)
 
 
-class PreAnalysisManager(object):
+class PreAnalysisManager:
     # make sure, that all the attacks are build
     # and have the scenario.py or whatever to run them
     def __init__(self, card, gp):
@@ -167,12 +169,12 @@ class App(CommandLineApp):
     #         pass
 
 
-class PostAnalysisManager(object):
+class PostAnalysisManager:
     pass
 
 
 # TODO add logging everywhere
-class CardState(object):
+class CardState:
     # basically a parsed output from `gp --list`
     def __init__(self, raw):
         self.raw = raw
@@ -255,7 +257,7 @@ class CardState(object):
                 self.isds.append(item)
 
 
-class Card(object):
+class Card:
     # object representing a card during the analysis
     # basically a card can go from one state to another if a GlobalPlatformCall is performed on it. E.g. listing, installing etc.
     # Being defensies and cautious we can, hopefully log each weird behaviour
@@ -273,7 +275,7 @@ class Card(object):
             self.states.append(state)
 
 
-# class AppManager(object):
+# class AppManager():
 #     def __init__(self):
 #         pass
 
@@ -283,7 +285,7 @@ class Card(object):
 #         PreAnalysisManager(gp, card)
 
 
-class ScenarioHandler(object):
+class ScenarioHandler:
     def __init__(self, config, gp, workdir):
         self.stages = config["STAGES"]
         self.gp = gp
