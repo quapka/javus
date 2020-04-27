@@ -15,6 +15,8 @@ import os
 
 from smartcard import ATR
 
+from settings import DATA
+
 # FIXME what if no card/reader is present?
 
 log = logging.getLogger(__file__)
@@ -89,6 +91,7 @@ class GlobalPlatformProWrapper(object):
 
         # load necessery configurations
         self.process_config()
+        self.process_card_types()
 
     def gp_prefix(self):
         cmd = [
@@ -115,6 +118,11 @@ class GlobalPlatformProWrapper(object):
         except KeyError:
             log.critical("Config [PATHS] section does not contain path to 'gp.jar'.")
             raise RuntimeError("Incomplete configuration.")
+
+    def process_card_types(self):
+        if self.card_types is None:
+            self.card_types = configparser.ConfigParser()
+            self.card_types.read(DATA / "types.ini")
 
     def determine_diversifier(self):
         log.debug("Try to determine the diversifier for the card.")
