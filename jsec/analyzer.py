@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-from jcvmutils.utils import MongoConnection
-from jcvmutils.utils import CommandLineApp
 
-from jsec.jsec.gppw import GlobalPlatformProWrapper
 # FIXME use isort
 import configparser
 import os
@@ -16,12 +13,14 @@ import enum
 import logging
 import re
 
-from jsec.cards.jcversion import config
-
 from pathlib import Path
 
 DATA_PATH = Path(__file__) / "data"
 
+from gppw import GlobalPlatformProWrapper
+from utils import MongoConnection
+from utils import CommandLineApp
+from utils import cd
 
 # FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
