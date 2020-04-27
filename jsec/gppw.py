@@ -82,6 +82,7 @@ class GlobalPlatformProWrapper(object):
         self.card_types = card_types
         self.diversifier = Diversifier.UNDETECTED
         self.gp_path = None
+        # TODO dry_run is not implemented
         self.dry_run = dry_run
         self.version = None
         self.atr = None
@@ -194,7 +195,6 @@ class GlobalPlatformProWrapper(object):
     # TODO when and how to save to database?
     def run(self, options):
         cmd = self.gp_prefix()
-        # def add_flags(self):
         if self.verbose:
             cmd += ["--verbose"]
         if self.debug:
