@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import configparser
 import argparse
 import logging
 import os
@@ -6,10 +7,13 @@ import re
 import subprocess as sp
 import sys
 import time
+import enum
 
 import pymongo
 
 from contextlib import contextmanager
+
+from jsec.settings import LIB_DIR
 
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()
@@ -131,10 +135,12 @@ class CommandLineApp(object):
         raise NotImplementedError("The method 'run' has not bee implemented!")
 
 
-# kudos to:
-# https://stackoverflow.com/questions/431684/how-do-i-change-the-working-directory-in-python/13197763#13197763
 @contextmanager
 def cd(new_path):
+    """
+    kudos to:
+    https://stackoverflow.com/questions/431684/how-do-i-change-the-working-directory-in-python/13197763#13197763
+    """
     old_path = os.getcwd()
     log.debug("Save old path: %s", old_path)
     try:
@@ -149,6 +155,28 @@ def cd(new_path):
         # FIXME Ceesjan taught to not to use format in logging!!!
         log.debug("Switch back to old path: %s", old_path)
         os.chdir(old_path)
+
+
+# FIXME depends on external configuration
+def load_versions(versions):
+    """
+    parses 'jc221,jc221' etc.
+    returns the supported versions and orders them
+    from newest to oldest
+    """
+    props = configparser.ConfigParser()
+    props.read(LIB_DIR / "jcversions.properties")
+    known = list(props["SUPPORTED_VERSIONS"])
+
+    filtered = []
+    for version in versions:
+        if version in known:
+            filtered.append(version)
+
+    # sort the values based on the order of JC versions in jcversions.properties
+    filtered.sort(key=known.index)
+
+    return filtered[::-1]
 
 
 if __name__ == "__main__":

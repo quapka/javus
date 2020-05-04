@@ -23,6 +23,12 @@ def get_project_data():
     return get_project_src() / "data"
 
 
+def get_project_lib():
+    # TODO ponder some more on the fact, that lib resides in src
+    return get_project_src() / "lib"
+
+
 PROJECT_ROOT = get_project_root()
 PROJECT_SRC = get_project_src()
 DATA = get_project_data()
+LIB_DIR = get_project_lib()
