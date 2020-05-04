@@ -1,5 +1,5 @@
 import pytest
-from jsec.jsec.gppw import GlobalPlatformProWrapper
+from jsec.gppw import GlobalPlatformProWrapper
 import configparser
 
 # FIXME should be reimplemented as pytest check rather

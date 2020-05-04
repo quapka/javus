@@ -2,7 +2,7 @@ import pytest
 import os
 
 from pathlib import Path
-from jsec.jsec.settings import get_project_root
+from jsec.settings import get_project_root
 
 import subprocess
 
