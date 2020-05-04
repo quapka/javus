@@ -2,16 +2,14 @@
 
 
 # TODO add docstrings
-# pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name
+# pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
 import configparser
 import os
 import argparse
 
-import subprocess
 import platform
 import sys
-import enum
 import logging
 import re
 
@@ -20,7 +18,6 @@ from pathlib import Path
 
 from jsec.settings import DATA
 from jsec.gppw import GlobalPlatformProWrapper
-from jsec.utils import MongoConnection
 from jsec.utils import CommandLineApp
 from jsec.utils import cd
 from jsec.utils import Error
@@ -68,7 +65,8 @@ class PreAnalysisManager:
         config = configparser.ConfigParser()
         path = DATA / "jcversion/config.ini"
         config.read(path)
-        # FIXME make sure the versions are oredered
+        # FIXME make sure the versions are oredered from the
+        # newest to the oldest
         versions = config["BUILD"]["versions"].split(",")
 
         for version in versions:
