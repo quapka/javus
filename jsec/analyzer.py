@@ -126,6 +126,8 @@ class App(CommandLineApp):
             help="No external programs are called, useful when developing the analyzer",
         )
 
+        # TODO def add options attempting to uninstall all applets, that were installed
+
     def parse_options(self):
         super().parse_options()
         if self.args.config_file is not None:

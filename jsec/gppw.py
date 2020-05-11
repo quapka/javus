@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-from jsec.utils import MongoConnection
-from jsec.utils import CommandLineApp
+from jsec.settings import DATA
 
 # from jcvmutils.utils import LOG_LEVELS
 import configparser
@@ -13,10 +12,6 @@ import logging
 import re
 import os
 
-
-from smartcard import ATR
-
-from jsec.settings import DATA
 
 # FIXME what if no card/reader is present?
 
@@ -39,7 +34,7 @@ class LogLevels(enum.Enum):
 
 class Diversifier(enum.Enum):
     # TODO what about other diversifiers
-    # see: https://www.notinventedhere.org/articles/python/how-to-use-strings-as-name-aliases-in-python-enums.html
+    # noqa: E501 # see: https://www.notinventedhere.org/articles/python/how-to-use-strings-as-name-aliases-in-python-enums.html
     UNDETECTED = enum.auto()
     EMV = enum.auto()
     VISA2 = enum.auto()
@@ -241,7 +236,8 @@ class GlobalPlatformProWrapper(object):
             return
 
         # before running other commmand a potentially harming the card
-        # we can try to grep for the ATR in the previous output and compare it to known EMV ATRs
+        # we can try to grep for the ATR in the previous output
+        # and compare it to known EMV ATRs
         list_output = proc.stdout.decode("utf8")
         self.atr = self.find_atr(list_output)
 
@@ -365,7 +361,6 @@ if __name__ == "__main__":
     # this part is not meant to be run standalone, but it is here for the
     # ease of development and testing
     import argparse
-    import configparser
     import logging
 
     parser = argparse.ArgumentParser()
