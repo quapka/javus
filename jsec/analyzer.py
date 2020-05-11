@@ -131,12 +131,12 @@ class App(CommandLineApp):
         if self.args.config_file is not None:
             self.config_file = self.args.config_file
 
-        if self.args.dry_run is not None:
+        self.dry_run = self.args.dry_run
+        if self.dry_run:
             print(
                 "[Note] --dry-run was set, no external commands are called "
                 "and no report is created"
             )
-            self.dry_run = self.args.dry_run
 
     def validate_config(self, value):
         if not os.path.exists(value):
