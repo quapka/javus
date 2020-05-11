@@ -21,6 +21,7 @@ from jsec.gppw import GlobalPlatformProWrapper
 from jsec.utils import CommandLineApp
 from jsec.utils import cd
 from jsec.utils import Error
+from jsec.utils import load_versions
 
 # FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
@@ -65,9 +66,9 @@ class PreAnalysisManager:
         config = configparser.ConfigParser()
         path = DATA / "jcversion/config.ini"
         config.read(path)
-        # FIXME make sure the versions are oredered from the
-        # newest to the oldest
+
         versions = config["BUILD"]["versions"].split(",")
+        versions = load_versions(versions)
 
         for version in versions:
             scenario = ScenarioHandler(config, self.gp, workdir=DATA / "jcversion")
