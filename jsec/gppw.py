@@ -8,6 +8,7 @@ import configparser
 
 import subprocess
 import enum
+import tempfile
 import logging
 import re
 import os
@@ -84,6 +85,7 @@ class GlobalPlatformProWrapper(object):
         self.version = None
         self.atr = None
         self.init_gp_list_output = ""
+        self._dump_file_content = None
 
         log.setLevel(log_verbosity)
 
@@ -188,12 +190,20 @@ class GlobalPlatformProWrapper(object):
         return clean_first == clean_second
 
     # TODO when and how to save to database?
-    def run(self, options):
+    def run(self, options, dump=False):
         cmd = self.gp_prefix()
         if self.verbose:
             cmd += ["--verbose"]
         if self.debug:
             cmd += ["--debug"]
+
+        # TODO consider using context manager for handling temporary files
+        # that need to be used by other projects
+        tmp_name = None
+        # dump the apdu communication to temporary file
+        if dump:
+            _, tmp_name = tempfile.mkstemp(prefix="jsec-")
+            cmd += ["--dump", tmp_name]
 
         cmd.extend(options)
         if self.dry_run:
@@ -202,6 +212,16 @@ class GlobalPlatformProWrapper(object):
         else:
             log.debug("Run the command: %s", " ".join(cmd))
             proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        if tmp_name is not None:
+            with open(tmp_name, "r") as f:
+                self._dump_file_content = f.read()
+            try:
+                os.remove(tmp_name)
+            except NotImplementedError:
+                # TODO log.
+                pass
+
         return proc
 
     def guess_diversifier(self):
@@ -296,6 +316,49 @@ class GlobalPlatformProWrapper(object):
         if not os.path.exists(applet_path):
             log.error("Cannot open or incorrect permission set on: '%s'", applet_path)
         return self.run(["--uninstall", applet_path])
+
+    def select(self, applet_aid):
+        pass
+
+    def apdu(self, payload, applet_aid):
+        # FIXME ugly mixing ints, lists, bytes
+        select = self.SELECT_BYTES + bytes([len(applet_aid)]) + applet_aid
+        options = [
+            "--apdu",
+            select.hex(),
+            "--apdu",
+            payload.hex(),
+        ]
+        self.run(options, dump=True)
+
+        if self._dump_file_content:
+            communication = self._parse_gp_dump_file(
+                raw_content=self._dump_file_content
+            )
+        return communication[payload.hex()]
+
+    def _parse_gp_dump_file(self, raw_content):
+        # TODO this is a bit naive, but hey, who isn't
+        com = {}
+        lines = iter(raw_content.split("\n"))
+        while True:
+            try:
+                line = next(lines)
+                if line.startswith("# Sent"):
+                    send = next(lines).strip()
+                    # consume the line with a comment
+                    next(lines)
+                    response = next(lines)
+                    payload = response[:-4]
+                    status = response[-4:]
+                    com[send] = {
+                        "payload": payload,
+                        "status": status,
+                    }
+            except StopIteration:
+                break
+
+        return com
 
 
 if __name__ == "__main__":

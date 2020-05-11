@@ -78,3 +78,45 @@ def test_detecting_diversifier_from_card_types():
     gp.atr = atr
     gp.infer_diversifier()
     assert gp.diversifier == Diversifier.EMV
+
+
+# TODO move to class test
+def test___parse_gp_dump_file__():
+    # raw is the content of a --dump file from GlobalPlatformPro
+    raw = """# Generated on Mon, 4 May 2020 17:31:15 +0200 by apdu4j/19.05.08.1-0-gfbddd95-dirty
+# Using Alcor Micro AU9560 00 00
+# ATR: 3BFC180000813180459067464A01002005000000004E
+# PROTOCOL: T=1
+#
+# Sent
+00A40400070011223344AACC
+# Received in 14ms
+6A82
+# Sent
+8001000000
+# Received in 7ms
+6D00
+# Sent
+00A4040000
+# Received in 25ms
+6F5C8408A000000003000000A550734A06072A864886FC6B01600C060A2A864886FC6B02020101630906072A864886FC6B03640B06092A864886FC6B040255650B06092B8510864864020103660C060A2B060104012A026E01029F6501FF9000
+"""
+    config = configparser.ConfigParser()
+    config["PATHS"] = {
+        "gp.jar": "/path/to/the/gp.jar",
+    }
+    gp = GlobalPlatformProWrapper(config=config, dry_run=True)
+    gp = GlobalPlatformProWrapper(config=config)
+
+    assert gp._parse_gp_dump_file(raw) == {
+        "00A40400070011223344AACC": {"payload": "", "status": "6A82"},
+        "8001000000": {"payload": "", "status": "6D00"},
+        "00A4040000": {
+            "payload": (
+                "6F5C8408A000000003000000A550734A06072A864886FC6B01600C060A2A864886FC6B0202"
+                "0101630906072A864886FC6B03640B06092A864886FC6B040255650B06092B851086486402"
+                "0103660C060A2B060104012A026E01029F6501FF"
+            ),
+            "status": "9000",
+        },
+    }
