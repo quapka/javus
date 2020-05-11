@@ -288,11 +288,37 @@ class Card:
 
 
 class ScenarioHandler:
-    def __init__(self, config, gp, workdir):
+    def __init__(self, config, gp, workdir, name=None):
+        self.name = name
+        self._config = config
         self.stages = config["STAGES"]
         self.gp = gp
         self.workdir = workdir
         self.installed_version = None
+        self.aid = None
+
+        self._get_applet_aid()
+
+        if self.name is None:
+            self._create_scenario_name()
+
+    def _get_applet_aid(self):
+        log.debug("Building the aid for this scenario")
+        # TODO what about attacks with multiple applets?
+        rid = self._config["BUILD"]["pkg.rid"]
+        pix = self._config["BUILD"]["applet.pix"]
+        try:
+            self.aid = bytes.fromhex(rid + pix)
+        except ValueError:
+            log.warning("Cannot build the AID from %s and %s", rid, pix)
+            pass
+
+    def _create_scenario_name(self):
+        # TODO finish:
+        # get value passed to init
+        # load from the config.ini
+        # get the gp file value
+        pass
 
     def execute_stages(self, version):
         self.installed_version = None
