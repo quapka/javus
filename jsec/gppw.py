@@ -64,6 +64,8 @@ class GlobalPlatformProWrapper(object):
     DIVERSIFIER_ERROR_MSG = (
         "DO NOT RE-TRY THE SAME COMMAND/KEYS OR YOU MAY BRICK YOUR CARD"
     )
+    # fixed bytes when selecting an applet
+    SELECT_BYTES = bytes([0x00, 0xA4, 0x04, 0x00])
 
     def __init__(
         self, config, card_types=None, dry_run=False, log_verbosity=logging.CRITICAL
