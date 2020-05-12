@@ -89,6 +89,10 @@ class GlobalPlatformProWrapper(object):
         # load necessery configurations
         self.process_config()
         self.process_card_types()
+        # TODO keep track of temporary files created to remove them
+        # at the en
+        # or simply create a temporary directory and remove it at the end
+        self._temp_files = []
 
     def gp_prefix(self):
         cmd = [
