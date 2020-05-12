@@ -329,7 +329,9 @@ class ScenarioHandler:
                 with cd(self.workdir):
                     self.gp.install(value.format(version=version))
             if stage.startswith("SEND"):
-                pass
+                result = self.send_apdu(value)
+                if result["status"] == "9000":
+                    version = result["payload"]
             if stage == "UNINSTALL":
                 if version == self.installed_version:
                     with cd(self.workdir):
