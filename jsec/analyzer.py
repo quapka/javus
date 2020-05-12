@@ -25,7 +25,7 @@ from jsec.utils import load_versions
 
 # FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
-# [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)
+# flake8: noqa [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)
 
 # TODO determine the level of defensive approach? E.g. when guessing emv
 
