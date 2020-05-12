@@ -62,10 +62,10 @@ class PreAnalysisManager:
         self.get_jc_version()
 
     def get_jc_version(self):
+        # Gets the JavaCard version from the card itself
         # ordered from the newests
         config = configparser.ConfigParser()
-        path = DATA / "jcversion/config.ini"
-        config.read(path)
+        config.read(DATA / "jcversion/config.ini")
 
         versions = config["BUILD"]["versions"].split(",")
         versions = load_versions(versions)
