@@ -340,6 +340,20 @@ class ScenarioHandler:
                     version,
                 )
 
+    def send_apdu(self, payload):
+        # validate APDU
+        # example: SEND_SUCCESS_INS = 80 01 00 00 04
+        # FIXME what about other strings with 0x etc...
+        # clear extra white space
+        payload = re.sub(r"\s", "", payload)
+        try:
+            payload = bytes.fromhex(payload)
+        except ValueError:
+            log.warning("Payload '%s' is not hexadecimal", payload)
+            return
+
+        return self.gp.apdu(payload=payload, applet_aid=self.aid)
+
 
 if __name__ == "__main__":
     app = App()
