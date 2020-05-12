@@ -323,6 +323,8 @@ class ScenarioHandler:
     def execute_stages(self, version):
         self.installed_version = None
         for stage, value in self.stages.items():
+            # TODO handle unknown stages
+            # define them somewhere
             stage = stage.upper()
             if stage == "INSTALL":
                 log.info("Attempt to install version: %s", version)

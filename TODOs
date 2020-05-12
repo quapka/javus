@@ -31,3 +31,4 @@ TODO: Add to source code files
 TODO: add mypy
 TODO: maybe some of the processes create java log files in ~
 TODO: flake8 specific configuration is not defined within the project, see ~/.config/.flake8
+TODO: check duplicate attacks (distinguished by names in jsec/data/attacks?)
