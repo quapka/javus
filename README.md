@@ -107,9 +107,20 @@ steps:
 
 Testing
 -------
-Runs *tests* about the Python project.
+If you've got `invoke` installed you can simply run from anywhere within the project:
 ```
-pytest -c tests/pytest.ini tests
+$ inv test
+```
+
+[TODO] add paths to the project root before running the tests.
+Or with virtual activated run the following:
+```
+$ pytest -c tests/pytest.ini tests
+```
+
+Or outside of the virtual environment run:
+```
+$ pipenv run pytest -c tests/pytest.ini tests
 ```
 
 Checking
