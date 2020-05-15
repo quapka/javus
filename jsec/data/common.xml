@@ -1,0 +1,81 @@
+<project>
+    <property environment="env" />
+    <property name="project.root"
+              value="${env.JCVM_ANALYSIS_HOME}" />
+    <property file="${project.root}/lib/jcversions.properties" />
+    <!-- Define Ant JavaCard task -->
+    <taskdef name="javacard"
+             classname="pro.javacard.ant.JavaCard"
+             classpath="${project.root}/lib/ant-javacard.jar" />
+    <!-- Import Ant contribution definitions -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <!-- FIXME load this location dynamically -->
+            <pathelement location="/usr/share/java/lib/ant-contrib-0.3.jar" />
+        </classpath>
+    </taskdef>
+    <!-- Define properties common for all attacks -->
+    <property file="config.ini" />
+    <property name="src.dir"
+              value="src" />
+    <property name="build.dir"
+              value="build" />
+    <property name="classes.dir"
+              value="${build.dir}/classes" />
+    <!-- Target for building all supported versions for particular an attack -->
+    <target name="build-all-versions">
+        <foreach param="version"
+                 list="${versions}"
+                 target="build-version" />
+    </target>
+    <target name="clean-all-versions">
+        <foreach param="version"
+                 list="${versions}"
+                 target="clean-version" />
+    </target>
+    <!-- Target for doing all build steps for one specific version for a specific attack -->
+    <target name="build-version"
+            depends="clean-version,bootstrap,build">
+        <!-- <mkdir dir="${classes.dir}" /> -->
+        <echo message="building version: ${version}" />
+    </target>
+    <target name="clean-version">
+        <echo message="cleaning version: ${version}" />
+        <delete dir="${build.dir}/${version}" />
+    </target>
+    <target name="bootstrap">
+        <echo message="boostrap version: ${version}" />
+        <mkdir dir="${build.dir}/${version}/com/se/vulns/javacard" />
+        <mkdir dir="${build.dir}/${version}/com/se/applets/javacard" />
+    </target>
+    <target name="build">
+        <echo message="${project.root}/oracle_javacard_sdks/${version}_kit" />
+        <javacard jckit="${project.root}/oracle_javacard_sdks/${version}_kit">
+            <!-- Verification is not supported JavaCard version 212 -->
+            <!-- Build the vulnerable part -->
+            <cap output="${build.dir}/${version}/com/se/vulns/javacard/vulns.cap"
+                 package="com.se.vulns"
+                 sources="${src.dir}"
+                 aid="${pkg.rid}${vulns.pix}"
+                 verify="false"
+                 ints="true"
+                 export="${build.dir}/${version}"
+                 jca="${build.dir}/${version}/com/se/vulns/javacard/vulns.jca">
+            </cap>
+            <!-- Build the actual applet that is going to be run -->
+            <cap output="${build.dir}/${version}/com/se/applets/javacard/applets.cap"
+                 package="com.se.applets"
+                 sources="${src.dir}"
+                 aid="${pkg.rid}${pkg.pix}"
+                 verify="false"
+                 ints="true"
+                 export="${build.dir}/${version}"
+                 jca="${build.dir}/${version}/com/se/applets/javacard/applets.jca">
+
+                <applet class="com.se.applets.SEApplet"
+                        aid="${pkg.rid}${applet.pix}" />
+                <import exps="${build.dir}/${version}" />
+            </cap>
+        </javacard>
+    </target>
+</project>
