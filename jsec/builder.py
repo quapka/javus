@@ -6,8 +6,10 @@ from jsec.utils import CommandLineApp
 from pathlib import Path
 import configparser
 import argparse
+import tempfile
 import os
 import enum
+import shutil
 import logging
 
 import subprocess
@@ -39,10 +41,15 @@ class CommandLineBuilder(CommandLineApp):
         self.parser.add_argument(
             "--working-dir",
             help="The working directory to use for building",
-            default=".",
+            default=Path(".").resolve(),
             type=Path,
         )
 
+        self.parser.add_argument(
+            "--temp-dir",
+            help="The temporary directory to copy the attack files to",
+            type=Path,
+        )
         # TODO validate default and passed value
         self.parser.add_argument(
             "--version", default="jc211",
@@ -81,10 +88,11 @@ class Builder:
         boostrap = enum.auto()
         build = enum.auto()
 
-    def __init__(self, workdir, dry_run=False, version=None):
-        self.wd = workdir
+    def __init__(self, workdir, dry_run=False, version=None, tempdir=None):
+        self.wd = Path(workdir)
         self.dry_run = dry_run
         self.version = version
+        self.tempdir = tempdir
 
         self.config = None
         self.supported_versions = None
@@ -101,6 +109,7 @@ class Builder:
             log.warning("Unsupported version '%s' set.", self.version)
 
         self._validate_workdir()
+        self._set_temp_dir()
 
         self.ready = True
 
@@ -116,6 +125,18 @@ class Builder:
         self.unsupported_versions = self._parse_versions(
             self.config["BUILD"]["unsupported.versions"]
         )
+
+    def _set_temp_dir(self):
+        if self.tempdir is None:
+            tmpdir = tempfile.gettempdir()
+            # TODO remove tmpdir if it is really tmp
+            self.tempdir = tempfile.mkdtemp(dir=tmpdir)
+
+            log.info("Using system temporary directory '%s'", self.tempdir)
+
+        self.tempdir = Path(self.tempdir)
+
+        log.info("Using '%s' as temporary directory", self.tempdir)
 
     @staticmethod
     def _parse_versions(raw):
@@ -183,16 +204,21 @@ class Builder:
 
     #     print(aids)
 
-    def make_temporary(self):
-        # in order to prevent changing the source files each attack is copied to
-        # temporary directory
-        pass
+    # def _make_temp_attack(self):
+    #     # in order to prevent changing the source files each attack is copied to
+    #     # temporary directory
+    #     # TODO dirs_exist_ok kwarg in Python 3.8
+    #     shutil.copytree(self.wd, self.tempdir / self.wd.name)
+
+    def _clean_temp(self):
+        shutil.rmtree(self.tempdir)
 
     def execute(self, cmd):
         if not self.ready:
             self._prepare()
 
-        # self.set_unique_aid()
+        # self._make_temp_attack()
+        # self.wd = self.tempdir
 
         self.cmd = cmd
         if cmd == self.COMMANDS.clean:
@@ -203,6 +229,8 @@ class Builder:
             self.build()
         else:
             log.error("Attempt to execute unrecognized command '%s'", cmd)
+
+        # self._clean_temp()
 
 
 if __name__ == "__main__":
