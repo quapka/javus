@@ -32,8 +32,18 @@ def get_project_attacks():
     return get_project_data() / "attacks"
 
 
+def get_project_testdir():
+    return get_project_root() / "tests"
+
+
+def get_project_checkdir():
+    return get_project_root() / "checks"
+
+
 PROJECT_ROOT = get_project_root()
 PROJECT_SRC = get_project_src()
 DATA = get_project_data()
 LIB_DIR = get_project_lib()
 ATTACKS = get_project_attacks()
+TESTDIR = get_project_testdir()
+CHECKDIR = get_project_checkdir()
