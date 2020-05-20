@@ -47,22 +47,34 @@ def cd(new_path):
 
 # list of the actual tasks goes here
 @task
-def test(c):
+def test(c, debug=False, verbose=True):
     cmd = []
     if not pipenv_is_active():
         cmd += ["pipenv", "run"]
 
-    cmd += ["pytest", "-v", "-c", "tests/pytest.ini", "tests"]
+    cmd += ["pytest"]
+    if debug:
+        cmd += ["--capture=no"]
+    if verbose:
+        cmd += ["--verbose"]
+
+    cmd += ["-c", "tests/pytest.ini", "tests"]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd), pty=True)
 
 
 @task
-def check(c):
+def check(c, debug=False, verbose=True):
     cmd = []
     if not pipenv_is_active():
         cmd += ["pipenv", "run"]
 
-    cmd += ["pytest", "-v", "-c", "checks/check.ini", "checks"]
+    cmd += ["pytest"]
+    if debug:
+        cmd += ["--capture=no"]
+    if verbose:
+        cmd += ["--verbose"]
+
+    cmd += ["-c", "checks/check.ini", "checks"]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd), pty=True)
