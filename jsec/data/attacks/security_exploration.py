@@ -22,10 +22,11 @@ from pathlib import Path
 # applet.pix = 03010C0101
 
 
-class SecurityExploration(Attack):
+class AttackBuilder(Attack):
     # attacks from SecurityExploration have similar pattern, therefore they can be
     # under one umbrella
     def __init__(self, attack, workdir, save=False):
+        # FIXME validate, that the attack is known
         self.attack = attack
         self.workdir = Path(workdir).resolve()
         self.save = save
@@ -65,8 +66,8 @@ class SecurityExploration(Attack):
             self._prepare()
 
         while not self.uniq_aids(used):
-            rid = self.aids["BUILD"]["pkg.pix"]
-            self.aids["BUILD"]["pkg.pix"] = hex(int(rid, 16) + 1).replace("0x", "")
+            rid = self.aids["BUILD"]["pkg.rid"]
+            self.aids["BUILD"]["pkg.rid"] = hex(int(rid, 16) + 1).replace("0x", "")
 
         self.save_aids()
 
@@ -82,5 +83,5 @@ class SecurityExploration(Attack):
 
 
 if __name__ == "__main__":
-    se = SecurityExploration("ArrayCopy", "arraycopy")
-    se.uniqfy()
+    se = AttackBuilder("ArrayCopy", "arraycopy")
+    se.uniqfy(used=["A00000006503010C02"])
