@@ -132,5 +132,27 @@ class AttackBuilder(BaseBuilder):
 
 
 if __name__ == "__main__":
-    se = AttackBuilder("ArrayCopy", "arraycopy")
-    se.uniqfy(used=["A00000006503010C02"])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", "--name")
+    parser.add_argument("-v", "--version")
+    parser.add_argument("-c", "--cmd")
+
+    args = parser.parse_args()
+
+    if args.name is not None:
+        attack_name = args.name
+    else:
+        attack_name = "arraycopy"
+
+    if args.version is not None:
+        version = args.version
+    else:
+        version = None
+
+    if args.cmd is not None:
+        cmd = BaseBuilder.COMMANDS[args.cmd]
+    else:
+        cmd = BaseBuilder.COMMANDS.build
+
+    se = AttackBuilder(workdir=attack_name, version=version)
+    se.execute(cmd=cmd)
