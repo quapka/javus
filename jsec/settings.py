@@ -28,7 +28,12 @@ def get_project_lib():
     return get_project_src() / "lib"
 
 
+def get_project_attacks():
+    return get_project_data() / "attacks"
+
+
 PROJECT_ROOT = get_project_root()
 PROJECT_SRC = get_project_src()
 DATA = get_project_data()
 LIB_DIR = get_project_lib()
+ATTACKS = get_project_attacks()
