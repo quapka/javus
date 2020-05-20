@@ -306,10 +306,53 @@ class Card:
 #     def __init__(self):
 #         pass
 
-#     def run(self):
-#         card = Card()
-#         gp = GlobalPlatformProWrapper()
-#         PreAnalysisManager(gp, card)
+class AnalysisManager:
+    def __init__(self, card, gp, config):
+        self.card = card
+        self.gp = gp
+        self.config = config
+        self.attacks = None
+
+    def load_attacks(self):
+        registry = configparser.ConfigParser()
+        registry_file = Path(Data / "registry.ini")
+        if not registry_file.exists():
+            log.error("Missing registry file '%s'", registry_file)
+            # TODO how to handle clean exit?
+        # FIXME does not fail on missing file, check it before
+        registry.read(registry_file)
+        return attacks
+
+    def run(self):
+        self.attacks = self.load_attacks()
+        for section in self.attacks.sections():
+            log.info("Executing attacks from '%s'", section)
+            builder_module = self.attacks[section]["builder"]
+            AttackBuilder = getattr(
+                importlib.import_module(f"jsec.data.attacks.{builder_module}"),
+                "AttackBuilder",
+            )
+            for key, value in self.attacks[section]:
+                if key == "builder":
+                    continue
+                # TODO instantiate attack builder
+                # TODO attack is defined by the workdir - no need for first param
+                ab = AttackBuilder(attack="", workdir=ATTACKS / value)
+                if not ab.uniq_aids(self.card.get_all_aids()):
+                    ab.uniqfy()
+                    ab.rebuild()
+            self.execute_attack(attack)
+
+    def execute_attack(self, attack):
+        # read attack config
+        # check if none of the AIDs match AIDs on the card
+        # if they match, rebuild the applet with a new AID
+
+        # copy to temporary directory
+        config = configparser.ConfigParser()
+        # config.read(DATA / attack.config)
+        # scenario = ScenarioHandler(config, self.gp, None, self.card)
+        # scenario.execute_stages()
 
 
 class ScenarioHandler:
