@@ -54,6 +54,7 @@ class Diversifier(enum.Enum):
         if diversifier == cls.KDF3:
             return "--kdf3"
 
+    # TODO rename to something more meaningful
     @classmethod
     def special(cls):
         # create a list of not NONE diversifiers
@@ -81,8 +82,8 @@ class GlobalPlatformProWrapper(object):
         self.dry_run = dry_run
         self.version = None
         self.atr = None
-        self.init_gp_list_output = ""
         self._dump_file_content = None
+        # TODO add ready flag
 
         log.setLevel(log_verbosity)
 

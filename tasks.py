@@ -81,3 +81,11 @@ def check(c, debug=False, verbose=True):
         c.run(" ".join(cmd), pty=True)
 
     # FIXME add overall success or failure to inform the user
+
+
+@task
+def todo(c):
+    cmd = ["grep", "-ir", r"'FIXME\|TODO'", "*"]
+
+    with cd(PROJECT_ROOT):
+        c.run(" ".join(cmd), pty=True)
