@@ -61,6 +61,7 @@ def test(c, debug=False, verbose=True):
     cmd += ["-c", "tests/pytest.ini", "tests"]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd), pty=True)
+    # FIXME add overall success or failure to inform the user
 
 
 @task
@@ -78,3 +79,5 @@ def check(c, debug=False, verbose=True):
     cmd += ["-c", "checks/check.ini", "checks"]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd), pty=True)
+
+    # FIXME add overall success or failure to inform the user
