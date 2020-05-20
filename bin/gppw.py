@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 
-from jcvmutils.utils import MongoConnection
-from jcvmutils.utils import CommandLineApp
-
 # from jcvmutils.utils import LOG_LEVELS
 import configparser
-
-import subprocess
 import enum
 import logging
-import re
 import os
-
+import re
+import subprocess
 
 from smartcard import ATR
+
+from jcvmutils.utils import CommandLineApp, MongoConnection
 
 # FIXME what if no card/reader is present?
 

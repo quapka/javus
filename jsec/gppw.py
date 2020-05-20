@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 
-from jsec.settings import DATA
-
 # from jcvmutils.utils import LOG_LEVELS
 import configparser
-
-import subprocess
 import enum
-import tempfile
 import logging
-import re
 import os
+import re
+import subprocess
+import tempfile
 
+from jsec.settings import DATA
 
 # FIXME what if no card/reader is present?
 

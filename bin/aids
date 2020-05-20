@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-import re
-import sys
 import functools
 import itertools
+import re
+import sys
+
 import numpy as np
 
 aid_line = re.compile(r'(APP|PKG|ISD|Applet):\s*(?P<aid>[a-zA-Z0-9]*)')

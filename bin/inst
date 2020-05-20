@@ -4,6 +4,7 @@ import logging
 import bs4
 import pymongo
 from bs4 import BeautifulSoup
+
 from jcvmutils.utils import CommandLineApp, MongoConnection
 
 log = logging.getLogger(__file__)

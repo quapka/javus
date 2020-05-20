@@ -1,11 +1,9 @@
-import pytest
-
-
 # FIXME prevent running live tests in case there is a card in the system
 import configparser
 
-from jsec.gppw import GlobalPlatformProWrapper
-from jsec.gppw import Diversifier
+import pytest
+
+from jsec.gppw import Diversifier, GlobalPlatformProWrapper
 
 
 def test__gp_prefix__from_config():

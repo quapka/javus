@@ -1,8 +1,8 @@
-from invoke import task
+import logging
 import os
 from contextlib import contextmanager
-import logging
 
+from invoke import task
 
 # TODO add logging, might require setting flags through tasks
 # log = logging.getLogger(__file__)

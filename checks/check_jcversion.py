@@ -1,9 +1,9 @@
-import pytest
 import os
-
-from pathlib import Path
-from jsec.settings import get_project_root
-
 import subprocess
+from pathlib import Path
+
+import pytest
+
+from jsec.settings import get_project_root
 
 DATA_DIR = Path(get_project_root() / "data")

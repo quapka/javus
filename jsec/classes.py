@@ -3,10 +3,11 @@ import logging
 import sys
 
 import smartcard
-from jsec.utils import CommandLineApp
 from smartcard.CardConnection import CardConnection
 from smartcard.System import readers
 from smartcard.util import toHexString
+
+from jsec.utils import CommandLineApp
 
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()

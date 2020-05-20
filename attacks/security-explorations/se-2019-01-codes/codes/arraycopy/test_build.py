@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import configparser
-import pytest
 import os
 import subprocess as sp
-
 import zipfile
+
+import pytest
 
 BUILD_DIR = "build"
 

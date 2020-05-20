@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 import argparse
-import subprocess as sp
 import configparser
 import os
-
+import subprocess as sp
 
 config = configparser.ConfigParser()
 config.read("config.ini")

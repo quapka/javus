@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-import smartcard
 import logging
+
+import smartcard
+
 from jcvmutils.classes import CommunicateWithCard
 
 # import jcvmutils.jcvmutils.class

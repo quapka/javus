@@ -1,6 +1,9 @@
-import pytest
-from jsec.gppw import GlobalPlatformProWrapper
 import configparser
+
+import pytest
+
+from jsec.gppw import GlobalPlatformProWrapper
+
 
 # FIXME should be reimplemented as pytest check rather
 @pytest.mark.live

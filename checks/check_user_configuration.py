@@ -1,6 +1,7 @@
-from jsec.settings import get_project_root
-import os
 import configparser
+import os
+
+from jsec.settings import get_project_root
 
 
 # TODO give more reasonable output to the user in case of a failure

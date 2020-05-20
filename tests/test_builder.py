@@ -1,8 +1,8 @@
 import pytest
 
-from jsec.utils import cd
 from jsec.builder import BaseBuilder
 from jsec.settings import TESTDIR
+from jsec.utils import cd
 
 
 def test_building():

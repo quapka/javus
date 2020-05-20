@@ -4,6 +4,7 @@ import re
 import subprocess as sp
 
 from dominate.util import raw
+
 from jcvmutils.tables import Table, almost, failed, passed
 
 SAFE_READ = 'send safe INS_READ'

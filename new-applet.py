@@ -6,6 +6,7 @@ import os
 import re
 import shutil
 
+
 class NewApplet(object):
     def __init__(self):
         self.parser = argparse.ArgumentParser(description=

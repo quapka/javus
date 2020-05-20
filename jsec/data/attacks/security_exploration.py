@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 
+import argparse
+import configparser
+import os
+import subprocess
+from pathlib import Path
+
 # from jsec.attack import Attack
 from jsec.builder import BaseBuilder
-from jsec.utils import cd
 from jsec.settings import ATTACKS
-import configparser
-from pathlib import Path
-import os
-
-import subprocess
-
-import argparse
-
+from jsec.utils import cd
 
 # Exemplar config.ini:
 # [BUILD]

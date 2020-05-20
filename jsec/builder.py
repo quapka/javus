@@ -1,20 +1,18 @@
 #!/usr/bin/env python
 
-# sort imports
-from jsec.utils import cd
-from jsec.utils import CommandLineApp
-from pathlib import Path
-import configparser
 import argparse
-import tempfile
-import os
+import configparser
 import enum
-import shutil
 import logging
-
+import os
+import shutil
 import subprocess
+import tempfile
+from pathlib import Path
 
 from jsec.attack import Attack
+# sort imports
+from jsec.utils import CommandLineApp, cd
 
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()

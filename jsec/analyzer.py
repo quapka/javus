@@ -1,31 +1,23 @@
 #!/usr/bin/env python
 
 
+import argparse
 # TODO add docstrings
 # pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
 import configparser
-import os
-import argparse
-
-import platform
-import sys
 import importlib
 import logging
+import os
+import platform
 import re
-
+import sys
 from pathlib import Path
 
-
-from jsec.settings import DATA
-from jsec.settings import ATTACKS
-from jsec.gppw import GlobalPlatformProWrapper
-from jsec.utils import CommandLineApp
-from jsec.utils import cd
-from jsec.utils import Error
-from jsec.utils import load_versions
-
 from jsec.builder import BaseBuilder
+from jsec.gppw import GlobalPlatformProWrapper
+from jsec.settings import ATTACKS, DATA
+from jsec.utils import CommandLineApp, Error, cd, load_versions
 
 # FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list

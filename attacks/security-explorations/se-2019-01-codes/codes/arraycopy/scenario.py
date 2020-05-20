@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-import subprocess
+import argparse
 import configparser
 import os
-
-import argparse
+import subprocess
 
 # TODO put to config to make modular
 BUILD_DIR = "build"

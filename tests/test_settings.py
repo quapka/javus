@@ -1,7 +1,7 @@
 import os
+from pathlib import Path
 
 from jsec.settings import get_project_root
-from pathlib import Path
 
 
 def test_getting_project_root():

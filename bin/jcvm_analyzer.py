@@ -1,20 +1,17 @@
 #!/usr/bin/env python
 
-from jcvmutils.utils import MongoConnection
-from jcvmutils.utils import CommandLineApp
-
-from gppw import GlobalPlatformProWrapper
-import configparser
-import os
 import argparse
-
-import subprocess
-import platform
-import sys
+import configparser
 import enum
 import logging
+import os
+import platform
 import re
+import subprocess
+import sys
 
+from gppw import GlobalPlatformProWrapper
+from jcvmutils.utils import CommandLineApp, MongoConnection
 
 # FIXME handle error on gp --list
 # [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)

@@ -3,6 +3,7 @@
 import re
 
 from dominate.util import raw
+
 from jcvmutils.tables import Table, failed, passed
 
 ATTACK_NAME = 'ArrayMetadataManipulation'

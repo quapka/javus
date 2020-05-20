@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
-import configparser
 import argparse
+import configparser
+import enum
 import logging
 import os
 import re
 import subprocess as sp
 import sys
 import time
-import enum
+from contextlib import contextmanager
 
 import pymongo
-
-from contextlib import contextmanager
 
 from jsec.settings import LIB_DIR
 

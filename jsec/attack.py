@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from abc import ABC
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 
 class Attack(ABC):
