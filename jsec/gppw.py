@@ -320,6 +320,11 @@ class GlobalPlatformProWrapper(object):
             log.error("Cannot open or incorrect permission set on: '%s'", applet_path)
         return self.run(["--uninstall", applet_path])
 
+    def list(self):
+        options = ["--list"]
+        proc = self.run(options=options, dump=False)
+        return proc
+
     def select(self, applet_aid):
         pass
 

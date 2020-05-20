@@ -18,11 +18,14 @@ from pathlib import Path
 
 
 from jsec.settings import DATA
+from jsec.settings import ATTACKS
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.utils import CommandLineApp
 from jsec.utils import cd
 from jsec.utils import Error
 from jsec.utils import load_versions
+
+from jsec.builder import BaseBuilder
 
 # FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
@@ -296,20 +299,38 @@ class Card:
     # TODO
     # install an applet
     # execute applet/attack steps
-    def __init__(self):
+    def __init__(self, gp):
         self.states = None
+        self.current_state = None
+        self.gp = gp
+        # self.isds = []
+        # self.pkgs = []
+        # self.applets = []
+        # self.aids = []
+        # TODO maybe use named tuples from collections?
         self.jcversion = None
 
-    def update(self, state):
+    def _update(self, state):
         if self.states is None:
             self.states = [state]
         else:
             self.states.append(state)
 
+        self.current_state = state
 
-# class AppManager():
-#     def __init__(self):
-#         pass
+    def save_state(self):
+        proc = self.gp.list()
+        raw = proc.stdout.decode("utf8")
+        state = CardState(raw=raw)
+        state.process()
+        self._update(state=state)
+
+    def get_current_aids(self):
+        if self.current_state is None:
+            self.save_state()
+
+        return self.current_state.get_all_aids()
+
 
 class AnalysisManager:
     def __init__(self, card, gp, config):
@@ -345,7 +366,8 @@ class AnalysisManager:
                 ab = AttackBuilder(attack="", workdir=ATTACKS / value)
                 if not ab.uniq_aids(self.card.get_all_aids()):
                     ab.uniqfy()
-                    ab.rebuild()
+                    # rebuild the applet
+                    ab.execute(BaseBuilder.COMMANDS.build)
             self.execute_attack(attack)
 
     def execute_attack(self, attack):
@@ -361,7 +383,7 @@ class AnalysisManager:
 
 
 class ScenarioHandler:
-    def __init__(self, config, gp, workdir, name=None):
+    def __init__(self, config, gp, workdir, card, name=None):
         self.name = name
         self._config = config
         self.stages = config["STAGES"]
@@ -369,6 +391,9 @@ class ScenarioHandler:
         self.workdir = workdir
         self.installed_version = None
         self.aid = None
+        self.card = card
+        # card states and results
+        self.report = None
 
         self._get_applet_aid()
 
@@ -394,7 +419,10 @@ class ScenarioHandler:
         pass
 
     def execute_stages(self, version):
+        # multiple install
         self.installed_version = None
+        # get state of the card == gp --list
+        # save it on the card
         for stage, value in self.stages.items():
             # TODO handle unknown stages
             # define them somewhere
