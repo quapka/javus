@@ -135,6 +135,7 @@ class App(CommandLineApp):
         )
 
         # TODO def add options attempting to uninstall all applets, that were installed
+        # but this should be the implicit behaviour
 
     def parse_options(self):
         super().parse_options()
@@ -172,11 +173,10 @@ class App(CommandLineApp):
         self.card = Card()
         prem = PreAnalysisManager(self.card, self.gp)
         prem.run()
-        # sel.get_jc_version(self.card)
 
-    # def run_attack(self):
-    #     for attack in self.active_attacks:
-    #         pass
+        anam = AnalysisManager(self.card, self.gp, self.config)
+        anam.run()
+        # sel.get_jc_version(self.card)
 
 
 class PostAnalysisManager:
