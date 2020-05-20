@@ -10,6 +10,7 @@ import argparse
 
 import platform
 import sys
+import importlib
 import logging
 import re
 
