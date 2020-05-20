@@ -67,6 +67,46 @@ class AttackBuilder(BaseBuilder):
             with open("aids.ini", "w") as aids_file:
                 self.aids.write(aids_file)
 
+    def _build(self):
+        # we can reuse the existing build process
+        super()._build()
+        # but we also need to generate some files after the build
+        self._generate()
+
+    def _generate(self):
+        import pudb
+
+        pudb.set_trace()
+        vulns_dir = os.path.realpath(
+            os.path.join(
+                self.workdir, "build", self.version, "com", "se", "vulns", "javacard",
+            )
+        )
+
+        cap_file = os.path.realpath(os.path.join(vulns_dir, "vulns.cap"))
+        exp_file = os.path.realpath(os.path.join(vulns_dir, "vulns.exp"))
+        new_cap_file = os.path.realpath(os.path.join(vulns_dir, "vulns.new.cap"))
+
+        # go to _gen
+        # wd = os.getcwd()
+        # os.chdir("../_gen")
+        # TODO this is probably not cross-platform, and other subprocess calls as well :/
+        with cd(ATTACKS / "_gen"):
+            cmd = [
+                "java",
+                "Gen",
+                cap_file,
+                exp_file,
+                new_cap_file,
+                # GENIDX,
+                self.config["BUILD"]["genidx"],
+                # GENARG,
+                self.config["BUILD"]["genarg"],
+            ]
+            output = subprocess.check_output(cmd).decode("utf8")
+            print(output)
+            # os.chdir(wd)
+
     def uniqfy(self, used=None):
         if used is None:
             used = []
