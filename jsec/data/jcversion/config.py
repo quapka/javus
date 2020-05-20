@@ -1,5 +1,19 @@
 #!/usr/bin/env python
 
+STAGES = {
+    # anonymous step
+    {
+        "install": "/path/to/file",
+        "install": "/path/to/file",
+        "install": "/path/to/file",
+        "send": "",
+    },
+}
 
-if __name__ == "__main__":
+
+def pre_handler(scenario):
+    pass
+
+
+def post_handler(scenario):
     pass
