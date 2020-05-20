@@ -72,8 +72,12 @@ class PreAnalysisManager:
         versions = load_versions(versions)
 
         for version in versions:
-            scenario = ScenarioHandler(config, self.gp, workdir=DATA / "jcversion")
+            scenario = ScenarioHandler(
+                config, self.gp, workdir=DATA / "jcversion", card=self.card
+            )
             scenario.execute_stages(version)
+
+        report = scenario.get_report()
 
 
 # FIXME give disclaimer and ask about consent
@@ -426,6 +430,12 @@ class ScenarioHandler:
             return
 
         return self.gp.apdu(payload=payload, applet_aid=self.aid)
+
+    def get_report(self):
+        return self.report
+
+    def generate_report(self):
+        pass
 
 
 if __name__ == "__main__":
