@@ -223,7 +223,7 @@ class CardState:
                 item[_type] = {
                     "AID": aid,
                     "STATE": state,
-                    "ITEMS": {"Privs": [], "Version": [], "Applet": [],},
+                    "ITEMS": {"Privs": [], "Version": [], "Applet": []},
                 }
                 self._items.append(item)
                 flag = not flag
@@ -257,6 +257,31 @@ class CardState:
                 self.pkgs.append(item)
             if list(item.keys()) == ["ISD"]:
                 self.isds.append(item)
+
+    def get_all_aids(self):
+        aids = []
+        for item in self.isds:
+            try:
+                aids.append(item["ISD"]["AID"])
+            except KeyError:
+                pass
+
+        for item in self.pkgs:
+            try:
+                aids.append(item["PKG"]["AID"])
+            except KeyError:
+                pass
+
+            # FIXME this might not work for multiple applets
+            aids.extend(item["PKG"]["ITEMS"]["Applet"])
+
+        for item in self.applets:
+            try:
+                aids.append(item["AID"])
+            except KeyError:
+                pass
+
+        return aids
 
 
 class Card:
