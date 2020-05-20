@@ -51,3 +51,4 @@ analysis-results/
 
 # ignore per user configuration files
 user-config.ini
+aids.ini
