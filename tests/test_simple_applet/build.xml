@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- <project basedir="." -->
+<!--          default="default" -->
+<!--          name="SimpleApplet"> -->
+<!--     <description>Builds, tests, and runs the project -->
+<!--     SimpleApplet.</description> -->
+<!--     <taskdef classname="pro.javacard.ant.JavaCard" -->
+<!--              classpath="ext/ant-javacard.jar" -->
+<!--              name="javacard" /> -->
+<!--     <property name="JC212" -->
+<!--               value="ext/jc212_kit" /> -->
+<!--     <property name="JC221" -->
+<!--               value="ext/jc221_kit" /> -->
+<!--     <property name="JC222" -->
+<!--               value="ext/jc222_kit" /> -->
+<!--     <property name="JC305u3" -->
+<!--               value="ext/jc305u3_kit" /> -->
+<!--     <property name="RID" -->
+<!--               value="0011223344" /> -->
+<!--     <property name="PIX" -->
+<!--               value="AABBDD" /> -->
+<!--     <property name="AID" -->
+<!--               value="${RID}${PIX}" /> -->
+<!--     <target name="com.simple.jc212"> -->
+<!--         <javacard jckit="${JC212}"> -->
+<!--             <cap aid="${RID}" -->
+<!--                  output="com.simple-jc212.cap" -->
+<!--                  sources="src/com" -->
+<!--                  verify="false"> -->
+<!--                 <applet aid="${AID}" -->
+<!--                         class="com.simple.SimpleApplet" /> -->
+<!--             </cap> -->
+<!--         </javacard> -->
+<!--     </target> -->
+<!--     <target name="com.simple.jc221"> -->
+<!--         <javacard jckit="${JC221}"> -->
+<!--             <cap aid="${RID}" -->
+<!--                  output="com.simple-jc221.cap" -->
+<!--                  sources="src/com"> -->
+<!--                 <applet aid="${AID}" -->
+<!--                         class="com.simple.SimpleApplet" /> -->
+<!--             </cap> -->
+<!--         </javacard> -->
+<!--     </target> -->
+<!--     <target name="com.simple.jc222"> -->
+<!--         <javacard jckit="${JC222}"> -->
+<!--             <cap aid="${RID}" -->
+<!--                  output="com.simple-jc222.cap" -->
+<!--                  sources="src/com"> -->
+<!--                 <applet aid="${AID}" -->
+<!--                         class="com.simple.SimpleApplet" /> -->
+<!--             </cap> -->
+<!--         </javacard> -->
+<!--     </target> -->
+<!--     <target name="com.simple.jc305"> -->
+<!--         <javacard jckit="${JC305u3}"> -->
+<!--             <cap aid="${RID}" -->
+<!--                  output="com.simple-jc305.cap" -->
+<!--                  sources="src/com"> -->
+<!--                 <applet aid="${AID}" -->
+<!--                         class="com.simple.SimpleApplet" /> -->
+<!--             </cap> -->
+<!--         </javacard> -->
+<!--     </target> -->
+<!-- </project> -->
+<project>
+    <property environment="env" />
+    <property name="project.root"
+              value="${env.JCVM_ANALYSIS_HOME}" />
+    <property file="${project.root}/lib/jcversions.properties" />
+    <!-- Define Ant JavaCard task -->
+    <taskdef name="javacard"
+             classname="pro.javacard.ant.JavaCard"
+             classpath="${project.root}/lib/ant-javacard.jar" />
+    <!-- Import Ant contribution definitions -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <!-- FIXME load this location dynamically -->
+            <pathelement location="/usr/share/java/lib/ant-contrib-0.3.jar" />
+        </classpath>
+    </taskdef>
+    <!-- Define properties common for all attacks -->
+    <property file="config.ini" />
+    <property file="aids.ini" />
+    <property name="src.dir"
+              value="src" />
+    <property name="build.dir"
+              value="build" />
+    <property name="classes.dir"
+              value="${build.dir}/classes" />
+    <!-- Target for building all supported versions for particular an attack -->
+    <target name="build-all-versions">
+        <foreach param="version"
+                 list="${versions}"
+                 target="build-version" />
+    </target>
+    <target name="clean-all-versions">
+        <foreach param="version"
+                 list="${versions}"
+                 target="clean-version" />
+    </target>
+    <!-- Target for doing all build steps for one specific version for a specific attack -->
+    <target name="build-version"
+            depends="clean-version,bootstrap,build">
+        <!-- <mkdir dir="${classes.dir}" /> -->
+        <echo message="building version: ${version}" />
+    </target>
+    <target name="clean-version">
+        <echo message="cleaning version: ${version}" />
+        <delete dir="${build.dir}/${version}" />
+    </target>
+    <target name="bootstrap">
+        <echo message="boostrap version: ${version}" />
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${build.dir}/${version}" />
+        <mkdir dir="${build.dir}/${version}" />
+    </target>
+    <target name="build">
+        <echo message="${project.root}/oracle_javacard_sdks/${version}_kit" />
+        <javacard jckit="${project.root}/oracle_javacard_sdks/${version}_kit">
+
+            <cap aid="${RID}"
+                 output="${build.dir}/com.simple-jc212.cap"
+                 sources="src/com"
+                 verify="false">
+                <applet aid="${RID}${PIX}"
+                        class="com.simple.SimpleApplet" />
+            </cap>
+        </javacard>
+        <!-- <javacard jckit="${project.root}/oracle_javacard_sdks/${version}_kit"> -->
+        <!--     <!-1- Verification is not supported JavaCard version 212 -1-> -->
+        <!--     <!-1- Build the vulnerable part -1-> -->
+        <!--     <cap output="${build.dir}/${version}/com/se/vulns/javacard/vulns.cap" -->
+        <!--          package="com.se.vulns" -->
+        <!--          sources="${src.dir}" -->
+        <!--          aid="${pkg.rid}${vulns.pix}" -->
+        <!--          verify="false" -->
+        <!--          ints="true" -->
+        <!--          export="${build.dir}/${version}" -->
+        <!--          jca="${build.dir}/${version}/com/se/vulns/javacard/vulns.jca"> -->
+        <!--     </cap> -->
+        <!--     <!-1- Build the actual applet that is going to be run -1-> -->
+        <!--     <cap output="${build.dir}/${version}/com/se/applets/javacard/applets.cap" -->
+        <!--          package="com.se.applets" -->
+        <!--          sources="${src.dir}" -->
+        <!--          aid="${pkg.rid}${pkg.pix}" -->
+        <!--          verify="false" -->
+        <!--          ints="true" -->
+        <!--          export="${build.dir}/${version}" -->
+        <!--          jca="${build.dir}/${version}/com/se/applets/javacard/applets.jca"> -->
+        <!--         <applet class="com.se.applets.SEApplet" -->
+        <!--                 aid="${pkg.rid}${applet.pix}" /> -->
+        <!--         <import exps="${build.dir}/${version}" /> -->
+        <!--     </cap> -->
+        <!-- </javacard> -->
+    </target>
+</project>

@@ -89,7 +89,7 @@ class Builder:
         build = enum.auto()
 
     def __init__(self, workdir, dry_run=False, version=None, tempdir=None):
-        self.wd = Path(workdir)
+        self.wd = Path(workdir).resolve()
         self.dry_run = dry_run
         self.version = version
         self.tempdir = tempdir
@@ -105,11 +105,11 @@ class Builder:
         self._load_config()
         self._set_versions()
 
-        if self.version not in self.supported_versions:
+        if self.version is not None and self.version not in self.supported_versions:
             log.warning("Unsupported version '%s' set.", self.version)
 
         self._validate_workdir()
-        self._set_temp_dir()
+        # self._set_temp_dir()
 
         self.ready = True
 
@@ -126,17 +126,17 @@ class Builder:
             self.config["BUILD"]["unsupported.versions"]
         )
 
-    def _set_temp_dir(self):
-        if self.tempdir is None:
-            tmpdir = tempfile.gettempdir()
-            # TODO remove tmpdir if it is really tmp
-            self.tempdir = tempfile.mkdtemp(dir=tmpdir)
+    # def _set_temp_dir(self):
+    #     if self.tempdir is None:
+    #         tmpdir = tempfile.gettempdir()
+    #         # TODO remove tmpdir if it is really tmp
+    #         self.tempdir = tempfile.mkdtemp(dir=tmpdir)
 
-            log.info("Using system temporary directory '%s'", self.tempdir)
+    #         log.info("Using system temporary directory '%s'", self.tempdir)
 
-        self.tempdir = Path(self.tempdir)
+    #     self.tempdir = Path(self.tempdir)
 
-        log.info("Using '%s' as temporary directory", self.tempdir)
+    #     log.info("Using '%s' as temporary directory", self.tempdir)
 
     @staticmethod
     def _parse_versions(raw):
@@ -159,6 +159,8 @@ class Builder:
         except subprocess.CalledProcessError:
             log.error("Command ended with non-zero error")
 
+        return proc
+
     def _validate_workdir(self):
         # TODO add to call pipeline
         with cd(self.wd):
@@ -167,7 +169,7 @@ class Builder:
                     "Cannot find 'build.xml'. Have you set working directory correctly?"
                 )
 
-    def clean(self):
+    def _clean(self):
         if self.version is None:
             options = ["clean-all-versions"]
         else:
@@ -177,9 +179,9 @@ class Builder:
                 "-Dversion={version}".format(version=self.version),
             ]
 
-        self._ant(options=options)
+        return self._ant(options=options)
 
-    def build(self):
+    def _build(self):
         if self.version is None:
             options = ["build-all-versions"]
         else:
@@ -188,7 +190,7 @@ class Builder:
                 "-Dversion={version}".format(version=self.version),
             ]
 
-        self._ant(options=options)
+        return self._ant(options=options)
 
     # def set_unique_aid(self, forbidden=None):
     #     # changes the AIDs for the specific build to make them unique from an existing set
@@ -210,8 +212,8 @@ class Builder:
     #     # TODO dirs_exist_ok kwarg in Python 3.8
     #     shutil.copytree(self.wd, self.tempdir / self.wd.name)
 
-    def _clean_temp(self):
-        shutil.rmtree(self.tempdir)
+    # def _clean_temp(self):
+    #     shutil.rmtree(self.tempdir)
 
     def execute(self, cmd):
         if not self.ready:
@@ -222,15 +224,16 @@ class Builder:
 
         self.cmd = cmd
         if cmd == self.COMMANDS.clean:
-            self.clean()
+            result = self._clean()
         elif cmd == self.COMMANDS.boostrap:
             raise NotImplementedError
         elif cmd == self.COMMANDS.build:
-            self.build()
+            result = self._build()
         else:
             log.error("Attempt to execute unrecognized command '%s'", cmd)
 
         # self._clean_temp()
+        return result
 
 
 if __name__ == "__main__":
