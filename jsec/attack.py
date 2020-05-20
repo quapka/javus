@@ -4,11 +4,9 @@ from abc import abstractmethod
 
 
 class Attack(ABC):
-    def __init__(self, workdir):
-        pass
-
     @abstractmethod
     def uniqfy(self):
+        # TODO maybe have default aids in config.ini and rewrite only aids.ini
         pass
 
 

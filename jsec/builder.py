@@ -14,6 +14,8 @@ import logging
 
 import subprocess
 
+from jsec.attack import Attack
+
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()
 formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s: %(message)s")
@@ -78,11 +80,11 @@ class CommandLineBuilder(CommandLineApp):
         return value
 
     def run(self):
-        builder = Builder(workdir=self.wd, dry_run=False, version=self.version)
+        builder = BaseBuilder(workdir=self.wd, dry_run=False, version=self.version)
         builder.execute(self.cmd)
 
 
-class Builder:
+class BaseBuilder(Attack):
     class COMMANDS(enum.Enum):
         clean = enum.auto()
         boostrap = enum.auto()
@@ -215,6 +217,13 @@ class Builder:
     # def _clean_temp(self):
     #     shutil.rmtree(self.tempdir)
 
+    def uniqfy(self):
+        # TODO add explanation of uniqfy method - unique AIDs
+        raise NotImplementedError(
+            "BaseBuilder does not implement uniqfy method. "
+            "Your builder must implement it's own version."
+        )
+
     def execute(self, cmd):
         if not self.ready:
             self._prepare()
@@ -232,7 +241,6 @@ class Builder:
         else:
             log.error("Attempt to execute unrecognized command '%s'", cmd)
 
-        # self._clean_temp()
         return result
 
 

@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
-from jsec.attack import Attack
+# from jsec.attack import Attack
+from jsec.builder import BaseBuilder
 from jsec.utils import cd
+from jsec.settings import ATTACKS
 import configparser
 from pathlib import Path
+import os
+
+import subprocess
+
+import argparse
 
 
 # Exemplar config.ini:
@@ -22,18 +29,19 @@ from pathlib import Path
 # applet.pix = 03010C0101
 
 
-class AttackBuilder(Attack):
+class AttackBuilder(BaseBuilder):
     # attacks from SecurityExploration have similar pattern, therefore they can be
     # under one umbrella
-    def __init__(self, attack, workdir, save=False):
+    def __init__(self, workdir, save=False, *args, **kwargs):
+        super().__init__(workdir=workdir, *args, **kwargs)
         # FIXME validate, that the attack is known
-        self.attack = attack
         self.workdir = Path(workdir).resolve()
         self.save = save
 
         self.config = None
         self.ready = False
 
+    # FIXME redundant - already in the BaseBuilder
     def load_config(self):
         config = configparser.ConfigParser()
         with cd(self.workdir):
@@ -48,6 +56,7 @@ class AttackBuilder(Attack):
 
         self.aids = aids
 
+    # FIXME redundant - already in the BaseBuilder
     def _prepare(self):
         self.load_config()
         self.load_aids()
