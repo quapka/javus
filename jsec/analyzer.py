@@ -2,6 +2,7 @@
 
 
 import argparse
+
 # TODO add docstrings
 # pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
@@ -360,18 +361,6 @@ class AnalysisManager:
                     ab.uniqfy()
                     # rebuild the applet
                     ab.execute(BaseBuilder.COMMANDS.build)
-            self.execute_attack(attack)
-
-    def execute_attack(self, attack):
-        # read attack config
-        # check if none of the AIDs match AIDs on the card
-        # if they match, rebuild the applet with a new AID
-
-        # copy to temporary directory
-        config = configparser.ConfigParser()
-        # config.read(DATA / attack.config)
-        # scenario = ScenarioHandler(config, self.gp, None, self.card)
-        # scenario.execute_stages()
 
 
 class ScenarioHandler:
