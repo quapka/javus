@@ -72,9 +72,6 @@ class AttackBuilder(BaseBuilder):
         self._generate()
 
     def _generate(self):
-        import pudb
-
-        pudb.set_trace()
         vulns_dir = os.path.realpath(
             os.path.join(
                 self.workdir, "build", self.version, "com", "se", "vulns", "javacard",
@@ -103,7 +100,6 @@ class AttackBuilder(BaseBuilder):
             ]
             output = subprocess.check_output(cmd).decode("utf8")
             print(output)
-            # os.chdir(wd)
 
     def uniqfy(self, used=None):
         if used is None:
