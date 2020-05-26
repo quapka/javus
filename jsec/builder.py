@@ -5,12 +5,11 @@ import configparser
 import enum
 import logging
 import os
-import shutil
 import subprocess
-import tempfile
 from pathlib import Path
 
 from jsec.attack import Attack
+
 # sort imports
 from jsec.utils import CommandLineApp, cd
 
@@ -69,7 +68,7 @@ class CommandLineBuilder(CommandLineApp):
         value = value.lower()
 
         try:
-            value = Builder.COMMANDS[value]
+            value = BaseBuilder.COMMANDS[value]
         except KeyError:
             raise argparse.ArgumentTypeError(
                 "Unknown command '{cmd}'".format(cmd=value)
@@ -88,11 +87,12 @@ class BaseBuilder(Attack):
         boostrap = enum.auto()
         build = enum.auto()
 
-    def __init__(self, workdir, dry_run=False, version=None, tempdir=None):
+    def __init__(self, gp, workdir, dry_run=False, version=None, tempdir=None):
         self.wd = Path(workdir).resolve()
         self.dry_run = dry_run
         self.version = version
         self.tempdir = tempdir
+        self.gp = gp
 
         self.config = None
         self.supported_versions = None
@@ -109,7 +109,6 @@ class BaseBuilder(Attack):
             log.warning("Unsupported version '%s' set.", self.version)
 
         self._validate_workdir()
-        # self._set_temp_dir()
 
         self.ready = True
 
@@ -125,18 +124,6 @@ class BaseBuilder(Attack):
         self.unsupported_versions = self._parse_versions(
             self.config["BUILD"]["unsupported.versions"]
         )
-
-    # def _set_temp_dir(self):
-    #     if self.tempdir is None:
-    #         tmpdir = tempfile.gettempdir()
-    #         # TODO remove tmpdir if it is really tmp
-    #         self.tempdir = tempfile.mkdtemp(dir=tmpdir)
-
-    #         log.info("Using system temporary directory '%s'", self.tempdir)
-
-    #     self.tempdir = Path(self.tempdir)
-
-    #     log.info("Using '%s' as temporary directory", self.tempdir)
 
     @staticmethod
     def _parse_versions(raw):
@@ -154,7 +141,8 @@ class BaseBuilder(Attack):
 
         try:
             proc.check_returncode()
-            # TODO should not print in case this is not called as command line application
+            # TODO should not print in case this is not called as
+            # command line application
             print("The command '{cmd}' was successful.".format(cmd=self.cmd.name))
         except subprocess.CalledProcessError:
             log.error("Command ended with non-zero error")
@@ -192,28 +180,8 @@ class BaseBuilder(Attack):
 
         return self._ant(options=options)
 
-    # def set_unique_aid(self, forbidden=None):
-    #     # changes the AIDs for the specific build to make them unique from an existing set
-    #     # one way is to open a config and change it's AID
-    #     rid = None
-    #     aids = []
-    #     for name, value in self.config["BUILD"].items():
-    #         if name.endswith("pix"):
-    #             aids.append(rid + value)
-    #         if name.endswith("rid"):
-    #             rid = value
-    #             aids = []
-
-    #     print(aids)
-
-    # def _make_temp_attack(self):
-    #     # in order to prevent changing the source files each attack is copied to
-    #     # temporary directory
-    #     # TODO dirs_exist_ok kwarg in Python 3.8
-    #     shutil.copytree(self.wd, self.tempdir / self.wd.name)
-
-    # def _clean_temp(self):
-    #     shutil.rmtree(self.tempdir)
+    def execute_attack(self, detailed=False):
+        pass
 
     def uniqfy(self):
         # TODO add explanation of uniqfy method - unique AIDs
@@ -225,9 +193,6 @@ class BaseBuilder(Attack):
     def execute(self, cmd):
         if not self.ready:
             self._prepare()
-
-        # self._make_temp_attack()
-        # self.wd = self.tempdir
 
         self.cmd = cmd
         if cmd == self.COMMANDS.clean:
