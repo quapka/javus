@@ -10,6 +10,7 @@ from pathlib import Path
 from jsec.builder import BaseBuilder
 from jsec.settings import ATTACKS
 from jsec.utils import cd
+from jsec.attack import BaseAttackExecutor
 
 # Exemplar config.ini:
 # [BUILD]
@@ -123,6 +124,13 @@ class AttackBuilder(BaseBuilder):
         aids = [pkg_rid + vulns_pix, pkg_rid + pkg_pix, pkg_rid + applet_pix]
 
         return set(aids).intersection(set(used)) == set()
+
+
+class AttackExecutor(BaseAttackExecutor):
+    def construct_aid(self) -> bytes:
+        rid = self.config["BUILD"]["pkg.rid"]
+        pix = self.config["BUILD"]["applet.pix"]
+        return bytes.fromhex(rid + pix)
 
 
 if __name__ == "__main__":
