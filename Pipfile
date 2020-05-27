@@ -8,6 +8,7 @@ pudb = "*"
 pytest = "*"
 pytest-cov = "*"
 jcvmutils = {editable = true,path = "."}
+mypy = "*"
 
 [packages]
 pymongo = "*"

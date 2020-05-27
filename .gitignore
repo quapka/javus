@@ -52,3 +52,5 @@ analysis-results/
 # ignore per user configuration files
 user-config.ini
 aids.ini
+
+.mypy_cache
