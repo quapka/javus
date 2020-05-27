@@ -16,6 +16,8 @@ import sys
 from pathlib import Path
 
 from jsec.builder import BaseBuilder
+from jsec.attack import BaseAttackExecutor
+from jsec.attack import AbstractAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
 from jsec.utils import CommandLineApp, Error, cd, load_versions
@@ -352,15 +354,55 @@ class AnalysisManager:
                 "AttackBuilder",
             )
             for key, value in self.attacks[section]:
+                # TODO this is ugly and not easy to extend in the future, maybe ditch the
+                # idea of ini files and get json?
                 if key == "builder":
                     continue
                 # TODO instantiate attack builder
                 # TODO attack is defined by the workdir - no need for first param
-                ab = AttackBuilder(attack="", workdir=ATTACKS / value)
-                if not ab.uniq_aids(self.card.get_all_aids()):
-                    ab.uniqfy()
-                    # rebuild the applet
-                    ab.execute(BaseBuilder.COMMANDS.build)
+                if value:
+                    builder = AttackBuilder(attack="", workdir=ATTACKS / key)
+                    if not builder.uniq_aids(self.card.get_all_aids()):
+                        builder.uniqfy()
+                        # rebuild the applet
+                        # TODO or call build directly? much nicer..
+                        builder.execute(BaseBuilder.COMMANDS.build)
+                    executor = self.get_executor(
+                        attack_name=key, builder_module=builder_module
+                    )
+
+    # FIXME finish loading the builder
+    def get_builder(self, attack_name: str):
+        pass
+
+    def get_executor(
+        self, attack_name: str, builder_module: str
+    ) -> AbstractAttackExecutor:
+        # first load the executor from the directory of the attack
+        try:
+            executor = getattr(
+                importlib.import_module(
+                    # TODO this way we cannot test this method, since the load path is
+                    # hardcoded
+                    f"jsec.data.attacks.{attack_name}.{attack_name}"
+                ),
+                "AttackExecutor",
+            )
+            return executor
+        except AttributeError:
+            pass
+
+        try:
+            executor = getattr(
+                importlib.import_module(f"jsec.data.attacks.{builder_module}"),
+                "AttackExecutor",
+            )
+        except AttributeError:
+            pass
+
+        # then fallback to the type of the attack executor
+        # finally base executor, that can (un)install and send APDUs
+        return BaseAttackExecutor
 
 
 class ScenarioHandler:
