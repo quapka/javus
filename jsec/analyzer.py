@@ -154,6 +154,7 @@ class App(CommandLineApp):
             )
         return Path(value)
 
+    # TODO unify load_configuration and load_config
     def load_configuration(self):
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
@@ -336,13 +337,13 @@ class AnalysisManager:
 
     def load_attacks(self):
         registry = configparser.ConfigParser()
-        registry_file = Path(Data / "registry.ini")
+        registry_file = Path(DATA / "registry.ini")
         if not registry_file.exists():
             log.error("Missing registry file '%s'", registry_file)
             # TODO how to handle clean exit?
         # FIXME does not fail on missing file, check it before
         registry.read(registry_file)
-        return attacks
+        return registry
 
     def run(self):
         self.attacks = self.load_attacks()
