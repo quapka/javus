@@ -21,3 +21,7 @@ class CheckUserConfiguration(object):
 
         config.read(config_file)
         config.sections()
+
+
+# TODO add check on user defined attacks etc., e.g. that they are importable
+# through importlib
