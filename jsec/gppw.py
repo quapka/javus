@@ -326,7 +326,7 @@ class GlobalPlatformProWrapper(object):
     def select(self, applet_aid):
         pass
 
-    def apdu(self, payload, applet_aid):
+    def apdu(self, payload: bytes, applet_aid: bytes):
         # FIXME ugly mixing ints, lists, bytes
         select = self.SELECT_BYTES + bytes([len(applet_aid)]) + applet_aid
         options = [
