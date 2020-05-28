@@ -61,7 +61,7 @@ def test(c, debug=False, verbose=True):
     cmd += ["-c", "tests/pytest.ini", "tests"]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd), pty=True)
-    # FIXME add overall success or failure to inform the user
+    # TODO add overall success or failure to inform the user
 
 
 @task
@@ -80,7 +80,7 @@ def check(c, debug=False, verbose=True):
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd), pty=True)
 
-    # FIXME add overall success or failure to inform the user
+    # TODO add overall success or failure to inform the user
 
 
 @task
@@ -106,3 +106,4 @@ def develop(c, restart=False):
     install_cmd = cmd + ["install", "--editable", "."]
     with cd(PROJECT_ROOT):
         c.run(" ".join(install_cmd))
+    # TODO add overall success or failure to inform the user
