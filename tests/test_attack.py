@@ -23,6 +23,10 @@ class TestBaseAttackExecutor:
             ("a a", b"\x0a\x0a"),
             ("0xaa 0xbb \t\n  0xcc", b"\xaa\xbb\xcc"),
             ("0xa 0xbb \t  0xc", b"\x0a\xbb\x0c"),
+            # hexadecimal values are assumed
+            ("80 60", b"\x80\x60"),
+            # but integers are valid as well
+            ("110 255", b"\x6e\xff"),
         ],
     )
     def test__parse_payload(self, raw_payload: str, parsed_payload: bytes) -> None:
