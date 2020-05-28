@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "459f219b12ea6745699fdf35dfe8777736688c64718fbabda247b1b653c7926d"
+            "sha256": "821a2c618b5be5118e51c877e2b006ffd19284cde748ebadb7ac3509a29e0dc9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -55,10 +55,6 @@
             ],
             "index": "pypi",
             "version": "==1.4.1"
-        },
-        "jcvmutils": {
-            "editable": true,
-            "path": "./pkgs/jcvmutils"
         },
         "prompt-toolkit": {
             "hashes": [
@@ -257,10 +253,6 @@
             ],
             "markers": "python_version < '3.8'",
             "version": "==1.6.0"
-        },
-        "jcvmutils": {
-            "editable": true,
-            "path": "./pkgs/jcvmutils"
         },
         "more-itertools": {
             "hashes": [

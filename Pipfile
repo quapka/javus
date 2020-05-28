@@ -7,7 +7,6 @@ verify_ssl = true
 pudb = "*"
 pytest = "*"
 pytest-cov = "*"
-jcvmutils = {editable = true,path = "."}
 mypy = "*"
 
 [packages]
@@ -18,7 +17,6 @@ beautifulsoup4 = "*"
 invoke = "*"
 pyinquirer = "*"
 pyscard = "*"
-jcvmutils = {editable = true,path = "./pkgs/jcvmutils"}
 
 [requires]
 python_version = "3.6"
