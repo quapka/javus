@@ -89,3 +89,20 @@ def todo(c):
 
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd), pty=True)
+
+
+@task
+def develop(c, restart=False):
+    cmd = []
+    if not pipenv_is_active():
+        cmd += ["pipenv", "run"]
+
+    cmd += ["pip3"]
+    if restart:
+        uninstall_cmd = cmd + ["uninstall", "--yes", "jsec"]
+        with cd(PROJECT_ROOT):
+            c.run(" ".join(uninstall_cmd))
+
+    install_cmd = cmd + ["install", "--editable", "."]
+    with cd(PROJECT_ROOT):
+        c.run(" ".join(install_cmd))

@@ -132,6 +132,32 @@ so that the analysis is ready to be run.
 pytest -c checks/check.ini checks
 ```
 
+Development
+-----------
+In order to be able to manually run and test the updated version (especially the script `jsec`) you need to install the project. You can use `invoke` for that. Run from anywhere in the project:
+```
+$ inv develop
+```
+This will install the version under the virtual environment created with Pipenv. If you want to make sure a fresh version is installed (along the saying _have you tried turning it off and on again?_) you can use the flag `--restart`:
+```
+$ inv develop --restart
+```
+
+If you don't have Invoke installed you can perform the previous steps manually. To do so, run the following commands from the project root directory:
+```
+$ pipenv shell
+$ pip3 install --editable .
+```
+Or together in one command:
+```
+$ pipenv run pip3 install --editable .
+```
+To make sure a fresh version is installed you need to uninstall it first:
+```
+$ pipenv run pip3 uninstall --yes jsec
+```
+
+
 Contribution
 ------------
 
