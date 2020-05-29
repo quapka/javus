@@ -10,6 +10,10 @@ import sys
 import time
 from contextlib import contextmanager
 
+# from collections import namedtuple
+from typing import NamedTuple
+from typing import Optional
+
 import pymongo
 
 from jsec.settings import LIB_DIR
@@ -176,6 +180,68 @@ def load_versions(versions):
     filtered.sort(key=known.index)
 
     return filtered[::-1]
+
+
+class JCVersion(NamedTuple):
+    major: int
+    minor: int
+
+    @classmethod
+    def from_str(cls_obj, string: str) -> "JCVersion":
+        # TODO add try/except?
+        major = int(string[:2])
+        minor = int(string[2:])
+        return cls_obj(major=major, minor=minor)
+
+    def __str__(self) -> str:
+        return "%s.%s" % (self.major, self.minor)
+
+
+class SDKVersion(NamedTuple):
+    major: int
+    minor: int
+    patch: int
+    update: Optional[int]
+    # TODO what is 'b' in jc310b43
+    b_value: Optional[int]
+
+    @classmethod
+    def from_str(cls_obj, string: str):
+        string = string.strip().lower()
+        # fmt: off
+        sdk_regex = re.compile(
+                r"((?P<header>jc)"
+                r"(?P<major>\d)"
+                r"(?P<minor>\d)"
+                r"(?P<patch>\d)"
+                r"((?P<type>[ub]?)"
+                r"(?P<type_value>\d+))?)"
+        )
+        # fmt: on
+
+        match = sdk_regex.match(string)
+        if match is not None:
+            major = int(match.group("major"))
+            minor = int(match.group("minor"))
+            patch = int(match.group("patch"))
+            update = None
+            b_value = None
+            if match.group("type") == "u":
+                update = int(match.group("type_value"))
+            elif match.group("type") == "b":
+                b_value = int(match.group("type_value"))
+
+            return cls_obj(
+                major=major, minor=minor, patch=patch, update=update, b_value=b_value
+            )
+
+    def __str__(self) -> str:
+        output = "%s.%s%s." % (self.major, self.minor, self.patch)
+        if self.update:
+            output += "u%s" % self.update
+        elif self.b_value:
+            output += "b%s" % self.b_value
+        return output
 
 
 if __name__ == "__main__":
