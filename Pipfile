@@ -8,6 +8,7 @@ pudb = "*"
 pytest = "*"
 pytest-cov = "*"
 mypy = "*"
+ipython = "*"
 
 [packages]
 pymongo = "*"
@@ -15,7 +16,6 @@ python-pkcs11 = "*"
 dominate = "*"
 beautifulsoup4 = "*"
 invoke = "*"
-pyinquirer = "*"
 pyscard = "*"
 
 [requires]
