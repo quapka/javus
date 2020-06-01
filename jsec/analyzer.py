@@ -160,7 +160,8 @@ class App(CommandLineApp):
         # FIXME make sure we only have one card in the reader
         self.card = Card(gp=self.gp)
         prem = PreAnalysisManager(self.card, self.gp)
-        prem.run()
+        # prem.run()
+        version = prem.get_jc_version()
 
         anam = AnalysisManager(self.card, self.gp, self.config)
         anam.run()

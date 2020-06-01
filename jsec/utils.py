@@ -10,6 +10,8 @@ import sys
 import time
 from contextlib import contextmanager
 
+from jsec.settings import LIB_DIR
+
 # from collections import namedtuple
 from typing import NamedTuple
 from typing import Optional
@@ -160,7 +162,9 @@ def cd(new_path):
         os.chdir(old_path)
 
 
+# FIXME rename to load_sdks
 # FIXME depends on external configuration
+# TODO maybe just load them directly from the submodule and put it on SDKVersion
 def load_versions(versions):
     """
     parses 'jc221,jc221' etc.
@@ -196,6 +200,17 @@ class JCVersion(NamedTuple):
     def __str__(self) -> str:
         return "%s.%s" % (self.major, self.minor)
 
+    def get_sdks(self):
+        sdks = []
+        available_sdks = SDKVersion.get_available_sdks()
+        for sdk in available_sdks:
+            if sdk.major < self.major:
+                sdks.append(sdk)
+            elif sdk.major == self.major and sdk.minor <= self.minor:
+                sdks.append(sdk)
+
+        return sdks
+
 
 class SDKVersion(NamedTuple):
     major: int
@@ -205,6 +220,7 @@ class SDKVersion(NamedTuple):
     # TODO what is 'b' in jc310b43
     b_value: Optional[int]
 
+    # TODO rename cls_obj to cls
     @classmethod
     def from_str(cls_obj, string: str):
         string = string.strip().lower()
@@ -235,6 +251,14 @@ class SDKVersion(NamedTuple):
                 major=major, minor=minor, patch=patch, update=update, b_value=b_value
             )
 
+    @classmethod
+    def from_list(cls, string: str, sep: str = ","):
+        sdks = []
+        for part in [x.strip() for x in string.split(sep=sep)]:
+            sdks.append(cls.from_str(part))
+
+        return sdks
+
     def __str__(self) -> str:
         output = "%s.%s%s." % (self.major, self.minor, self.patch)
         if self.update:
@@ -242,6 +266,26 @@ class SDKVersion(NamedTuple):
         elif self.b_value:
             output += "b%s" % self.b_value
         return output
+
+    # TODO load only once and get them from the class afterwards
+    @classmethod
+    def get_available_sdks(cls) -> list:
+        sdks = []
+        properties = configparser.ConfigParser()
+        properties.read(LIB_DIR / "jcversions.properties")
+        for version, _ in properties["SUPPORTED_VERSIONS"].items():
+            sdks.append(SDKVersion.from_str(version))
+
+        return sdks
+
+    # TODO missing other comparison methods
+    def __eq__(self, other):
+        result = self.major == other.major
+        result = result and self.minor == other.minor
+        result = result and self.patch == other.patch
+        result = result and self.update == other.update
+        result = result and self.b_value == other.b_value
+        return result
 
 
 if __name__ == "__main__":

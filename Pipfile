@@ -9,6 +9,7 @@ pytest = "*"
 pytest-cov = "*"
 mypy = "*"
 ipython = "*"
+pytest-mock = "*"
 
 [packages]
 pymongo = "*"

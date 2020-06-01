@@ -4,6 +4,8 @@ from jsec.utils import SDKVersion
 import pytest
 from typing import Optional
 
+# from pytest_mock import mocker
+
 # FIXME depends on external configuration
 def test__load_versions__filters_unknown_versions():
     versions = ["not a version", "jc221"]
@@ -46,8 +48,24 @@ class TestJCVersion:
         jcversion = JCVersion.from_str(version)
         assert str(jcversion) == string
 
-    def test_comparing_version(self):
-        pass
+    @pytest.mark.parametrize(
+        "jcversion,exp_sdks",
+        [
+            ("0200", SDKVersion.from_list("jc202")),
+            ("0300", SDKVersion.from_list("jc202,jc300,jc301,jc304")),
+            ("0310", SDKVersion.from_list("jc202,jc300,jc301,jc304,jc310b43")),
+        ],
+    )
+    def test_get_sdks(self, mocker, jcversion, exp_sdks):
+        # mocking available SDKs
+        mocker.patch.object(SDKVersion, "get_available_sdks")
+        SDKVersion.get_available_sdks.return_value = SDKVersion.from_list(
+            "jc202,jc300,jc301,jc304,jc310b43"
+        )
+
+        jcversion = JCVersion.from_str(jcversion)
+        sdks = jcversion.get_sdks()
+        assert sdks == exp_sdks
 
 
 class TestSDKVersion:
@@ -76,3 +94,27 @@ class TestSDKVersion:
         assert sdkversion.patch == patch
         assert sdkversion.update == update
         assert sdkversion.b_value == b_value
+
+    # FIXME this interacts with real data, but is not really a check
+    def test_available_sdks(self):
+        available = SDKVersion.get_available_sdks()
+        assert SDKVersion.from_str("jc211") == available[0]
+
+    @pytest.mark.parametrize(
+        "raw_list,versions",
+        [
+            ("jc211", [SDKVersion.from_str("jc211")]),
+            (
+                "jc222,jc310b43",
+                [SDKVersion.from_str("jc222"), SDKVersion.from_str("jc310b43")],
+            ),
+        ],
+    )
+    def test_from_list(self, raw_list: str, versions: list):
+        assert SDKVersion.from_list(raw_list) == versions
+
+
+# @pytest.mark.parametrize("jcversion,sdks", [("0300", [])])
+# def test_infer_sdks_from_jcversion(jcversion: str, sdks: list):
+#     jcversion = JCVersion.from_str(jcversion)
+#     assert jcversion.get_sdks() == sdks
