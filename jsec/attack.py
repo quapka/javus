@@ -40,7 +40,9 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         self.installed_applets = None
         self.stages = None
 
-    def load_config(self) -> None:
+        self._load_config()
+
+    def _load_config(self) -> None:
         self.config.read(self.workdir / "config.ini")
 
     def get_stages(self):
