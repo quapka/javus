@@ -406,88 +406,88 @@ class AnalysisManager:
         return BaseAttackExecutor
 
 
-class ScenarioHandler:
-    def __init__(self, config, gp, workdir, card, name=None):
-        self.name = name
-        self._config = config
-        self.stages = config["STAGES"]
-        self.gp = gp
-        self.workdir = workdir
-        self.installed_version = None
-        self.aid = None
-        self.card = card
-        # card states and results
-        self.report = None
+# class ScenarioHandler:
+#     def __init__(self, config, gp, workdir, card, name=None):
+#         self.name = name
+#         self._config = config
+#         self.stages = config["STAGES"]
+#         self.gp = gp
+#         self.workdir = workdir
+#         self.installed_version = None
+#         self.aid = None
+#         self.card = card
+#         # card states and results
+#         self.report = None
 
-        self._get_applet_aid()
+#         self._get_applet_aid()
 
-        if self.name is None:
-            self._create_scenario_name()
+#         if self.name is None:
+#             self._create_scenario_name()
 
-    def _get_applet_aid(self):
-        log.debug("Building the aid for this scenario")
-        # TODO what about attacks with multiple applets?
-        rid = self._config["BUILD"]["pkg.rid"]
-        pix = self._config["BUILD"]["applet.pix"]
-        try:
-            self.aid = bytes.fromhex(rid + pix)
-        except ValueError:
-            log.warning("Cannot build the AID from %s and %s", rid, pix)
-            pass
+#     def _get_applet_aid(self):
+#         log.debug("Building the aid for this scenario")
+#         # TODO what about attacks with multiple applets?
+#         rid = self._config["BUILD"]["pkg.rid"]
+#         pix = self._config["BUILD"]["applet.pix"]
+#         try:
+#             self.aid = bytes.fromhex(rid + pix)
+#         except ValueError:
+#             log.warning("Cannot build the AID from %s and %s", rid, pix)
+#             pass
 
-    def _create_scenario_name(self):
-        # TODO finish:
-        # get value passed to init
-        # load from the config.ini
-        # get the gp file value
-        pass
+#     def _create_scenario_name(self):
+#         # TODO finish:
+#         # get value passed to init
+#         # load from the config.ini
+#         # get the gp file value
+#         pass
 
-    def execute_stages(self, version):
-        # multiple install
-        self.installed_version = None
-        # get state of the card == gp --list
-        # save it on the card
-        for stage, value in self.stages.items():
-            # TODO handle unknown stages
-            # define them somewhere
-            stage = stage.upper()
-            if stage == "INSTALL":
-                log.info("Attempt to install version: %s", version)
-                with cd(self.workdir):
-                    self.gp.install(value.format(version=version))
-            if stage.startswith("SEND"):
-                result = self.send_apdu(value)
-                if result["status"] == "9000":
-                    version = result["payload"]
-            if stage == "UNINSTALL":
-                if version == self.installed_version:
-                    with cd(self.workdir):
-                        log.info("Uninstall version: %s", version)
-                        self.gp.uninstall(value.format(version=version))
-                log.warning(
-                    "Attempt to uninstall version '%s', that was not installed.",
-                    version,
-                )
+#     def execute_stages(self, version):
+#         # multiple install
+#         self.installed_version = None
+#         # get state of the card == gp --list
+#         # save it on the card
+#         for stage, value in self.stages.items():
+#             # TODO handle unknown stages
+#             # define them somewhere
+#             stage = stage.upper()
+#             if stage == "INSTALL":
+#                 log.info("Attempt to install version: %s", version)
+#                 with cd(self.workdir):
+#                     self.gp.install(value.format(version=version))
+#             if stage.startswith("SEND"):
+#                 result = self.send_apdu(value)
+#                 if result["status"] == "9000":
+#                     version = result["payload"]
+#             if stage == "UNINSTALL":
+#                 if version == self.installed_version:
+#                     with cd(self.workdir):
+#                         log.info("Uninstall version: %s", version)
+#                         self.gp.uninstall(value.format(version=version))
+#                 log.warning(
+#                     "Attempt to uninstall version '%s', that was not installed.",
+#                     version,
+#                 )
 
-    def send_apdu(self, payload):
-        # validate APDU
-        # example: SEND_SUCCESS_INS = 80 01 00 00 04
-        # FIXME what about other strings with 0x etc...
-        # clear extra white space
-        payload = re.sub(r"\s", "", payload)
-        try:
-            payload = bytes.fromhex(payload)
-        except ValueError:
-            log.warning("Payload '%s' is not hexadecimal", payload)
-            return
+#     def send_apdu(self, payload):
+#         # validate APDU
+#         # example: SEND_SUCCESS_INS = 80 01 00 00 04
+#         # FIXME what about other strings with 0x etc...
+#         # clear extra white space
+#         payload = re.sub(r"\s", "", payload)
+#         try:
+#             payload = bytes.fromhex(payload)
+#         except ValueError:
+#             log.warning("Payload '%s' is not hexadecimal", payload)
+#             return
 
-        return self.gp.apdu(payload=payload, applet_aid=self.aid)
+#         return self.gp.apdu(payload=payload, applet_aid=self.aid)
 
-    def get_report(self):
-        return self.report
+#     def get_report(self):
+#         return self.report
 
-    def generate_report(self):
-        pass
+#     def generate_report(self):
+#         pass
 
 
 if __name__ == "__main__":
