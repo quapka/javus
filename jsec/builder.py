@@ -183,12 +183,48 @@ class BaseBuilder(Attack):
     def execute_attack(self, detailed=False):
         pass
 
-    def uniqfy(self):
-        # TODO add explanation of uniqfy method - unique AIDs
-        raise NotImplementedError(
-            "BaseBuilder does not implement uniqfy method. "
-            "Your builder must implement it's own version."
-        )
+    # def uniqfy(self):
+    #     # TODO add explanation of uniqfy method - unique AIDs
+    #     raise NotImplementedError(
+    #         "BaseBuilder does not implement uniqfy method. "
+    #         "Your builder must implement it's own version."
+    #     )
+
+    # FIXME unify self.wd and self.workidr etc
+    def load_aids(self):
+        aids = configparser.ConfigParser()
+        with cd(self.wd):
+            aids.read("aids.ini")
+
+        self.aids = aids
+
+    def save_aids(self):
+        with cd(self.wd):
+            with open("aids.ini", "w") as aids_file:
+                self.aids.write(aids_file)
+
+    def uniqfy(self, used: list = None):
+        if used is None:
+            used = []
+
+        if not self.ready:
+            self._prepare()
+
+        while not self.uniq_aids(used):
+            rid = self.aids["BUILD"]["pkg.rid"]
+            self.aids["BUILD"]["pkg.rid"] = hex(int(rid, 16) + 1).replace("0x", "")
+
+        self.save_aids()
+
+    def uniq_aids(self, used):
+        pkg_rid = self.aids["BUILD"]["pkg.rid"]
+        vulns_pix = self.aids["BUILD"]["vulns.pix"]
+        pkg_pix = self.aids["BUILD"]["pkg.pix"]
+        applet_pix = self.aids["BUILD"]["applet.pix"]
+
+        aids = [pkg_rid + vulns_pix, pkg_rid + pkg_pix, pkg_rid + applet_pix]
+
+        return set(aids).intersection(set(used)) == set()
 
     def execute(self, cmd):
         if not self.ready:
