@@ -21,6 +21,9 @@ from jsec.attack import AbstractAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
 from jsec.utils import CommandLineApp, Error, cd, load_versions
+from jsec.data.jcversion.jcversion import JCVersionExecutor
+
+# from jsec.data.jcversion import
 
 # FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
@@ -61,21 +64,10 @@ class PreAnalysisManager:
         self.get_jc_version()
 
     def get_jc_version(self):
-        # Gets the JavaCard version from the card itself
-        # ordered from the newests
-        config = configparser.ConfigParser()
-        config.read(DATA / "jcversion/config.ini")
-
-        versions = config["BUILD"]["versions"].split(",")
-        versions = load_versions(versions)
-
-        for version in versions:
-            scenario = ScenarioHandler(
-                config, self.gp, workdir=DATA / "jcversion", card=self.card
-            )
-            scenario.execute_stages(version)
-
-        report = scenario.get_report()
+        version = JCVersionExecutor(
+            card=self.card, gp=self.gp, workdir=Path(), version=None
+        ).get_jcversion()
+        return version
 
 
 # FIXME give disclaimer and ask about consent
@@ -166,7 +158,7 @@ class App(CommandLineApp):
             config=self.config, dry_run=self.dry_run, log_verbosity=self.verbosity,
         )
         # FIXME make sure we only have one card in the reader
-        self.card = Card()
+        self.card = Card(gp=self.gp)
         prem = PreAnalysisManager(self.card, self.gp)
         prem.run()
 
@@ -295,7 +287,7 @@ class Card:
     # TODO
     # install an applet
     # execute applet/attack steps
-    def __init__(self, gp):
+    def __init__(self, gp: GlobalPlatformProWrapper):
         self.states = None
         self.current_state = None
         self.gp = gp
