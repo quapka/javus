@@ -94,6 +94,7 @@ class GlobalPlatformProWrapper(object):
         self._temp_files = []
 
     def gp_prefix(self):
+        # TODO 'java' might not work on Windows and could require java.exe
         cmd = [
             "java",
             "-jar",
@@ -189,7 +190,8 @@ class GlobalPlatformProWrapper(object):
         clean_second = second.replace(" ", "").upper()
         return clean_first == clean_second
 
-    # TODO when and how to save to database?
+    # TODO when and how to save to database? - probably not here, as this should only handle
+    # the GlobalPlatformPro calls
     def run(self, options, dump=False):
         cmd = self.gp_prefix()
         if self.verbose:

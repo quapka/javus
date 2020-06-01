@@ -77,7 +77,6 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
         separated = self._separate_payload(clean)
         if separated:
-            # Hexadecimal values are expected first
             try:
                 return bytes([int(x, 16) for x in separated])
             except ValueError:
