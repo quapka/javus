@@ -54,12 +54,13 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         path = value.format(version=self.version)
         log.info("Attempt to install applet: %s", path)
         with cd(self.workdir):
-            self.gp.install(path)
+            return self.gp.install(path)
 
     def _uninstall(self, value: str):
         if self.installed_applets is not None:
             for path in self.installed_applets[::-1]:
-                self.gp.uninstall(path)
+                with cd(self.workdir):
+                    self.gp.uninstall(path)
 
     def construct_aid(self) -> bytes:
         # FIXME this method is a gimmick to be overriden by the custom Executors
@@ -70,7 +71,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         aid = self.construct_aid()
         # TODO payload may be of varying kinds of hexa/int values values
         payload = self._parse_payload(raw_payload)
-        self.gp.apdu(payload, aid)
+        return self.gp.apdu(payload, aid)
 
     def _parse_payload(self, raw: str) -> bytes:
         clean = self._clean_payload(raw)
@@ -118,17 +119,21 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         reduced = re.sub(r"\s+", " ", stripped)
         return reduced
 
-    def execute(self):
+    def execute(self) -> list:
         stages = self.get_stages()
+        report = []
 
         for stage, value in stages.items():
             stage = stage.strip().upper()
             if stage == "INSTALL":
-                self._install(value)
-            if stage.startswith("SEND"):
-                self._send(value)
-            if stage == "UNINSTALL":
-                self._uninstall(value)
+                result = self._install(value)
+            elif stage.startswith("SEND"):
+                result = self._send(value)
+            elif stage == "UNINSTALL":
+                result = self._uninstall(value)
+
+            report.append({stage: result})
+        return report
 
 
 if __name__ == "__main__":
