@@ -61,7 +61,7 @@ class PreAnalysisManager:
     def run(self):
         # install the JCVersion applet
         # save the version somewhere
-        self.get_jc_version()
+        self.card.jcversion = self.get_jc_version()
 
     def get_jc_version(self):
         version = JCVersionExecutor(
@@ -160,8 +160,7 @@ class App(CommandLineApp):
         # FIXME make sure we only have one card in the reader
         self.card = Card(gp=self.gp)
         prem = PreAnalysisManager(self.card, self.gp)
-        # prem.run()
-        version = prem.get_jc_version()
+        prem.run()
 
         anam = AnalysisManager(self.card, self.gp, self.config)
         anam.run()
