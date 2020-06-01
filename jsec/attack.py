@@ -64,7 +64,11 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
     def construct_aid(self) -> bytes:
         # FIXME this method is a gimmick to be overriden by the custom Executors
-        return bytes.fromhex(self.config["BUILD"]["aid"])
+        rid = bytes.fromhex(self.config["BUILD"]["pkg.rid"])
+        pix = bytes.fromhex(self.config["BUILD"]["applet.pix"])
+        aid = rid + pix
+
+        return aid
 
     def _send(self, raw_payload: str):
         # TODO prepare payload
