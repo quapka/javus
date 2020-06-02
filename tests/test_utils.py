@@ -37,11 +37,11 @@ class TestJCVersion:
     @pytest.mark.parametrize(
         "version,string",
         [
-            ("0000", "0.0"),
-            ("0100", "1.0"),
-            ("0202", "2.2"),
-            ("0201", "2.1"),
-            ("0300", "3.0"),
+            ("0000", "JavaCard version: 0.0"),
+            ("0100", "JavaCard version: 1.0"),
+            ("0202", "JavaCard version: 2.2"),
+            ("0201", "JavaCard version: 2.1"),
+            ("0300", "JavaCard version: 3.0"),
         ],
     )
     def test___str__(self, version: str, string: str):

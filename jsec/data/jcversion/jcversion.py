@@ -24,7 +24,7 @@ class JCVersionExecutor(BaseAttackExecutor):
         versions = load_versions(versions)
 
         # for version in versions:
-        for version in ["jc222"]:
+        for version in versions:
             # FIXME setting versions like so is quite a weird thing
             self.version = version
             report = self.execute()

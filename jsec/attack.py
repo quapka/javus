@@ -37,7 +37,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         self.version = version
 
         self.config = configparser.ConfigParser()
-        self.installed_applets = None
+        self.installed_applets = []
         self.stages = None
 
         self._load_config()
@@ -54,11 +54,17 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         path = value.format(version=self.version)
         log.info("Attempt to install applet: %s", path)
         with cd(self.workdir):
-            return self.gp.install(path)
+            result = self.gp.install(path)
+            if result.returncode == 0:
+                self.installed_applets.append(path)
+
+        return result
 
     def _uninstall(self, value: str):
         if self.installed_applets is not None:
-            for path in self.installed_applets[::-1]:
+            # attemp to uninstall the installed applets in reversed order
+            while self.installed_applets:
+                path = self.installed_applets.pop()
                 with cd(self.workdir):
                     self.gp.uninstall(path)
 
@@ -127,6 +133,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         stages = self.get_stages()
         report = []
 
+        # perform next stage only if the previous one was successful
         for stage, value in stages.items():
             stage = stage.strip().upper()
             if stage == "INSTALL":

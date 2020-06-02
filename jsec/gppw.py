@@ -224,6 +224,11 @@ class GlobalPlatformProWrapper(object):
                 # TODO log.
                 pass
 
+        if proc.returncode == 0:
+            log.info("The command '%s' was successful.", " ".join(cmd))
+        else:
+            log.info("The command '%s' was not successful.", " ".join(cmd))
+
         return proc
 
     def guess_diversifier(self):

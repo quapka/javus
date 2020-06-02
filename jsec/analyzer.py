@@ -164,7 +164,6 @@ class App(CommandLineApp):
 
         anam = AnalysisManager(self.card, self.gp, self.config)
         anam.run()
-        # sel.get_jc_version(self.card)
 
 
 class PostAnalysisManager:

@@ -199,7 +199,7 @@ class JCVersion(NamedTuple):
         return cls_obj(major=major, minor=minor)
 
     def __str__(self) -> str:
-        return "%s.%s" % (self.major, self.minor)
+        return "JavaCard version: %s.%s" % (self.major, self.minor)
 
     def get_sdks(self) -> List["SDKVersion"]:
         """
