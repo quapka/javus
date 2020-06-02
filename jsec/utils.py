@@ -15,6 +15,7 @@ from jsec.settings import LIB_DIR
 # from collections import namedtuple
 from typing import NamedTuple
 from typing import Optional
+from typing import List
 
 import pymongo
 
@@ -200,7 +201,10 @@ class JCVersion(NamedTuple):
     def __str__(self) -> str:
         return "%s.%s" % (self.major, self.minor)
 
-    def get_sdks(self):
+    def get_sdks(self) -> List["SDKVersion"]:
+        """
+        Returns a list of sdks, that are worth trying for the specific card
+        """
         sdks = []
         available_sdks = SDKVersion.get_available_sdks()
         for sdk in available_sdks:
@@ -222,7 +226,7 @@ class SDKVersion(NamedTuple):
 
     # TODO rename cls_obj to cls
     @classmethod
-    def from_str(cls_obj, string: str):
+    def from_str(cls_obj, string: str) -> "SDKVersion":
         string = string.strip().lower()
         # fmt: off
         sdk_regex = re.compile(
@@ -252,7 +256,7 @@ class SDKVersion(NamedTuple):
             )
 
     @classmethod
-    def from_list(cls, string: str, sep: str = ","):
+    def from_list(cls, string: str, sep: str = ",") -> List["SDKVersion"]:
         sdks = []
         for part in [x.strip() for x in string.split(sep=sep)]:
             sdks.append(cls.from_str(part))
@@ -269,7 +273,7 @@ class SDKVersion(NamedTuple):
 
     # TODO load only once and get them from the class afterwards
     @classmethod
-    def get_available_sdks(cls) -> list:
+    def get_available_sdks(cls) -> List["SDKVersion"]:
         sdks = []
         properties = configparser.ConfigParser()
         properties.read(LIB_DIR / "jcversions.properties")
@@ -279,7 +283,7 @@ class SDKVersion(NamedTuple):
         return sdks
 
     # TODO missing other comparison methods
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         result = self.major == other.major
         result = result and self.minor == other.minor
         result = result and self.patch == other.patch
