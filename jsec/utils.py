@@ -223,6 +223,8 @@ class SDKVersion(NamedTuple):
     update: Optional[int]
     # TODO what is 'b' in jc310b43
     b_value: Optional[int]
+    # the original string, that was parsed to separate values
+    raw: str
 
     # TODO rename cls_obj to cls
     @classmethod
@@ -252,7 +254,12 @@ class SDKVersion(NamedTuple):
                 b_value = int(match.group("type_value"))
 
             return cls_obj(
-                major=major, minor=minor, patch=patch, update=update, b_value=b_value
+                major=major,
+                minor=minor,
+                patch=patch,
+                update=update,
+                b_value=b_value,
+                raw=string,
             )
 
     @classmethod
