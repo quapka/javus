@@ -157,9 +157,10 @@ class App(CommandLineApp):
         )
         # FIXME make sure we only have one card in the reader
         self.card = Card(gp=self.gp)
+        print("Running the pre-analysis..")
         prem = PreAnalysisManager(self.card, self.gp)
         prem.run()
-
+        print("Running the analysis..")
         anam = AnalysisManager(self.card, self.gp, self.config)
         anam.run()
 
