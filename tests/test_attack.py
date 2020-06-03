@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import pytest
 from jsec.attack import BaseAttackExecutor
+from jsec.analyzer import Card
 from jsec.gppw import GlobalPlatformProWrapper
 import configparser
 from pathlib import Path
@@ -14,6 +15,7 @@ class TestBaseAttackExecutor:
         }
         self.gp = GlobalPlatformProWrapper(config=config)
         self.path = Path()
+        self.card = Card(gp=self.gp)
 
     @pytest.mark.parametrize(
         "raw_payload,parsed_payload",
@@ -30,7 +32,7 @@ class TestBaseAttackExecutor:
         ],
     )
     def test__parse_payload(self, raw_payload: str, parsed_payload: bytes) -> None:
-        bae = BaseAttackExecutor(gp=self.gp, workdir=self.path, version="")
+        bae = BaseAttackExecutor(card=self.card, gp=self.gp, workdir=self.path)
         assert bae._parse_payload(raw_payload) == parsed_payload
 
     @pytest.mark.parametrize(
@@ -44,7 +46,7 @@ class TestBaseAttackExecutor:
         ],
     )
     def test__clean_payload(self, raw: str, cleaned: str) -> None:
-        bae = BaseAttackExecutor(gp=self.gp, workdir=self.path, version="")
+        bae = BaseAttackExecutor(card=self.card, gp=self.gp, workdir=self.path)
         assert bae._clean_payload(raw) == cleaned
 
     @pytest.mark.parametrize(
@@ -57,5 +59,5 @@ class TestBaseAttackExecutor:
         ],
     )
     def test__separate_payload(self, raw: str, separated: str):
-        bae = BaseAttackExecutor(gp=self.gp, workdir=self.path, version="")
+        bae = BaseAttackExecutor(card=self.card, gp=self.gp, workdir=self.path)
         assert bae._separate_payload(raw) == separated

@@ -64,9 +64,7 @@ class PreAnalysisManager:
         self.card.jcversion = self.get_jc_version()
 
     def get_jc_version(self):
-        version = JCVersionExecutor(
-            card=self.card, gp=self.gp, workdir=Path(), version=None
-        ).get_jcversion()
+        version = JCVersionExecutor(gp=self.gp, workdir=Path()).get_jcversion()
         return version
 
 
@@ -360,7 +358,7 @@ class AnalysisManager:
                         # TODO or call build directly? much nicer..
                         builder.execute(BaseBuilder.COMMANDS.build)
                     executor = self.get_executor(
-                        attack_name=key, builder_module=builder_module
+                        card=self.card, attack_name=key, builder_module=builder_module
                     )
 
     # FIXME finish loading the builder

@@ -31,10 +31,10 @@ class AbstractAttackExecutor(ABC):
 
 
 class BaseAttackExecutor(AbstractAttackExecutor):
-    def __init__(self, gp: GlobalPlatformProWrapper, workdir: Path, version: str):
+    def __init__(self, card: "Card", gp: GlobalPlatformProWrapper, workdir: Path):
+        self.card = card
         self.gp = gp
         self.workdir = Path(workdir).resolve()
-        self.version = version
 
         self.config = configparser.ConfigParser()
         self.installed_applets = []
