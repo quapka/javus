@@ -21,6 +21,7 @@ from jsec.attack import AbstractAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
 from jsec.utils import CommandLineApp, Error, cd, load_versions
+from jsec.utils import JCVersion
 from jsec.data.jcversion.jcversion import JCVersionExecutor
 
 # from jsec.data.jcversion import
@@ -61,10 +62,16 @@ class PreAnalysisManager:
     def run(self):
         # install the JCVersion applet
         # save the version somewhere
-        self.card.jcversion = self.get_jc_version()
+        # FIXME don't hardcode it for a card!
+        # put JCVersion into a types.ini
+        print("WARNING: Manually setting JCVersion for Card A!!!")
+        self.card.jcversion = JCVersion.from_str("0300")  # self.get_jc_version()
+        self.card.sdks = self.card.jcversion.get_sdks()
 
     def get_jc_version(self):
-        version = JCVersionExecutor(gp=self.gp, workdir=Path()).get_jcversion()
+        version = JCVersionExecutor(
+            card=self.card, gp=self.gp, workdir=Path(), sdk=None
+        ).get_jcversion()
         return version
 
 
@@ -344,22 +351,22 @@ class AnalysisManager:
                 importlib.import_module(f"jsec.data.attacks.{builder_module}"),
                 "AttackBuilder",
             )
-            for key, value in self.attacks[section]:
+            for key, value in self.attacks[section].items():
                 # TODO this is ugly and not easy to extend in the future, maybe ditch the
                 # idea of ini files and get json?
                 if key == "builder":
                     continue
                 # TODO instantiate attack builder
                 # TODO attack is defined by the workdir - no need for first param
-                if value:
-                    builder = AttackBuilder(attack="", workdir=ATTACKS / key)
-                    if not builder.uniq_aids(self.card.get_all_aids()):
+                if self.attacks.getboolean(section, key):
+                    builder = AttackBuilder(gp=self.gp, workdir=ATTACKS / key)
+                    if not builder.uniq_aids(self.card.get_current_aids()):
                         builder.uniqfy()
                         # rebuild the applet
                         # TODO or call build directly? much nicer..
                         builder.execute(BaseBuilder.COMMANDS.build)
                     executor = self.get_executor(
-                        card=self.card, attack_name=key, builder_module=builder_module
+                        attack_name=key, builder_module=builder_module
                     )
 
     # FIXME finish loading the builder
@@ -380,7 +387,7 @@ class AnalysisManager:
                 "AttackExecutor",
             )
             return executor
-        except AttributeError:
+        except (ModuleNotFoundError, AttributeError):
             pass
 
         try:
@@ -388,6 +395,8 @@ class AnalysisManager:
                 importlib.import_module(f"jsec.data.attacks.{builder_module}"),
                 "AttackExecutor",
             )
+        # TODO maybe add ModuleNotFoundError, but if it is in config.ini it is actually an
+        # error - either missing module or should not be in config
         except AttributeError:
             pass
 

@@ -41,25 +41,24 @@ class AttackBuilder(BaseBuilder):
         self.ready = False
 
     # FIXME redundant - already in the BaseBuilder
-    def load_config(self):
-        config = configparser.ConfigParser()
-        with cd(self.workdir):
-            config.read("config.ini")
+    # def load_config(self):
+    #     config = configparser.ConfigParser()
+    #     with cd(self.workdir):
+    #         config.read("config.ini")
 
-        self.config = config
+    #     self.config = config
 
-    def load_aids(self):
-        aids = configparser.ConfigParser()
-        with cd(self.workdir):
-            aids.read("aids.ini")
+    # def load_aids(self):
+    #     aids = configparser.ConfigParser()
+    #     with cd(self.workdir):
+    #         aids.read("aids.ini")
 
-        self.aids = aids
+    #     self.aids = aids
 
-    # FIXME redundant - already in the BaseBuilder
+    # # FIXME redundant - already in the BaseBuilder
     def _prepare(self):
-        self.load_config()
+        super()._prepare()
         self.load_aids()
-        self.ready = True
 
     def save_aids(self):
         with cd(self.workdir):
@@ -116,6 +115,9 @@ class AttackBuilder(BaseBuilder):
         self.save_aids()
 
     def uniq_aids(self, used):
+        if not self.ready:
+            self._prepare()
+
         pkg_rid = self.aids["BUILD"]["pkg.rid"]
         vulns_pix = self.aids["BUILD"]["vulns.pix"]
         pkg_pix = self.aids["BUILD"]["pkg.pix"]

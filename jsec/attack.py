@@ -5,6 +5,7 @@ from pathlib import Path
 
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.utils import cd
+from jsec.utils import SDKVersion
 import configparser
 import logging
 
@@ -31,7 +32,9 @@ class AbstractAttackExecutor(ABC):
 
 
 class BaseAttackExecutor(AbstractAttackExecutor):
-    def __init__(self, card: "Card", gp: GlobalPlatformProWrapper, workdir: Path):
+    def __init__(
+        self, card: "Card", gp: GlobalPlatformProWrapper, workdir: Path, sdk: SDKVersion
+    ):
         self.card = card
         self.gp = gp
         self.workdir = Path(workdir).resolve()
@@ -48,10 +51,13 @@ class BaseAttackExecutor(AbstractAttackExecutor):
     def get_stages(self):
         return self.config["STAGES"]
 
-    def _install(self, value: str):
+    def _install(self, value: str, sdk_version: SDKVersion):
         # value is a path/string, that can include {version} for differentiating between
         # different versions
-        path = value.format(version=self.version)
+        if sdk_version is None:
+            sdk_version = self._determine_version()
+
+        path = value.format(version=sdk_version.raw)
         log.info("Attempt to install applet: %s", path)
         with cd(self.workdir):
             result = self.gp.install(path)
@@ -129,7 +135,12 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         reduced = re.sub(r"\s+", " ", stripped)
         return reduced
 
-    def execute(self) -> list:
+    def _determine_version(self) -> "SDKVersion":
+        # determine the newest SDK version supported both by the card and the attack
+        attack_versions = SDKVersion.from_list(self.config["BUILD"]["versions"])
+        return list(set(attack_versions).intersection(set(self.card.sdks)))[-1]
+
+    def execute(self, sdk_version=None) -> list:
         stages = self.get_stages()
         report = []
 
@@ -137,7 +148,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         for stage, value in stages.items():
             stage = stage.strip().upper()
             if stage == "INSTALL":
-                result = self._install(value)
+                result = self._install(value, sdk_version=sdk_version)
             elif stage.startswith("SEND"):
                 result = self._send(value)
             elif stage == "UNINSTALL":

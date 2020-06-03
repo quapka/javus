@@ -113,7 +113,7 @@ class BaseBuilder(Attack):
         self.ready = True
 
     def _load_config(self):
-        config = configparser.ConfigParser()
+        config = configparser.ConfigParser(strict=False)
         with cd(self.wd):
             config.read("config.ini")
 

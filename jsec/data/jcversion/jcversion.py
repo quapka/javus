@@ -4,6 +4,7 @@ from jsec.attack import BaseAttackExecutor
 from jsec.settings import DATA
 from jsec.utils import load_versions
 from jsec.utils import JCVersion
+from jsec.utils import SDKVersion
 from pathlib import Path
 from jsec.utils import cd
 import configparser
@@ -26,8 +27,8 @@ class JCVersionExecutor(BaseAttackExecutor):
         # for version in versions:
         for version in versions:
             # FIXME setting versions like so is quite a weird thing
-            self.version = version
-            report = self.execute()
+            version = SDKVersion.from_str(version)
+            report = self.execute(sdk_version=version)
             if report[2]["SEND_READ_VERSION"]["status"] == "9000":
                 return JCVersion.from_str(report[2]["SEND_READ_VERSION"]["payload"])
 
