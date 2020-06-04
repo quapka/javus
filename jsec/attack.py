@@ -18,13 +18,6 @@ handler.setFormatter(formatter)
 log.addHandler(handler)
 
 
-class Attack(ABC):
-    @abstractmethod
-    def uniqfy(self):
-        # TODO maybe have default aids in config.ini and rewrite only aids.ini
-        pass
-
-
 class AbstractAttackExecutor(ABC):
     @abstractmethod
     def execute(self):

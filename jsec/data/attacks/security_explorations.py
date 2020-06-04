@@ -6,7 +6,6 @@ import os
 import subprocess
 from pathlib import Path
 
-# from jsec.attack import Attack
 from jsec.builder import BaseBuilder
 from jsec.settings import ATTACKS
 from jsec.utils import cd

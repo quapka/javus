@@ -8,7 +8,7 @@ import os
 import subprocess
 from pathlib import Path
 
-from jsec.attack import Attack
+import abc
 
 # sort imports
 from jsec.utils import CommandLineApp, cd
@@ -18,6 +18,13 @@ handler = logging.StreamHandler()
 formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s: %(message)s")
 handler.setFormatter(formatter)
 log.addHandler(handler)
+
+
+class AbstractAttackBuilder(abc.ABC):
+    @abc.abstractmethod
+    def uniqfy(self):
+        # TODO maybe have default aids in config.ini and rewrite only aids.ini
+        pass
 
 
 # FIXME add tests
@@ -81,7 +88,7 @@ class CommandLineBuilder(CommandLineApp):
         builder.execute(self.cmd)
 
 
-class BaseBuilder(Attack):
+class BaseBuilder(AbstractAttackBuilder):
     class COMMANDS(enum.Enum):
         clean = enum.auto()
         boostrap = enum.auto()
