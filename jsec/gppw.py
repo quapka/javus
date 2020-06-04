@@ -348,7 +348,7 @@ class GlobalPlatformProWrapper(object):
             communication = self._parse_gp_dump_file(
                 raw_content=self._dump_file_content
             )
-        return communication[payload.hex()]
+        return communication[payload.hex().upper()]
 
     def _parse_gp_dump_file(self, raw_content):
         # TODO this is a bit naive, but hey, who isn't
