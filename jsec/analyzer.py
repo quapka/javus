@@ -347,31 +347,55 @@ class AnalysisManager:
         for section in self.attacks.sections():
             log.info("Executing attacks from '%s'", section)
             builder_module = self.attacks[section]["builder"]
-            AttackBuilder = getattr(
-                importlib.import_module(f"jsec.data.attacks.{builder_module}"),
-                "AttackBuilder",
-            )
             for key, value in self.attacks[section].items():
                 # TODO this is ugly and not easy to extend in the future, maybe ditch the
                 # idea of ini files and get json?
                 if key == "builder":
                     continue
-                # TODO instantiate attack builder
-                # TODO attack is defined by the workdir - no need for first param
                 if self.attacks.getboolean(section, key):
+                    AttackBuilder = self.get_builder(
+                        attack_name=key, builder_module=builder_module
+                    )
                     builder = AttackBuilder(gp=self.gp, workdir=ATTACKS / key)
                     if not builder.uniq_aids(self.card.get_current_aids()):
                         builder.uniqfy()
                         # rebuild the applet
                         # TODO or call build directly? much nicer..
                         builder.execute(BaseBuilder.COMMANDS.build)
-                    executor = self.get_executor(
+                    AttackExecutor = self.get_executor(
                         attack_name=key, builder_module=builder_module
                     )
+                    executor = AttackExecutor(
+                        card=self.card, gp=self.gp, workdir=ATTACKS / key
+                    )
+                    executor.execute()
 
     # FIXME finish loading the builder
-    def get_builder(self, attack_name: str):
-        pass
+    def get_builder(self, attack_name: str, builder_module: str):
+        try:
+            builder = getattr(
+                importlib.import_module(
+                    f"jsec.data.attacks.{attack_name}.{attack_name}"
+                ),
+                "AttackBuilder",
+            )
+            return builder
+        except (ModuleNotFoundError, AttributeError):
+            pass
+
+        try:
+            builder = getattr(
+                importlib.import_module(f"jsec.data.attacks.{builder_module}"),
+                "AttackBuilder",
+            )
+            return builder
+        except AttributeError:
+            pass
+        except ModuleNotFoundError:
+            # FIXME handle this
+            pass
+
+        return BaseBuilder
 
     def get_executor(
         self, attack_name: str, builder_module: str

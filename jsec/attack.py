@@ -33,7 +33,11 @@ class AbstractAttackExecutor(ABC):
 
 class BaseAttackExecutor(AbstractAttackExecutor):
     def __init__(
-        self, card: "Card", gp: GlobalPlatformProWrapper, workdir: Path, sdk: SDKVersion
+        self,
+        card: "Card",
+        gp: GlobalPlatformProWrapper,
+        workdir: Path,
+        sdk: SDKVersion = None,
     ):
         self.card = card
         self.gp = gp
