@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import pytest
-from jsec.attack import BaseAttackExecutor
+from jsec.executor import BaseAttackExecutor
 from jsec.analyzer import Card
 from jsec.gppw import GlobalPlatformProWrapper
 import configparser

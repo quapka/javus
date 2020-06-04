@@ -16,8 +16,8 @@ import sys
 from pathlib import Path
 
 from jsec.builder import BaseBuilder
-from jsec.attack import BaseAttackExecutor
-from jsec.attack import AbstractAttackExecutor
+from jsec.executor import BaseAttackExecutor
+from jsec.executor import AbstractAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
 from jsec.utils import CommandLineApp, Error, cd, load_versions

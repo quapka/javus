@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from jsec.attack import BaseAttackExecutor
+from jsec.executor import BaseAttackExecutor
 from jsec.settings import DATA
 from jsec.utils import load_versions
 from jsec.utils import JCVersion
