@@ -39,7 +39,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         self.gp = gp
         self.workdir = Path(workdir).resolve()
 
-        self.config = configparser.ConfigParser()
+        self.config = configparser.ConfigParser(strict=False)
         self.installed_applets = []
         self.stages = None
 
