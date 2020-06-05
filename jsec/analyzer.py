@@ -354,6 +354,10 @@ class Card:
 
     def save_state(self):
         proc = self.gp.list()
+        if proc.returncode != 0:
+            log.info("Cannot save the state of the card.")
+            return
+
         raw = proc.stdout.decode("utf8")
         state = CardState(raw=raw)
         state.process()
