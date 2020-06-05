@@ -125,7 +125,13 @@ class App(CommandLineApp):
             action="store_true",
             help="No external programs are called, useful when developing the analyzer",
         )
-
+        # TODO test if argparse defaults are validated
+        self.parser.add_argument(
+            "-o",
+            "--output-dir",
+            default=Path("jsec-analysis-result"),
+            help="A directory, that will store the results of the analysis",
+        )
         # TODO def add options attempting to uninstall all applets, that were installed
         # but this should be the implicit behaviour
 
@@ -173,7 +179,27 @@ class App(CommandLineApp):
 
 
 class PostAnalysisManager:
-    pass
+    def __init__(self, output_dir: Path):
+        self.output_dir = output_dir
+
+    def create_output_dir(self) -> Path:
+        suffix = 0
+        while True:
+            if suffix:
+                self.output_dir += "-{}".format(suffix)
+            try:
+                os.mkdir(self.output_dir)
+            except FileExistsError:
+                log.debug(
+                    "The directory '%s' already exists. Updating and adding a suffix",
+                    self.output_dir,
+                )
+                suffix += 1
+
+        return self.output_dir
+
+    def run(self):
+        self.create_output_dir()
 
 
 # TODO add logging everywhere
