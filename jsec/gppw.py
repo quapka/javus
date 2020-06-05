@@ -271,11 +271,9 @@ class GlobalPlatformProWrapper(object):
             break
 
     def read_gp_version(self):
-        cmd = self.gp_prefix()
-        cmd += ["--version"]
+        proc = self.run(options=["--version"])
 
         # FIXME add --dry-run
-        proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # the version of GlobalPlatformPro used during the analysis has a bug in the CLI
         # more information at: https://github.com/martinpaljak/GlobalPlatformPro/issues/217
         if proc.returncode in [0, 1]:
@@ -285,10 +283,7 @@ class GlobalPlatformProWrapper(object):
         """
         Calling $ gp --help as a sanity checking, that gp is working properly
         """
-        cmd = self.gp_prefix()
-        cmd += ["--help"]
-        # FIXME add --dry-run
-        proc = subprocess.run(cmd)
+        proc = self.run(options=["--help"])
 
         if proc.returncode == 0:
             self.works = True
