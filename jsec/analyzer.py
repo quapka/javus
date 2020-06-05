@@ -143,8 +143,8 @@ class App(CommandLineApp):
         self.dry_run = self.args.dry_run
         if self.dry_run:
             print(
-                "[Note] --dry-run was set, no external commands are called "
-                "and no report is created"
+                "[Note] '--dry-run' was set, no external commands are called "
+                "and no report is created."
             )
 
     def validate_config(self, value):
@@ -176,6 +176,7 @@ class App(CommandLineApp):
         print("Running the analysis..")
         anam = AnalysisManager(self.card, self.gp, self.config)
         anam.run()
+        print("Running the post-analysis..")
 
 
 class PostAnalysisManager:
