@@ -318,21 +318,6 @@ class GlobalPlatformProWrapper(object):
         if proc.returncode == 0:
             self.works = True
 
-    # def get_atr(self, gp_verbose_output=None):
-    #     # be cautious in case we have already an ATR
-    #     # no need to call it again and potentially brick the card
-    #     if self.atr is not None:
-    #         return
-    #     # in case we have a verbose gp output we can attempt to match the ATR
-    #     if gp_verbose_output is not None:
-    #         self.atr = self.find_atr(gp_verbose_output)
-    #     # otherwise we match for it from output of '--list' command
-    #     cmd = self.gp_prefix()
-    #     cmd += ["--list"]
-    #     proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #     # should not matter what the return code is
-    #     self.atr = self.find_atr(proc.stdout)
-
     def find_atr(self, string):
         # fragile and naive way of getting the ATR, but does the job
         match = re.search(r"ATR: ([A-Z0-9]+)", string)
