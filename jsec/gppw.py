@@ -11,6 +11,8 @@ import tempfile
 
 from jsec.settings import DATA
 
+from typing import List
+
 # FIXME what if no card/reader is present?
 
 log = logging.getLogger(__file__)
@@ -184,7 +186,7 @@ class GlobalPlatformProWrapper(object):
                     continue
 
     @staticmethod
-    def same_atr(first, second):
+    def same_atr(first: str, second: str) -> bool:
         # TODO use smartcard.ATR
         clean_first = first.replace(" ", "").upper()
         clean_second = second.replace(" ", "").upper()
@@ -192,7 +194,20 @@ class GlobalPlatformProWrapper(object):
 
     # TODO when and how to save to database? - probably not here, as this should only handle
     # the GlobalPlatformPro calls
-    def run(self, options, dump=False):
+    def run(
+        self, options: List[str], dump: bool = False, safe=False
+    ) -> subprocess.CompletedProcess:
+        r"""
+        :param safe:
+            `True` if the command to be executed is safe to be run. E.g. `gp --version`
+            is safe, because we don't interact with the card and therefore we don't need
+            to know the diversifier of the card.
+        """
+        # TODO rename safe to something about diversifier or card?
+
+        if not safe:
+            self.determine_diversifier()
+
         cmd = self.gp_prefix()
         if self.verbose:
             cmd += ["--verbose"]
@@ -241,7 +256,7 @@ class GlobalPlatformProWrapper(object):
             )
             return
         # first try `$ gp --list` without diversifier
-        proc = self.run(["--list"])
+        proc = self.run(["--list"], safe=True)
         if proc.returncode == 0:
             self.diversifier = Diversifier.NONE
             log.debug("'%s' diversifier is used.", self.diversifier.name)
@@ -259,7 +274,7 @@ class GlobalPlatformProWrapper(object):
 
         for div in Diversifier.special():
             options = ["--list", Diversifier.get_flag(div)]
-            proc = self.run(options)
+            proc = self.run(options, safe=True)
             output = "\n".join([proc.stdout.decode("utf8"), proc.stderr.decode("utf8")])
             if proc.returncode != 0 or self.DIVERSIFIER_ERROR_MSG in output:
                 log.warning(
@@ -271,7 +286,7 @@ class GlobalPlatformProWrapper(object):
             break
 
     def read_gp_version(self):
-        proc = self.run(options=["--version"])
+        proc = self.run(options=["--version"], safe=True)
 
         # FIXME add --dry-run
         # the version of GlobalPlatformPro used during the analysis has a bug in the CLI
@@ -283,7 +298,7 @@ class GlobalPlatformProWrapper(object):
         """
         Calling $ gp --help as a sanity checking, that gp is working properly
         """
-        proc = self.run(options=["--help"])
+        proc = self.run(options=["--help"], safe=True)
 
         if proc.returncode == 0:
             self.works = True
