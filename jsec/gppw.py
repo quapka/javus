@@ -13,6 +13,8 @@ from jsec.settings import DATA
 
 from typing import List
 
+# from jsec.analyzer import CardState
+
 # FIXME what if no card/reader is present?
 
 log = logging.getLogger(__file__)
@@ -83,6 +85,7 @@ class GlobalPlatformProWrapper(object):
         self.version = None
         self.atr = None
         self._dump_file_content = None
+        self.card = None
         # TODO add ready flag
 
         log.setLevel(log_verbosity)
@@ -192,10 +195,19 @@ class GlobalPlatformProWrapper(object):
         clean_second = second.replace(" ", "").upper()
         return clean_first == clean_second
 
+    def _save_state(self):
+        # state is the output of a --list cmd and setting `save_state` to True
+        # would lead to infinite recursion
+        proc = self.run(options=["--list"], dump=False, safe=False, save_state=False)
+        if proc.returncode == 0:
+            state = CardState(raw=proc.stdout.decode("utf8"))
+            state.process()
+            self.card.add_state(state)
+
     # TODO when and how to save to database? - probably not here, as this should only handle
     # the GlobalPlatformPro calls
     def run(
-        self, options: List[str], dump: bool = False, safe=False
+        self, options: List[str], dump: bool = False, safe=False, save_state=True
     ) -> subprocess.CompletedProcess:
         r"""
         :param safe:
@@ -207,6 +219,9 @@ class GlobalPlatformProWrapper(object):
 
         if not safe:
             self.determine_diversifier()
+
+        if save_state:
+            self._save_state()
 
         cmd = self.gp_prefix()
         if self.verbose:
@@ -286,7 +301,7 @@ class GlobalPlatformProWrapper(object):
             break
 
     def read_gp_version(self):
-        proc = self.run(options=["--version"], safe=True)
+        proc = self.run(options=["--version"], safe=True, save_state=False)
 
         # FIXME add --dry-run
         # the version of GlobalPlatformPro used during the analysis has a bug in the CLI
@@ -298,7 +313,7 @@ class GlobalPlatformProWrapper(object):
         """
         Calling $ gp --help as a sanity checking, that gp is working properly
         """
-        proc = self.run(options=["--help"], safe=True)
+        proc = self.run(options=["--help"], safe=True, save_state=False)
 
         if proc.returncode == 0:
             self.works = True

@@ -184,6 +184,7 @@ class App(CommandLineApp):
 
         # FIXME make sure we only have one card in the reader
         self.card = Card(gp=self.gp)
+        self.gp.card = self.card
         print("Running the pre-analysis..")
         prem = PreAnalysisManager(self.card, self.gp)
         prem.run()
@@ -344,7 +345,7 @@ class Card:
         # TODO maybe use named tuples from collections?
         self.jcversion = None
 
-    def _update(self, state):
+    def add_state(self, state):
         if self.states is None:
             self.states = [state]
         else:
@@ -352,16 +353,16 @@ class Card:
 
         self.current_state = state
 
-    def save_state(self):
-        proc = self.gp.list()
-        if proc.returncode != 0:
-            log.info("Cannot save the state of the card.")
-            return
+    # def save_state(self):
+    #     proc = self.gp.list()
+    #     if proc.returncode != 0:
+    #         log.info("Cannot save the state of the card.")
+    #         return
 
-        raw = proc.stdout.decode("utf8")
-        state = CardState(raw=raw)
-        state.process()
-        self._update(state=state)
+    #     raw = proc.stdout.decode("utf8")
+    #     state = CardState(raw=raw)
+    #     state.process()
+    #     self._update(state=state)
 
     def get_current_aids(self):
         if self.current_state is None:
