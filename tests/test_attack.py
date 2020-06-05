@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import pytest
 from jsec.executor import BaseAttackExecutor
-from jsec.analyzer import Card
+from jsec.card import Card
 from jsec.gppw import GlobalPlatformProWrapper
 import configparser
 from pathlib import Path
