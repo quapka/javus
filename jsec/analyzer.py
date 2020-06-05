@@ -22,6 +22,7 @@ from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
 from jsec.utils import CommandLineApp, Error, cd, load_versions
 from jsec.utils import JCVersion
+from typing import Optional
 from jsec.data.jcversion.jcversion import JCVersionExecutor
 
 # from jsec.data.jcversion import
@@ -89,7 +90,7 @@ class App(CommandLineApp):
         # FIXME group self.args according to meaning
         self.config = None
         self.config_file = None
-        self.gp = None
+        self.gp = Optional[GlobalPlatformProWrapper]
         self.card = None
         super().__init__()
         self.setup_logging(log)
@@ -162,12 +163,25 @@ class App(CommandLineApp):
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
 
+    def card_present(self) -> bool:
+        # TODO check if card is present based on 'gp --list' output
+        # this could be done more cleverly using smartcard module
+        # TODO check for multiple cards inserted etc.
+        result = self.gp.list()
+        if result.stderr.decode().startswith("No smart card readers with a card found"):
+            return False
+        return True
+
     def run(self):
         self.load_configuration()
 
         self.gp = GlobalPlatformProWrapper(
             config=self.config, dry_run=self.dry_run, log_verbosity=self.verbosity,
         )
+        if not self.card_present():
+            print("No card was recognized. Please, insert a card.")
+            sys.exit(1)
+
         # FIXME make sure we only have one card in the reader
         self.card = Card(gp=self.gp)
         print("Running the pre-analysis..")
