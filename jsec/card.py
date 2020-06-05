@@ -120,11 +120,6 @@ class Card:
         self.states = None
         self.current_state = None
         self.gp = gp
-        # self.isds = []
-        # self.pkgs = []
-        # self.applets = []
-        # self.aids = []
-        # TODO maybe use named tuples from collections?
         self.jcversion = None
 
     def add_state(self, state):
@@ -134,17 +129,6 @@ class Card:
             self.states.append(state)
 
         self.current_state = state
-
-    # def save_state(self):
-    #     proc = self.gp.list()
-    #     if proc.returncode != 0:
-    #         log.info("Cannot save the state of the card.")
-    #         return
-
-    #     raw = proc.stdout.decode("utf8")
-    #     state = CardState(raw=raw)
-    #     state.process()
-    #     self._update(state=state)
 
     def get_current_aids(self):
         if self.current_state is None:
