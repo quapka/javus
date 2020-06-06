@@ -47,7 +47,7 @@ class MongoConnection(object):
         self,
         host="localhost",
         port="27017",
-        database="card-analysis",
+        database="javacard-analysis",
         collation="commands",
     ):
         self.host = host
