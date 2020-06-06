@@ -134,6 +134,7 @@ class App(CommandLineApp):
             help="A directory, that will store the results of the analysis",
         )
         # TODO def add options attempting to uninstall all applets, that were installed
+        # TODO add argument to dump to json file intead of MongoDB
         # but this should be the implicit behaviour
 
     def parse_options(self):
