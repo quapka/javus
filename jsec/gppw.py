@@ -271,7 +271,7 @@ class GlobalPlatformProWrapper(object):
             )
             return
         # first try `$ gp --list` without diversifier
-        proc = self.run(["--list"], safe=True)
+        proc = self.run(["--list"], safe=True, save_state=False)
         if proc.returncode == 0:
             self.diversifier = Diversifier.NONE
             log.debug("'%s' diversifier is used.", self.diversifier.name)
@@ -289,7 +289,7 @@ class GlobalPlatformProWrapper(object):
 
         for div in Diversifier.special():
             options = ["--list", Diversifier.get_flag(div)]
-            proc = self.run(options, safe=True)
+            proc = self.run(options, safe=True, save_state=False)
             output = "\n".join([proc.stdout.decode("utf8"), proc.stderr.decode("utf8")])
             if proc.returncode != 0 or self.DIVERSIFIER_ERROR_MSG in output:
                 log.warning(

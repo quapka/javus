@@ -12,6 +12,10 @@ import logging
 import os
 import platform
 import re
+import smartcard
+from smartcard.CardConnection import CardConnection
+from smartcard.CardConnectionDecorator import CardConnectionDecorator
+from smartcard.System import readers
 import sys
 from pathlib import Path
 
@@ -22,7 +26,9 @@ from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
 from jsec.utils import CommandLineApp, Error, cd, load_versions
 from jsec.utils import JCVersion
+from jsec.card import Card
 from typing import Optional
+from typing import List
 from jsec.data.jcversion.jcversion import JCVersionExecutor
 
 # from jsec.data.jcversion import
@@ -56,13 +62,46 @@ if int(PY_VERSION[0]) < 3:
 class PreAnalysisManager:
     # make sure, that all the attacks are build
     # and have the scenario.py or whatever to run them
-    def __init__(self, card, gp):
-        self.gp = gp
+    def __init__(self, card: "Card", gp: "GlobalPlatformProWrapper"):
         self.card = card
+        self.gp = gp
+
+    def detect_cards(self,) -> List[CardConnectionDecorator]:
+        r"""Make sure, that exactly one card is inserted"""
+        cards = []
+        for reader in readers():
+            con = reader.createConnection()
+            try:
+                con.connect()
+                cards.append(con)
+            except smartcard.Exceptions.NoCardException:
+                continue
+
+        return cards
+
+    def single_card_inserted(self) -> bool:
+        cards = self.detect_cards()
+        single_card = True
+        number_of_cards = len(cards)
+        if number_of_cards < 1:
+            log.error("No JavaCards have been detected.")
+            print("No JavaCards have been detected, please, insert one.")
+            single_card = False
+
+        if number_of_cards > 1:
+            log.error("Too many cards ('%s') have been detected", number_of_cards)
+            print(
+                "Detected %s cards, that is too many, insert only single card."
+                % number_of_cards
+            )
+            single_card = False
+
+        return single_card
 
     def run(self):
-        # install the JCVersion applet
-        # save the version somewhere
+        if not self.single_card_inserted():
+            # TODO is it worth having custom errors?
+            sys.exit(1)
         # FIXME don't hardcode it for a card!
         # put JCVersion into a types.ini
         print("WARNING: Manually setting JCVersion for Card A!!!")
@@ -179,10 +218,6 @@ class App(CommandLineApp):
         self.gp = GlobalPlatformProWrapper(
             config=self.config, dry_run=self.dry_run, log_verbosity=self.verbosity,
         )
-        if not self.card_present():
-            print("No card was recognized. Please, insert a card.")
-            sys.exit(1)
-
         # FIXME make sure we only have one card in the reader
         self.card = Card(gp=self.gp)
         self.gp.card = self.card
