@@ -53,3 +53,5 @@ analysis-results/
 aids.ini
 
 .mypy_cache
+
+*@neomake*
