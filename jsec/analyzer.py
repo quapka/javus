@@ -67,7 +67,9 @@ class PreAnalysisManager:
         self.gp = gp
 
     def detect_cards(self,) -> List[CardConnectionDecorator]:
-        r"""Make sure, that exactly one card is inserted"""
+        r"""Detect all the JavaCards, that are currently inserted
+        in the readers.
+        """
         cards = []
         for reader in readers():
             con = reader.createConnection()
@@ -80,6 +82,9 @@ class PreAnalysisManager:
         return cards
 
     def single_card_inserted(self) -> bool:
+        r"""We need to ensure, that one and only one card is inserted in all of the readers
+        when doing the analysis.
+        """
         cards = self.detect_cards()
         single_card = True
         number_of_cards = len(cards)
