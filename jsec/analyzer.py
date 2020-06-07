@@ -77,7 +77,7 @@ class PreAnalysisManager:
                 con.connect()
                 cards.append(con)
             except smartcard.Exceptions.NoCardException:
-                continue
+                pass
 
         return cards
 
