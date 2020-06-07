@@ -188,7 +188,7 @@ class App(CommandLineApp):
                 "and no report is created."
             )
 
-    def validate_config(self, value):
+    def validate_config(self, value: str) -> Path:
         if not os.path.exists(value):
             raise argparse.ArgumentTypeError(
                 "\nError: Can't open the configuration file '{}'. "
@@ -202,15 +202,6 @@ class App(CommandLineApp):
     def load_configuration(self):
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
-
-    def card_present(self) -> bool:
-        # TODO check if card is present based on 'gp --list' output
-        # this could be done more cleverly using smartcard module
-        # TODO check for multiple cards inserted etc.
-        result = self.gp.list()
-        if result.stderr.decode().startswith("No smart card readers with a card found"):
-            return False
-        return True
 
     def run(self):
         self.load_configuration()
