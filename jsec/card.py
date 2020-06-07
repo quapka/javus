@@ -2,8 +2,10 @@ import re
 
 
 class CardState:
-    # basically a parsed output from `gp --list`
-    def __init__(self, raw):
+    r"""Basically a parsed output from `gp --list`
+    """
+
+    def __init__(self, raw: str):
         self.raw = raw
         self.isds = []
         self.pkgs = []
@@ -83,7 +85,7 @@ class CardState:
             if list(item.keys()) == ["ISD"]:
                 self.isds.append(item)
 
-    def get_all_aids(self):
+    def get_all_aids(self) -> list:
         aids = []
         for item in self.isds:
             try:
@@ -122,7 +124,7 @@ class Card:
         self.gp = gp
         self.jcversion = None
 
-    def add_state(self, state):
+    def add_state(self, state: CardState):
         if self.states is None:
             self.states = [state]
         else:
@@ -130,12 +132,8 @@ class Card:
 
         self.current_state = state
 
-    def get_current_aids(self):
+    def get_current_aids(self) -> list:
         if self.current_state is None:
             self.save_state()
 
         return self.current_state.get_all_aids()
-
-
-if __name__ == "__main__":
-    pass
