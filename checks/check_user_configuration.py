@@ -13,11 +13,11 @@ class CheckUserConfiguration(object):
 
     def check_presences_of_user_configuration(self):
         project_dir = os.listdir(self.project_root)
-        assert "user-config.ini" in project_dir
+        assert "user-config-template.ini" in project_dir
 
     def check_user_config_is_valid(self):
         config = configparser.ConfigParser(strict=True)
-        config_file = os.path.join(self.project_root, "user-config.ini")
+        config_file = os.path.join(self.project_root, "user-config-template.ini")
 
         config.read(config_file)
         config.sections()
