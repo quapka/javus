@@ -113,3 +113,12 @@ def develop(c, restart=False):
     with cd(PROJECT_ROOT):
         c.run(" ".join(install_cmd))
     # TODO add overall success or failure to inform the user
+
+
+@task
+def sort_imports(c):
+    r"""Use `isort` to fix the Python imports in the whole project
+    """
+    cmd = ["isort", "--recursive", "--atomic", "."]
+    with cd(PROJECT_ROOT):
+        c.run(" ".join(cmd))
