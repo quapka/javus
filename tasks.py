@@ -48,6 +48,7 @@ def cd(new_path):
 # list of the actual tasks goes here
 @task
 def test(c, debug=False, verbose=True):
+    r"""Run the tests for this project"""
     cmd = []
     if not pipenv_is_active():
         cmd += ["pipenv", "run"]
@@ -66,6 +67,7 @@ def test(c, debug=False, verbose=True):
 
 @task
 def check(c, debug=False, verbose=True):
+    r"""Run the live checks for this project"""
     cmd = []
     if not pipenv_is_active():
         cmd += ["pipenv", "run"]
@@ -85,6 +87,7 @@ def check(c, debug=False, verbose=True):
 
 @task
 def todo(c):
+    r"""Show the TODOs and FIXMEs in the project"""
     cmd = ["grep", "-ir", r"'FIXME\|TODO'", "*"]
 
     with cd(PROJECT_ROOT):
@@ -93,6 +96,9 @@ def todo(c):
 
 @task
 def develop(c, restart=False):
+    r"""Install the project and scripts, so that you can develop
+    and test it immediately and easily
+    """
     cmd = []
     if not pipenv_is_active():
         cmd += ["pipenv", "run"]
