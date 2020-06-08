@@ -27,6 +27,7 @@ class JCVersionExecutor(BaseAttackExecutor):
             # FIXME setting versions like so is quite a weird thing
             version = SDKVersion.from_str(version)
             report = self.execute(sdk_version=version)
+            # FIXME after changing gppw the version cannot be read like this probably
             if report[2]["SEND_READ_VERSION"]["status"] == "9000":
                 return JCVersion.from_str(report[2]["SEND_READ_VERSION"]["payload"])
 

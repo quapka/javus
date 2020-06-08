@@ -24,14 +24,14 @@ def test__gp_prefix__when_missing_in_config():
 
 
 @pytest.mark.parametrize(
-    "div,str_div",
+    "div,diversifier_flag",
     [
         (Diversifier.NONE, ""),
         (Diversifier.EMV, "--emv"),
         (Diversifier.VISA2, "--visa2"),
     ],
 )
-def test_add_diversifier_flag_to_gp_prefix(div, str_div):
+def test_add_diversifier_flag_to_gp_prefix(div, diversifier_flag):
     config = configparser.ConfigParser()
     config["PATHS"] = {
         "gp.jar": "/path/to/the/gp.jar",
@@ -39,12 +39,16 @@ def test_add_diversifier_flag_to_gp_prefix(div, str_div):
     gp = GlobalPlatformProWrapper(config=config, dry_run=True)
     gp.process_config()
     gp.diversifier = div
-    assert gp.gp_prefix() == [
+
+    expected_cmd = [
         "java",
         "-jar",
         "/path/to/the/gp.jar",
-        str_div,
     ]
+    if diversifier_flag:
+        expected_cmd.append(diversifier_flag)
+
+    assert gp.gp_prefix() == expected_cmd
 
 
 def test_detecting_diversifier_from_config():

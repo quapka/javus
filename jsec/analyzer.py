@@ -2,6 +2,7 @@
 
 
 import argparse
+
 # TODO add docstrings
 # pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
@@ -12,6 +13,7 @@ import os
 import platform
 import re
 import sys
+import time
 from pathlib import Path
 from typing import List, Optional
 
@@ -27,6 +29,7 @@ from jsec.executor import AbstractAttackExecutor, BaseAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
 from jsec.utils import CommandLineApp, Error, JCVersion, cd, load_versions
+from jsec.utils import MongoConnection
 
 # from jsec.data.jcversion import
 
@@ -101,6 +104,7 @@ class PreAnalysisManager:
         return single_card
 
     def run(self):
+        report = {}
         if not self.single_card_inserted():
             # TODO is it worth having custom errors?
             sys.exit(1)
@@ -109,6 +113,10 @@ class PreAnalysisManager:
         print("WARNING: Manually setting JCVersion for Card A!!!")
         self.card.jcversion = JCVersion.from_str("0300")  # self.get_jc_version()
         self.card.sdks = self.card.jcversion.get_sdks()
+        report["JCVersion"] = self.card.jcversion
+        report["SDKs"] = self.card.sdks
+
+        return report
 
     def get_jc_version(self):
         version = JCVersionExecutor(
@@ -128,11 +136,12 @@ class App(CommandLineApp):
     """
 
     def __init__(self):
-        # FIXME group self.args according to meaning
+        # FIXME sort self arguments and parameters
         self.config = None
         self.config_file = None
-        self.gp = Optional[GlobalPlatformProWrapper]
-        self.card = None
+        self.gp: Optional[GlobalPlatformProWrapper] = None
+        self.card: Optional[Card] = None
+        self.report: dict = {}
         super().__init__()
         self.setup_logging(log)
 
@@ -174,9 +183,29 @@ class App(CommandLineApp):
             default=Path("jsec-analysis-result"),
             help="A directory, that will store the results of the analysis",
         )
+
+        self.parser.add_argument(
+            "-m",
+            "--message",
+            type=str,
+            default="",
+            help="A message/comment, that will be saved together with this analysis run.",
+        )
+        self.parser.add_argument(
+            "-j",
+            "--json",
+            type=self.validate_json_flag,
+            default=Path("javacard-analysis.json"),
+            help="Save the results as JSON into the specified file.",
+        )
+        # TODO add -t/--tag for tagging analysis runs?
         # TODO def add options attempting to uninstall all applets, that were installed
         # TODO add argument to dump to json file intead of MongoDB
         # but this should be the implicit behaviour
+
+    def validate_json_flag(self, value):
+        # FIXME finish
+        return value
 
     def parse_options(self):
         super().parse_options()
@@ -189,6 +218,8 @@ class App(CommandLineApp):
                 "[Note] '--dry-run' was set, no external commands are called "
                 "and no report is created."
             )
+        self.message = self.args.message
+        self.json = self.args.json
 
     def validate_config(self, value: str) -> Path:
         if not os.path.exists(value):
@@ -205,22 +236,54 @@ class App(CommandLineApp):
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
 
-    def run(self):
+    def save_record(self) -> None:
+        if self.dry_run:
+            return
+        database = self.config["DATABASE"]["name"]
+        host = self.config["DATABASE"]["host"]
+        port = self.config["DATABASE"]["port"]
+
+        with MongoConnection(database=database, host=host, port=port) as con:
+            con.col.insert_one(self.report)
+
+    def prepare(self):
         self.load_configuration()
 
         self.gp = GlobalPlatformProWrapper(
             config=self.config, dry_run=self.dry_run, log_verbosity=self.verbosity,
         )
-        # FIXME make sure we only have one card in the reader
         self.card = Card(gp=self.gp)
         self.gp.card = self.card
+
+    def run(self):
+        start_time = time.time()
+        self.prepare()
+
         print("Running the pre-analysis..")
         prem = PreAnalysisManager(self.card, self.gp)
-        prem.run()
+        prem_results = prem.run()
+
         print("Running the analysis..")
         anam = AnalysisManager(self.card, self.gp, self.config)
-        anam.run()
+        anam_results = anam.run()
+
         print("Running the post-analysis..")
+        end_time = time.time()
+
+        self.report.update(
+            {
+                "start-time": start_time,
+                "end-time": end_time,
+                "duration": end_time - start_time,
+                "message": self.message,
+                "pre-analysis-results": prem_results,
+                "analysis-results": anam_results,
+            }
+        )
+        import pprint
+
+        pprint.pprint(self.report)
+        self.save_record()
 
 
 class PostAnalysisManager:
@@ -248,13 +311,18 @@ class PostAnalysisManager:
 
 
 class AnalysisManager:
-    def __init__(self, card, gp, config):
+    def __init__(
+        self,
+        card: Card,
+        gp: GlobalPlatformProWrapper,
+        config: configparser.ConfigParser,
+    ):
         self.card = card
         self.gp = gp
         self.config = config
-        self.attacks = None
+        self.attacks: Optional[configparser.ConfigParser] = None
 
-    def load_attacks(self):
+    def load_attacks(self) -> configparser.ConfigParser:
         registry = configparser.ConfigParser()
         registry_file = Path(DATA / "registry.ini")
         if not registry_file.exists():
@@ -266,31 +334,33 @@ class AnalysisManager:
 
     def run(self):
         self.attacks = self.load_attacks()
+        report = {}
         for section in self.attacks.sections():
             log.info("Executing attacks from '%s'", section)
             builder_module = self.attacks[section]["builder"]
-            for key, value in self.attacks[section].items():
+            for attack, value in self.attacks[section].items():
                 # TODO this is ugly and not easy to extend in the future, maybe ditch the
                 # idea of ini files and get json?
-                if key == "builder":
+                if attack == "builder":
                     continue
-                if self.attacks.getboolean(section, key):
+                if self.attacks.getboolean(section, attack):
                     AttackBuilder = self.get_builder(
-                        attack_name=key, builder_module=builder_module
+                        attack_name=attack, builder_module=builder_module
                     )
-                    builder = AttackBuilder(gp=self.gp, workdir=ATTACKS / key)
+                    builder = AttackBuilder(gp=self.gp, workdir=ATTACKS / attack)
                     if not builder.uniq_aids(self.card.get_current_aids()):
                         builder.uniqfy()
                         # rebuild the applet
                         # TODO or call build directly? much nicer..
                         builder.execute(BaseBuilder.COMMANDS.build)
                     AttackExecutor = self.get_executor(
-                        attack_name=key, builder_module=builder_module
+                        attack_name=attack, builder_module=builder_module
                     )
                     executor = AttackExecutor(
-                        card=self.card, gp=self.gp, workdir=ATTACKS / key
+                        card=self.card, gp=self.gp, workdir=ATTACKS / attack
                     )
-                    executor.execute()
+                    report[attack] = executor.execute()
+        return report
 
     # FIXME finish loading the builder
     def get_builder(self, attack_name: str, builder_module: str):

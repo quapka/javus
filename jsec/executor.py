@@ -57,7 +57,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         log.info("Attempt to install applet: %s", path)
         with cd(self.workdir):
             result = self.gp.install(path)
-            if result.returncode == 0:
+            if result["returncode"] == 0:
                 self.installed_applets.append(path)
 
         return result

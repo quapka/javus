@@ -8,10 +8,11 @@ import os
 import re
 import subprocess
 import tempfile
-from typing import List
+from typing import List, Optional
 
 from jsec.card import CardState
 from jsec.settings import DATA
+from jsec.utils import Timer
 
 # FIXME what if no card/reader is present?
 
@@ -104,7 +105,7 @@ class GlobalPlatformProWrapper(object):
             self.gp_path,
         ]
         # TODO add the diversifier here, it is probably the safest option
-        if self.diversifier != Diversifier.UNDETECTED:
+        if self.diversifier not in [Diversifier.UNDETECTED, Diversifier.NONE]:
             cmd += [Diversifier.get_flag(self.diversifier)]
         return cmd
 
@@ -193,20 +194,34 @@ class GlobalPlatformProWrapper(object):
         clean_second = second.replace(" ", "").upper()
         return clean_first == clean_second
 
-    def _save_state(self):
+    def _save_state(self) -> Optional[CardState]:
         # state is the output of a --list cmd and setting `save_state` to True
         # would lead to infinite recursion
-        proc = self.run(options=["--list"], dump=False, safe=False, save_state=False)
-        if proc.returncode == 0:
-            state = CardState(raw=proc.stdout.decode("utf8"))
+        proc = self.run(
+            options=["--list"],
+            dump=False,
+            safe=False,
+            save_state=False,
+            verbose=False,
+            debug=False,
+        )
+        if proc["returncode"] == 0:
+            state = CardState(raw=proc["stdout"])
             state.process()
             self.card.add_state(state)
+            return state
 
     # TODO when and how to save to database? - probably not here, as this should only handle
     # the GlobalPlatformPro calls
     def run(
-        self, options: List[str], dump: bool = False, safe=False, save_state=True
-    ) -> subprocess.CompletedProcess:
+        self,
+        options: List[str],
+        dump: bool = False,
+        safe=False,
+        save_state=True,
+        verbose=True,
+        debug=True,
+    ) -> dict:
         r"""
         :param safe:
             `True` if the command to be executed is safe to be run. E.g. `gp --version`
@@ -222,9 +237,10 @@ class GlobalPlatformProWrapper(object):
             self._save_state()
 
         cmd = self.gp_prefix()
-        if self.verbose:
+        # FIXME better way of having self.value and value passed as a parameter?
+        if self.verbose and verbose:
             cmd += ["--verbose"]
-        if self.debug:
+        if self.debug and debug:
             cmd += ["--debug"]
 
         # TODO consider using context manager for handling temporary files
@@ -241,7 +257,12 @@ class GlobalPlatformProWrapper(object):
             proc = None
         else:
             log.debug("Run the command: %s", " ".join(cmd))
-            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # FIXME naive way of tracking time it takes to communicate with the card
+            # can be improved, but sufficient for now
+            with Timer() as timer:
+                proc = subprocess.run(
+                    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                )
 
         if tmp_name is not None:
             with open(tmp_name, "r") as f:
@@ -257,7 +278,11 @@ class GlobalPlatformProWrapper(object):
         else:
             log.info("The command '%s' was not successful.", " ".join(cmd))
 
-        return proc
+        report = self.parse_proc(proc)
+        report["start-time"] = timer.start
+        report["end-time"] = timer.end
+        report["duration"] = timer.duration
+        return report
 
     def guess_diversifier(self):
         # try to avoid bricking the card in case the diversifier
@@ -270,7 +295,7 @@ class GlobalPlatformProWrapper(object):
             return
         # first try `$ gp --list` without diversifier
         proc = self.run(["--list"], safe=True, save_state=False)
-        if proc.returncode == 0:
+        if proc["returncode"] == 0:
             self.diversifier = Diversifier.NONE
             log.debug("'%s' diversifier is used.", self.diversifier.name)
             return
@@ -288,8 +313,8 @@ class GlobalPlatformProWrapper(object):
         for div in Diversifier.special():
             options = ["--list", Diversifier.get_flag(div)]
             proc = self.run(options, safe=True, save_state=False)
-            output = "\n".join([proc.stdout.decode("utf8"), proc.stderr.decode("utf8")])
-            if proc.returncode != 0 or self.DIVERSIFIER_ERROR_MSG in output:
+            output = "\n".join([proc["stdout"], proc["stderr"]])
+            if proc["returncode"] != 0 or self.DIVERSIFIER_ERROR_MSG in output:
                 log.warning(
                     "Tried '%s' as diversifier, but it is not correct", div.name
                 )
@@ -304,7 +329,7 @@ class GlobalPlatformProWrapper(object):
         # FIXME add --dry-run
         # the version of GlobalPlatformPro used during the analysis has a bug in the CLI
         # more information at: https://github.com/martinpaljak/GlobalPlatformPro/issues/217
-        if proc.returncode in [0, 1]:
+        if proc["returncode"] in [0, 1]:
             self.version = proc.stdout.decode("utf8").split("\n")[0]
 
     def verify_gp(self):
@@ -313,7 +338,7 @@ class GlobalPlatformProWrapper(object):
         """
         proc = self.run(options=["--help"], safe=True, save_state=False)
 
-        if proc.returncode == 0:
+        if proc["returncode"] == 0:
             self.works = True
 
     def find_atr(self, string):
@@ -322,6 +347,18 @@ class GlobalPlatformProWrapper(object):
         if match:
             return match.group(1)
         return None
+
+    def parse_proc(self, proc: subprocess.CompletedProcess) -> dict:
+        r"""Turns `subprocess.CompletedProcess` into such dictionary, that
+        it can be saved in to database
+        """
+        result = {}
+        result["args"] = proc.args
+        result["stdout"] = proc.stdout.decode("utf8")
+        result["stderr"] = proc.stderr.decode("utf8")
+        result["returncode"] = proc.returncode
+
+        return result
 
     def install(self, applet_path):
         if not os.path.exists(applet_path):

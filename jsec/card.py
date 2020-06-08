@@ -125,6 +125,7 @@ class Card:
         self.jcversion = None
 
     def add_state(self, state: CardState):
+        r"""Add CardState to the list of states"""
         if self.states is None:
             self.states = [state]
         else:
@@ -133,7 +134,8 @@ class Card:
         self.current_state = state
 
     def get_current_aids(self) -> list:
+        r"""Get a list of AIDs of the current state"""
         if self.current_state is None:
-            self.save_state()
+            self.current_state = self.gp._save_state()
 
         return self.current_state.get_all_aids()
