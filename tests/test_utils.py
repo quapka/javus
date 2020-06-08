@@ -1,8 +1,8 @@
-from jsec.utils import load_versions
-from jsec.utils import JCVersion
-from jsec.utils import SDKVersion
-import pytest
 from typing import Optional
+
+import pytest
+
+from jsec.utils import JCVersion, SDKVersion, load_versions
 
 # from pytest_mock import mocker
 

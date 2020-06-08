@@ -7,9 +7,9 @@ import subprocess
 from pathlib import Path
 
 from jsec.builder import BaseBuilder
+from jsec.executor import BaseAttackExecutor
 from jsec.settings import ATTACKS
 from jsec.utils import cd
-from jsec.executor import BaseAttackExecutor
 
 # Exemplar config.ini:
 # [BUILD]

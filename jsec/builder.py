@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import abc
 import argparse
 import configparser
 import enum
@@ -7,8 +8,6 @@ import logging
 import os
 import subprocess
 from pathlib import Path
-
-import abc
 
 # sort imports
 from jsec.utils import CommandLineApp, cd

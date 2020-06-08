@@ -1,10 +1,12 @@
 #!/usr/bin/env python
-import pytest
-from jsec.executor import BaseAttackExecutor
-from jsec.card import Card
-from jsec.gppw import GlobalPlatformProWrapper
 import configparser
 from pathlib import Path
+
+import pytest
+
+from jsec.card import Card
+from jsec.executor import BaseAttackExecutor
+from jsec.gppw import GlobalPlatformProWrapper
 
 
 class TestBaseAttackExecutor:

@@ -8,12 +8,10 @@ import os
 import re
 import subprocess
 import tempfile
-
-
-from jsec.settings import DATA
-from jsec.card import CardState
-
 from typing import List
+
+from jsec.card import CardState
+from jsec.settings import DATA
 
 # FIXME what if no card/reader is present?
 

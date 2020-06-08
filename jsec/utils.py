@@ -9,13 +9,8 @@ import subprocess as sp
 import sys
 import time
 from contextlib import contextmanager
-
-from jsec.settings import LIB_DIR
-
 # from collections import namedtuple
-from typing import NamedTuple
-from typing import Optional
-from typing import List
+from typing import List, NamedTuple, Optional
 
 import pymongo
 

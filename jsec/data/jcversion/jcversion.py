@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
+import configparser
+from pathlib import Path
+
 from jsec.executor import BaseAttackExecutor
 from jsec.settings import DATA
-from jsec.utils import load_versions
-from jsec.utils import JCVersion
-from jsec.utils import SDKVersion
-from pathlib import Path
-from jsec.utils import cd
-import configparser
+from jsec.utils import JCVersion, SDKVersion, cd, load_versions
 
 
 class JCVersionExecutor(BaseAttackExecutor):
