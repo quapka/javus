@@ -1,0 +1,19 @@
+<table>
+  <tbody>
+    <caption>{{ attack_name }}</caption>
+      <tr>
+        {% for stage in stages %}
+          {% for name in stage.keys() %}
+            <th>{{ name }}</th>
+          {% endfor %}
+        {% endfor %}
+      </tr>
+      <tr>
+        {% for stage in stages %}
+          {% for value in stage.values() %}
+            <th>{{ value }}</th>
+          {% endfor %}
+        {% endfor %}
+      </tr>
+  </tbody>
+</table>

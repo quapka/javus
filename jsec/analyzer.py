@@ -198,6 +198,10 @@ class App(CommandLineApp):
             default=Path("javacard-analysis.json"),
             help="Save the results as JSON into the specified file.",
         )
+        # FIXME probably go with subcommands
+        self.parser.add_argument(
+            "-w", "--web", action="store_true", help="Start the web application"
+        )
         # TODO add -t/--tag for tagging analysis runs?
         # TODO def add options attempting to uninstall all applets, that were installed
         # TODO add argument to dump to json file intead of MongoDB
@@ -280,9 +284,6 @@ class App(CommandLineApp):
                 "analysis-results": anam_results,
             }
         )
-        import pprint
-
-        pprint.pprint(self.report)
         self.save_record()
 
 
