@@ -7,6 +7,7 @@ import pytest
 from jsec.card import Card
 from jsec.executor import BaseAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
+from contextlib import ExitStack as does_not_raise
 
 
 class TestBaseAttackExecutor:
@@ -63,3 +64,16 @@ class TestBaseAttackExecutor:
     def test__separate_payload(self, raw: str, separated: str):
         bae = BaseAttackExecutor(card=self.card, gp=self.gp, workdir=self.path)
         assert bae._separate_payload(raw) == separated
+
+    @pytest.mark.parametrize(
+        "stage,clean_stage,exception",
+        [
+            (" ", "", pytest.raises(RuntimeError)),
+            (" install \t", "install", does_not_raise()),
+            (" \tsend read memory", "send_read_memory", does_not_raise()),
+        ],
+    )
+    def test__create_stage_name(self, stage, clean_stage, exception):
+        bae = BaseAttackExecutor(card=self.card, gp=self.gp, workdir=self.path)
+        with exception:
+            assert bae._create_stage_name(stage) == clean_stage
