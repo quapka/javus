@@ -11,7 +11,7 @@
       <tr>
         {% for stage in stages %}
           {% for value in stage.values() %}
-            <th>{{ value }}</th>
+            <th>{{ value['success'] }}</th>
           {% endfor %}
         {% endfor %}
       </tr>

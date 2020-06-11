@@ -25,6 +25,7 @@ def index():
 
     with MongoConnection(database=name, host=host, port=port) as con:
         last_attack = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
+
     return render_template("index.html", results=last_attack)
 
 
