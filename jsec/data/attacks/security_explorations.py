@@ -11,25 +11,12 @@ from jsec.executor import BaseAttackExecutor
 from jsec.settings import ATTACKS
 from jsec.utils import cd
 
-# Exemplar config.ini:
-# [BUILD]
-# # TODO what about jc212
-# versions = jc221,jc222,jc303,jc304,jc305u1,jc305u2,jc305u3
-# unsupported.versions = jc211,jc310b43
-# genidx = 1
-# genarg = 0
-# # those are the default values, however during the analysis those values might be altered
-# # because an applet/package with the same AID can already be installed
-# # TODO test rid is always before pix
-# pkg.rid = A000000065
-# vulns.pix = 03010C02
-# pkg.pix = 03010C01
-# applet.pix = 03010C0101
-
 
 class AttackBuilder(BaseBuilder):
-    # attacks from SecurityExploration have similar pattern, therefore they can be
-    # under one umbrella
+    r"""Attacks from SecurityExploration have similar pattern, therefore they can
+    share the AttackBuilder
+    """
+
     def __init__(self, workdir, save=False, *args, **kwargs):
         super().__init__(workdir=workdir, *args, **kwargs)
         # FIXME validate, that the attack is known
@@ -39,22 +26,6 @@ class AttackBuilder(BaseBuilder):
         self.config = None
         self.ready = False
 
-    # FIXME redundant - already in the BaseBuilder
-    # def load_config(self):
-    #     config = configparser.ConfigParser()
-    #     with cd(self.workdir):
-    #         config.read("config.ini")
-
-    #     self.config = config
-
-    # def load_aids(self):
-    #     aids = configparser.ConfigParser()
-    #     with cd(self.workdir):
-    #         aids.read("aids.ini")
-
-    #     self.aids = aids
-
-    # # FIXME redundant - already in the BaseBuilder
     def _prepare(self):
         super()._prepare()
         self.load_aids()
@@ -68,12 +39,21 @@ class AttackBuilder(BaseBuilder):
         # we can reuse the existing build process
         super()._build()
         # but we also need to generate some files after the build
-        self._generate()
+        if self.version == None:
+            self._generate_all_versions()
+        else:
+            self._generate_version(version=self.version)
 
-    def _generate(self):
+    def _generate_all_versions(self):
+        for version in self.config["BUILD"]["versions"].split(","):
+            self._generate_version(version=version)
+
+    def _generate_version(self, version=None):
+        r"""Generate the vulns.new.cap file for the given version"""
+
         vulns_dir = os.path.realpath(
             os.path.join(
-                self.workdir, "build", self.version, "com", "se", "vulns", "javacard",
+                self.workdir, "build", version, "com", "se", "vulns", "javacard",
             )
         )
 
@@ -81,9 +61,6 @@ class AttackBuilder(BaseBuilder):
         exp_file = os.path.realpath(os.path.join(vulns_dir, "vulns.exp"))
         new_cap_file = os.path.realpath(os.path.join(vulns_dir, "vulns.new.cap"))
 
-        # go to _gen
-        # wd = os.getcwd()
-        # os.chdir("../_gen")
         # TODO this is probably not cross-platform, and other subprocess calls as well :/
         with cd(ATTACKS / "_gen"):
             cmd = [
@@ -98,7 +75,6 @@ class AttackBuilder(BaseBuilder):
                 self.config["BUILD"]["genarg"],
             ]
             output = subprocess.check_output(cmd).decode("utf8")
-            print(output)
 
     def uniqfy(self, used=None):
         if used is None:
