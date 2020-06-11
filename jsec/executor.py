@@ -84,28 +84,58 @@ class BaseAttackExecutor(AbstractAttackExecutor):
     def _prepare_install(self, *args, **kwargs):
         pass
 
-    def _install(self, value: str, sdk_version: SDKVersion):
+    def _install(self, path: str, sdk_version: SDKVersion, *args, **kwargs):
         # value is a path/string, that can include {version} for differentiating between
         # different versions
         if sdk_version is None:
-            sdk_version = self._determine_version()
+            self.sdk_version = self._determine_version()
 
-        path = value.format(version=sdk_version.raw)
+        path = path.format(version=self.sdk_version.raw)
         log.info("Attempt to install applet: %s", path)
         with cd(self.workdir):
             result = self.gp.install(path)
-            if result["returncode"] == 0:
-                self.installed_applets.append(path)
+            # if result["returncode"] == 0:
+            #     self.installed_applets.append(path)
 
         return result
 
-    def _uninstall(self, value: str):
-        if self.installed_applets is not None:
-            # attemp to uninstall the installed applets in reversed order
-            while self.installed_applets:
-                path = self.installed_applets.pop()
-                with cd(self.workdir):
-                    self.gp.uninstall(path)
+    def _assess_install(self, result, *args, **kwargs):
+        success = True
+        # FIXME few naive checks, but we can also use --dump on install command
+        # and make sure e.g. the status words are 9000
+        if result["returncode"] != 0:
+            success = False
+
+        if "CAP loaded" not in result["stdout"]:
+            success = False
+
+        # make sure it is in the CardState after the installation
+        result["success"] = success
+        return result
+
+    def _uninstall(self, path: str, sdk_version: SDKVersion, *args, **kwargs):
+        # result = []
+        # setting SDKVersion is done in _install, that is kinda weird
+        path = path.format(version=self.sdk_version.raw)
+        # if self.installed_applets is not None:
+        #     # attemp to uninstall the installed applets in reversed order
+        #     while self.installed_applets:
+        # path = self.installed_applets.pop()
+        with cd(self.workdir):
+            result = self.gp.uninstall(path)
+
+        return result
+
+    def _assess_uninstall(self, result, *args, **kwargs):
+        success = True
+        if result["returncode"] != 0:
+            success = False
+
+        if "deleted" not in result["stdout"]:
+            success = False
+
+        result["success"] = success
+        return result
 
     def construct_aid(self) -> bytes:
         # FIXME this method is a gimmick to be overriden by the custom Executors
@@ -115,12 +145,17 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
         return aid
 
-    def _send(self, raw_payload: str):
+    def _send(self, payload: str, *args, **kwargs):
         # TODO prepare payload
         aid = self.construct_aid()
         # TODO payload may be of varying kinds of hexa/int values values
-        payload = self._parse_payload(raw_payload)
+        payload = self._parse_payload(payload)
         return self.gp.apdu(payload, aid)
+
+    def _assess_send(self, result, *args, **kwargs):
+        sucess = True
+        result["success"] = True
+        return result
 
     def _parse_payload(self, raw: str) -> bytes:
         clean = self._clean_payload(raw)
@@ -173,22 +208,66 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         attack_versions = SDKVersion.from_list(self.config["BUILD"]["versions"])
         return list(set(attack_versions).intersection(set(self.card.sdks)))[-1]
 
-    def execute(self, sdk_version=None) -> list:
+    def execute(self, sdk_version=None, **kwargs) -> list:
         stages = self.get_stages()
         report = []
 
-        # perform next stage only if the previous one was successful
-        for stage, value in stages.items():
-            stage = stage.strip().upper()
-            if stage == "INSTALL":
-                result = self._install(value, sdk_version=sdk_version)
-            elif stage.startswith("SEND"):
-                result = self._send(value)
-            elif stage == "UNINSTALL":
-                result = self._uninstall(value)
+        # FIXME perform next stage only if the previous one was successful
+        for stage_data in stages:
+            stage = stage_data.pop("name")
+            result = self._run_stage(
+                stage, **stage_data, sdk_version=sdk_version, **kwargs
+            )
+            # if stage == "INSTALL":
+            #     result = self._install(value, sdk_version=sdk_version)
+            # elif stage.startswith("SEND"):
+            #     result = self._send(value)
+            # elif stage == "UNINSTALL":
+            #     result = self._uninstall(value)
 
             report.append({stage: result})
+
         return report
+
+    def _run_stage(self, raw_stage: str, *args, **kwargs):
+        stage = self._create_stage_name(raw_stage)
+        prepare_stage = "_prepare_" + stage
+        try:
+            prepare_method = getattr(self, prepare_stage)
+        except AttributeError:
+            log.error("Cannot find stage method '%s'", prepare_stage)
+
+            # prepare_method is optional and lambda cannot use *args, **kwargs
+            def prepare_method(*args, **kwargs):
+                pass
+
+        try:
+            stage_method = getattr(self, "_" + stage)
+        except AttributeError:
+            log.error("Cannot find stage method '%s'", stage)
+            # TODO this method is not optional
+
+        assess_stage = "_assess_" + stage
+        try:
+            assess_method = getattr(self, assess_stage)
+        except AttributeError:
+            log.error("Cannot find stage method '%s'", assess_stage)
+            # TODO this method is not optional
+
+        prepare_method(*args, **kwargs)
+        result = stage_method(*args, **kwargs)
+        result = assess_method(result, *args, **kwargs)
+        return result
+
+    @staticmethod
+    def _create_stage_name(stage: str) -> str:
+        stage = stage.strip().lower()
+        stage = re.sub(r" ", "_", stage)
+        stage = re.sub(r"\s+", "", stage)
+
+        if not stage:
+            raise RuntimeError("'stage' name cannot be empty")
+        return stage
 
 
 if __name__ == "__main__":
