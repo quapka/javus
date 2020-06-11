@@ -4,6 +4,9 @@ import logging
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
+import importlib
+
+from typing import List
 
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.utils import SDKVersion, cd
@@ -34,6 +37,8 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         self.card = card
         self.gp = gp
         self.workdir = Path(workdir).resolve()
+        # FIXME
+        self.attack_name = self.workdir.name
 
         self.config = configparser.ConfigParser(strict=False)
         self.installed_applets = []
@@ -44,8 +49,40 @@ class BaseAttackExecutor(AbstractAttackExecutor):
     def _load_config(self) -> None:
         self.config.read(self.workdir / "config.ini")
 
-    def get_stages(self):
-        return self.config["STAGES"]
+    def get_stages(self) -> List[dict]:
+        # first load stages from `<attackname>`.py
+        stages = self.import_stages()
+        if stages is not None:
+            return stages
+        stages = self.parse_config_stages()
+        if stages is not None:
+            return stages
+
+        raise ValueError("Cannot load attack stages")
+
+    def import_stages(self):
+        try:
+            stages = getattr(
+                importlib.import_module(
+                    f"jsec.data.attacks.{self.attack_name}.{self.attack_name}"
+                ),
+                "Stages",
+            )
+        except (ModuleNotFoundError, AttributeError):
+            pass
+
+        return stages.STAGES
+
+    def parse_config_stages(self) -> List[dict]:
+        stages = []
+        for key, values in self.config["STAGES"].items():
+            for value in [x.strip() for x in values.splitlines() if x]:
+                stages.append({key: value})
+
+        return stages
+
+    def _prepare_install(self, *args, **kwargs):
+        pass
 
     def _install(self, value: str, sdk_version: SDKVersion):
         # value is a path/string, that can include {version} for differentiating between
