@@ -349,6 +349,8 @@ class AnalysisManager:
                         attack_name=attack, builder_module=builder_module
                     )
                     builder = AttackBuilder(gp=self.gp, workdir=ATTACKS / attack)
+                    # FIXME when to build the attacks?
+                    builder.execute(BaseBuilder.COMMANDS.build)
                     if not builder.uniq_aids(self.card.get_current_aids()):
                         builder.uniqfy()
                         # rebuild the applet
