@@ -267,7 +267,7 @@ class SDKVersion(NamedTuple):
         return sdks
 
     def __str__(self) -> str:
-        output = "%s.%s%s." % (self.major, self.minor, self.patch)
+        output = "SDK Version: %s.%s.%s." % (self.major, self.minor, self.patch)
         if self.update:
             output += "u%s" % self.update
         elif self.b_value:
