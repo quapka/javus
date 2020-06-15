@@ -238,7 +238,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             )
 
             report.append({stage: result})
-            if not self.optional_stage(stage_data) and not result["success"]:
+            if not self.optional_stage(stage, stage_data) and not result["success"]:
                 break
 
         # fill in the rest of the stages, that were not executed
@@ -249,14 +249,19 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         return report
 
     @staticmethod
-    def optional_stage(stage_data: dict) -> bool:
-
+    def optional_stage(stage: str. stage_data: dict) -> bool:
         try:
             return stage_data["optional"]
         except KeyError:
-            # TODO distinguish (un)install stages
-            # by default a stage is not optional
-            return False
+            if stage == 'install':
+                # install is required by default
+                return False
+            elif stage == 'uninstall':
+                # uninstall stage is optional as it makes sense to continue uninstalling
+                # applets even if some cannot be uninstalled
+                return True
+        # any other stage is deemed required
+        return False
 
     def _run_stage(self, raw_stage: str, *args, **kwargs):
         stage = self._create_stage_name(raw_stage)
