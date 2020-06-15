@@ -1,3 +1,17 @@
+@font-face{
+    font-family: titillium;
+    src: url('/static/fonts/TitilliumWeb-Regular.ttf');
+}
+
+@font-face{
+    font-family: titillium;
+    src: url('/static/fonts/TitilliumWeb-Bold.ttf');
+    font-weight: bold;
+}
+* {
+    font-family: titillium;
+}
+
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
