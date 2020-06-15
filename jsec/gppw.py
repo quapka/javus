@@ -375,6 +375,10 @@ class GlobalPlatformProWrapper(object):
         proc = self.run(options=options, dump=False)
         return proc
 
+    def delete(self, aid: bytes):
+        options = ["--delete", aid.hex()]
+        proc = self.run(options=options, dump=False)
+
     def select(self, applet_aid):
         pass
 
