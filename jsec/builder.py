@@ -149,7 +149,7 @@ class BaseBuilder(AbstractAttackBuilder):
             proc.check_returncode()
             # TODO should not print in case this is not called as
             # command line application
-            print("The command '{cmd}' was successful.".format(cmd=self.cmd.name))
+            log.info("The command '%s' was successful.", self.cmd.name)
         except subprocess.CalledProcessError:
             log.error("Command ended with non-zero error")
 
