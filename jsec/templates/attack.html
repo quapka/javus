@@ -11,7 +11,15 @@
       <tr>
         {% for stage in stages %}
           {% for value in stage.values() %}
-            <th>{{ value['success'] }}</th>
+            <td>
+              {% if value['skipped'] %}
+                skipped
+              {% else %}
+                {{ value['success'] }}
+                {{ value['args'] }}
+              <!-- <br>{{ value['stdout'] }}<br>{{ value['stderr'] }} -->
+              {% endif %}
+            </td>
           {% endfor %}
         {% endfor %}
       </tr>
