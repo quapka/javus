@@ -414,8 +414,9 @@ class AnalysisManager:
                 importlib.import_module(f"jsec.data.attacks.{builder_module}"),
                 "AttackExecutor",
             )
-        # TODO maybe add ModuleNotFoundError, but if it is in config.ini it is actually an
-        # error - either missing module or should not be in config
+            # TODO maybe add ModuleNotFoundError, but if it is in config.ini it is actually an
+            # error - either missing module or should not be in config
+            return executor
         except AttributeError:
             pass
 
