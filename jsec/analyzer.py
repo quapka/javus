@@ -352,7 +352,7 @@ class AnalysisManager:
                     # FIXME when to build the attacks?
                     builder.execute(BaseBuilder.COMMANDS.build)
                     if not builder.uniq_aids(self.card.get_current_aids()):
-                        builder.uniqfy()
+                        builder.uniqfy(used=self.card.get_current_aids())
                         # rebuild the applet
                         # TODO or call build directly? much nicer..
                         builder.execute(BaseBuilder.COMMANDS.build)
