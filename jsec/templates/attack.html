@@ -2,6 +2,7 @@
   <tbody>
     <caption>{{ attack_name }}</caption>
       <tr>
+        <th>Attack Stages</th>
         {% for stage in stages %}
           {% for name in stage.keys() %}
             <th>{{ name }}</th>
@@ -9,11 +10,12 @@
         {% endfor %}
       </tr>
       <tr>
+        <td>Results</td>
         {% for stage in stages %}
           {% for value in stage.values() %}
             <td>
               {% if value['skipped'] %}
-                skipped
+                -
               {% else %}
                 {{ value['success'] }}
                 {{ value['args'] }}
