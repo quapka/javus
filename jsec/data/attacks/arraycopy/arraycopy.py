@@ -55,22 +55,3 @@ class Stages:
             "optional": True,
         },
     ]
-
-
-#     def pre_install(self, *args, path, comment, **kwargs):
-#         pass
-
-#     def install(self, *args, path, comment, **kwargs):
-#         pass
-
-#     def post_install(self, *args, path, comment, **kwargs):
-#         pass
-
-#     def pre_send(self):
-#         pass
-
-#     def send(self):
-#         pass
-
-#     def after_send(self):
-#         pass
