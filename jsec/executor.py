@@ -95,6 +95,8 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         # different versions
         if sdk_version is None:
             self.sdk_version = self._determine_version()
+        else:
+            self.sdk_version = sdk_version
 
         path = path.format(version=self.sdk_version.raw)
         log.info("Attempt to install applet: %s", path)
@@ -151,7 +153,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
         return aid
 
-    def _send(self, payload: str, *args, **kwargs):
+    def _send(self, *args, payload: str, **kwargs):
         # TODO prepare payload
         aid = self.construct_aid()
         # TODO payload may be of varying kinds of hexa/int values values

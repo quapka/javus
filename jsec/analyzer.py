@@ -111,7 +111,8 @@ class PreAnalysisManager:
         # FIXME don't hardcode it for a card!
         # put JCVersion into a types.ini
         print("WARNING: Manually setting JCVersion for Card A!!!")
-        self.card.jcversion = JCVersion.from_str("0300")  # self.get_jc_version()
+        self.card.jcversion = JCVersion.from_str("0300")
+        # self.card.jcversion = self.get_jc_version()
         self.card.sdks = self.card.jcversion.get_sdks()
         report["JCVersion"] = self.card.jcversion
         report["SDKs"] = self.card.sdks
