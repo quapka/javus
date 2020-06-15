@@ -6,10 +6,11 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 import importlib
 
-from typing import List
+from typing import List, Optional
 
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.utils import SDKVersion, cd
+from jsec.settings import PROJECT_ROOT
 
 # TODO add some log initializer
 log = logging.getLogger(__file__)
@@ -60,18 +61,23 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
         raise ValueError("Cannot load attack stages")
 
-    def import_stages(self):
+    def import_stages(self) -> Optional[List[dict]]:
+        # the module name can be inferred from the paths
+        # TODO getting the module path feels a bit hackish - wonder if that works from other
+        # folders as well - it does
+        module_name = self.workdir.name
+        relative_module_path = (
+            str(self.workdir.relative_to(PROJECT_ROOT)).replace("/", ".")
+            + "."
+            + module_name
+        )
         try:
-            stages = getattr(
-                importlib.import_module(
-                    f"jsec.data.attacks.{self.attack_name}.{self.attack_name}"
-                ),
-                "Stages",
-            )
+            stages = getattr(importlib.import_module(relative_module_path), "Stages",)
+            return stages.STAGES
         except (ModuleNotFoundError, AttributeError):
             pass
 
-        return stages.STAGES
+        return None
 
     def parse_config_stages(self) -> List[dict]:
         stages = []
