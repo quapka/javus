@@ -99,14 +99,31 @@ class AttackBuilder(BaseBuilder):
         applet_pix = self.aids["BUILD"]["applet.pix"]
 
         aids = [pkg_rid + vulns_pix, pkg_rid + pkg_pix, pkg_rid + applet_pix]
+        aids = [aid.upper() for aid in aids]
 
         return set(aids).intersection(set(used)) == set()
 
 
 class AttackExecutor(BaseAttackExecutor):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.aids = None
+
+    def load_aids(self):
+        aids = configparser.ConfigParser()
+        with cd(self.workdir):
+            aids.read("aids.ini")
+
+        self.aids = aids
+        return
+
     def construct_aid(self) -> bytes:
-        rid = self.config["BUILD"]["pkg.rid"]
-        pix = self.config["BUILD"]["applet.pix"]
+        # FIXME this is so weird and ugly, each send should somehow define to which applet
+        # it sends its data
+        if self.aids is None:
+            self.load_aids()
+        rid = self.aids["BUILD"]["pkg.rid"]
+        pix = self.aids["BUILD"]["applet.pix"]
         return bytes.fromhex(rid + pix)
 
 
