@@ -229,24 +229,11 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         report = []
 
         # FIXME perform next stage only if the previous one was successful
-        # skip_stage = False
-        # previous_result = {"success": True}
         for i, stage_data in enumerate(stages):
-            # import pudb
-
-            # pudb.set_trace()
             stage = stage_data.pop("name")
             result = self._run_stage(
                 stage, **stage_data, sdk_version=sdk_version, **kwargs
             )
-
-            # previous_result = result.copy()
-            # if stage == "INSTALL":
-            #     result = self._install(value, sdk_version=sdk_version)
-            # elif stage.startswith("SEND"):
-            #     result = self._send(value)
-            # elif stage == "UNINSTALL":
-            #     result = self._uninstall(value)
 
             report.append({stage: result})
             if not self.optional_stage(stage_data) and not result["success"]:
@@ -275,7 +262,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         try:
             prepare_method = getattr(self, prepare_stage)
         except AttributeError:
-            log.error("Cannot find stage method '%s'", prepare_stage)
+            log.warning("Cannot find stage method '%s'", prepare_stage)
 
             # prepare_method is optional and lambda cannot use *args, **kwargs
             def prepare_method(*args, **kwargs):
