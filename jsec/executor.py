@@ -249,14 +249,14 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         return report
 
     @staticmethod
-    def optional_stage(stage: str. stage_data: dict) -> bool:
+    def optional_stage(stage: str, stage_data: dict) -> bool:
         try:
             return stage_data["optional"]
         except KeyError:
-            if stage == 'install':
+            if stage == "install":
                 # install is required by default
                 return False
-            elif stage == 'uninstall':
+            elif stage == "uninstall":
                 # uninstall stage is optional as it makes sense to continue uninstalling
                 # applets even if some cannot be uninstalled
                 return True
