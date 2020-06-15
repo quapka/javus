@@ -203,21 +203,38 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         reduced = re.sub(r"\s+", " ", stripped)
         return reduced
 
+    def possible_versions(self) -> List["SDKVersion"]:
+        r"""Returns the intersection of SDKVersions the attack can be build for
+        and the ones supported by the Card"""
+        attack_sdk_versions = SDKVersion.from_list(
+            self.config["BUILD"]["versions"], sep=","
+        )
+        return list(set(attack_sdk_versions).intersection(set(self.card.sdks)))
+
     def _determine_version(self) -> "SDKVersion":
         # determine the newest SDK version supported both by the card and the attack
         attack_versions = SDKVersion.from_list(self.config["BUILD"]["versions"])
-        return list(set(attack_versions).intersection(set(self.card.sdks)))[-1]
+        newest = list(set(attack_versions).intersection(set(self.card.sdks)))[-1]
+        print(newest)
+        return newest
 
     def execute(self, sdk_version=None, **kwargs) -> list:
         stages = self.get_stages()
         report = []
 
         # FIXME perform next stage only if the previous one was successful
-        for stage_data in stages:
+        # skip_stage = False
+        # previous_result = {"success": True}
+        for i, stage_data in enumerate(stages):
+            # import pudb
+
+            # pudb.set_trace()
             stage = stage_data.pop("name")
             result = self._run_stage(
                 stage, **stage_data, sdk_version=sdk_version, **kwargs
             )
+
+            # previous_result = result.copy()
             # if stage == "INSTALL":
             #     result = self._install(value, sdk_version=sdk_version)
             # elif stage.startswith("SEND"):
@@ -226,8 +243,25 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             #     result = self._uninstall(value)
 
             report.append({stage: result})
+            if not self.optional_stage(stage_data) and not result["success"]:
+                break
+
+        # fill in the rest of the stages, that were not executed
+        for stage_data in stages[i + 1 :]:
+            stage = stage_data.pop("name")
+            report.append({stage: {"success": False, "skipped": True}})
 
         return report
+
+    @staticmethod
+    def optional_stage(stage_data: dict) -> bool:
+
+        try:
+            return stage_data["optional"]
+        except KeyError:
+            # TODO distinguish (un)install stages
+            # by default a stage is not optional
+            return False
 
     def _run_stage(self, raw_stage: str, *args, **kwargs):
         stage = self._create_stage_name(raw_stage)
@@ -257,6 +291,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         prepare_method(*args, **kwargs)
         result = stage_method(*args, **kwargs)
         result = assess_method(result, *args, **kwargs)
+        result["skipped"] = False
         return result
 
     @staticmethod

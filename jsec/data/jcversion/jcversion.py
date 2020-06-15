@@ -22,7 +22,6 @@ class JCVersionExecutor(BaseAttackExecutor):
             versions = self.config["BUILD"]["versions"].split(",")
         versions = load_versions(versions)
 
-        # for version in versions:
         for version in versions:
             # FIXME setting versions like so is quite a weird thing
             version = SDKVersion.from_str(version)
@@ -32,6 +31,28 @@ class JCVersionExecutor(BaseAttackExecutor):
                 return JCVersion.from_str(report[2]["SEND_READ_VERSION"]["payload"])
 
         return JCVersion.from_str("")
+
+
+class Stages:
+    STAGES = [
+        {
+            "name": "install",
+            "path": "build/{version}/javacardversion-{version}.cap",
+            "optional": False,
+        },
+        {
+            # the apdu for reading the version, without the select
+            "name": "send",
+            "payload:": "80 04 00 00 02",
+            "comment": "empty",
+            "optional": True,
+        },
+        {
+            "name": "uninstall",
+            "path": "build/{version}/javacardversion-{version}.cap",
+            "optional": True,
+        },
+    ]
 
 
 if __name__ == "__main__":
