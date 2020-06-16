@@ -43,15 +43,15 @@ class Stages:
             "comment": "read memory",
             "optional": True,
         },
-        {
-            "name": "uninstall",
-            "path": "build/{version}/com/se/applets/javacard/applets.cap",
-            "optional": True,
-        },
-        {
-            "name": "uninstall",
-            "path": "build/{version}/com/se/vulns/javacard/vulns.new.cap",
-            # TODO should be optional by default
-            "optional": True,
-        },
+        # {
+        #     "name": "uninstall",
+        #     "path": "build/{version}/com/se/applets/javacard/applets.cap",
+        #     "optional": True,
+        # },
+        # {
+        #     "name": "uninstall",
+        #     "path": "build/{version}/com/se/vulns/javacard/vulns.new.cap",
+        #     # TODO should be optional by default
+        #     "optional": True,
+        # },
     ]
