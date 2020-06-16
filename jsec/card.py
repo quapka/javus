@@ -32,7 +32,6 @@ class CardState:
         # fmt: on
 
         item = {}
-        flag = False
         for line in self.raw.strip().split("\n"):
             line = line.strip()
 
@@ -41,19 +40,17 @@ class CardState:
 
             tag_match = tag.match(line)
             if tag_match is not None:
+                item = {}
                 _type = tag_match.group("type")
                 aid = tag_match.group("aid")
                 state = tag_match.group("state")
 
-                if flag:
-                    item = {}
                 item[_type] = {
                     "AID": aid,
                     "STATE": state,
                     "ITEMS": {"Privs": [], "Version": [], "Applet": []},
                 }
                 self._items.append(item)
-                flag = not flag
                 continue
 
             prop_match = prop.match(line)
@@ -61,7 +58,6 @@ class CardState:
                 name = prop_match.group("name")
                 value = prop_match.group("value")
                 if name == "Privs":
-                    # if prop_match.group("value"):
                     values = [x.strip() for x in value.split(",")]
                     item[_type]["ITEMS"][name].extend(values)
                 else:
