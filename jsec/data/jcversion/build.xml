@@ -17,6 +17,7 @@
     </taskdef>
     <!-- Define properties common for all attacks -->
     <property file="config.ini" />
+    <property file="aids.ini" />
     <property name="src.dir"
               value="src" />
     <property name="build.dir"

@@ -27,8 +27,12 @@ class JCVersionExecutor(BaseAttackExecutor):
             version = SDKVersion.from_str(version)
             report = self.execute(sdk_version=version)
             # FIXME after changing gppw the version cannot be read like this probably
-            if report[2]["SEND_READ_VERSION"]["status"] == "9000":
-                return JCVersion.from_str(report[2]["SEND_READ_VERSION"]["payload"])
+            if report[1]["send"]["success"]:
+                # TODO this is quite cumbersome
+                version_str = report[1]["send"]["communication"]["8004000002"][
+                    "payload"
+                ]
+                return JCVersion.from_str(version_str)
 
         return JCVersion.from_str("")
 
@@ -43,15 +47,15 @@ class Stages:
         {
             # the apdu for reading the version, without the select
             "name": "send",
-            "payload:": "80 04 00 00 02",
+            "payload": "80 04 00 00 02",
             "comment": "empty",
             "optional": True,
         },
-        {
-            "name": "uninstall",
-            "path": "build/{version}/javacardversion-{version}.cap",
-            "optional": True,
-        },
+        # {
+        #     "name": "uninstall",
+        #     "path": "build/{version}/javacardversion-{version}.cap",
+        #     "optional": True,
+        # },
     ]
 
 
