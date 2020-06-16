@@ -2,6 +2,7 @@
 import configparser
 import logging
 import re
+import copy
 from abc import ABC, abstractmethod
 from pathlib import Path
 import importlib
@@ -54,10 +55,10 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         # first load stages from `<attackname>`.py
         stages = self.import_stages()
         if stages is not None:
-            return stages
+            return copy.deepcopy(stages)
         stages = self.parse_config_stages()
         if stages is not None:
-            return stages
+            return copy.deepcopy(stages)
 
         raise ValueError("Cannot load attack stages")
 
