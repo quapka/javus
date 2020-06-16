@@ -110,6 +110,7 @@ class BaseBuilder(AbstractAttackBuilder):
     def _prepare(self):
         self._load_config()
         self._set_versions()
+        self.load_aids()
 
         if self.version is not None and self.version not in self.supported_versions:
             log.warning("Unsupported version '%s' set.", self.version)
@@ -218,17 +219,18 @@ class BaseBuilder(AbstractAttackBuilder):
 
         while not self.uniq_aids(used):
             rid = self.aids["BUILD"]["pkg.rid"]
-            self.aids["BUILD"]["pkg.rid"] = hex(int(rid, 16) + 1).replace("0x", "")
+            self.aids["BUILD"]["pkg.rid"] = (int(rid, 16) + 1).to_bytes(5, "big").hex()
 
         self.save_aids()
 
     def uniq_aids(self, used):
+        if not self.ready:
+            self._prepare()
+
         pkg_rid = self.aids["BUILD"]["pkg.rid"]
-        vulns_pix = self.aids["BUILD"]["vulns.pix"]
-        pkg_pix = self.aids["BUILD"]["pkg.pix"]
         applet_pix = self.aids["BUILD"]["applet.pix"]
 
-        aids = [pkg_rid + vulns_pix, pkg_rid + pkg_pix, pkg_rid + applet_pix]
+        aids = [pkg_rid + applet_pix]
 
         return set(aids).intersection(set(used)) == set()
 
