@@ -295,6 +295,56 @@ class SDKVersion(NamedTuple):
         return result
 
 
+class AID:
+    def __init__(self, string: str = "", rid: bytes = None, pix: bytes = None):
+        if string:
+            # TODO add input length checks
+            aid = bytes.fromhex(string)
+            rid = aid[:5]
+            if len(rid) != 5:
+                raise ValueError("RID from '%s' is not 5 bytes long" % string)
+            pix = aid[5:]
+            if not (0 <= len(pix) <= 11):
+                raise ValueError("PIX length from '%s' is not 0-11 bytes long" % string)
+            self.rid = rid
+            self.pix = pix
+        else:
+            if rid is not None:
+                if isinstance(rid, str):
+                    self.rid = bytes.fromhex(rid)
+                elif isinstance(rid, bytes):
+                    self.rid = rid
+                if pix is not None:
+                    if isinstance(pix, str):
+                        self.pix = bytes.fromhex(pix)
+                    elif isinstance(pix, bytes):
+                        self.pix = pix
+                else:
+                    self.pix = bytes()
+
+    @property
+    def aid(self):
+        return self.rid + self.pix
+
+    def increase(self):
+        r"""Increases `self.rid` by one each time"""
+        byteorder = "big"
+        rid_len = 5
+
+        rid_as_int = int.from_bytes(self.rid, byteorder) + 1
+
+        self.rid = rid_as_int.to_bytes(rid_len, byteorder)
+
+    def __eq__(self, other):
+        if isinstance(other, bytes):
+            return self.aid == other
+        elif isinstance(other, self.__class__):
+            return self.aid == other.aid
+
+    def __str__(self):
+        return self.aid.hex().upper()
+
+
 if __name__ == "__main__":
     app = CommandLineApp()
     app.run()

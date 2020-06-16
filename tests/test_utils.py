@@ -3,6 +3,7 @@ from typing import Optional
 import pytest
 
 from jsec.utils import JCVersion, SDKVersion, load_versions
+from jsec.utils import AID
 
 # from pytest_mock import mocker
 
@@ -114,7 +115,27 @@ class TestSDKVersion:
         assert SDKVersion.from_list(raw_list) == versions
 
 
-# @pytest.mark.parametrize("jcversion,sdks", [("0300", [])])
-# def test_infer_sdks_from_jcversion(jcversion: str, sdks: list):
-#     jcversion = JCVersion.from_str(jcversion)
-#     assert jcversion.get_sdks() == sdks
+@pytest.mark.parametrize(
+    "string,expected_aid", [("0011223344", b"\x00\x11\x22\x33\x44"),]
+)
+def test_reading_aid(string, expected_aid):
+    aid = AID(string)
+    assert aid == expected_aid
+
+
+@pytest.mark.parametrize("rid, expected_rid", [("0000000000", "0000000001")])
+def test_increase(rid, expected_rid):
+    a = AID(rid)
+    b = AID(expected_rid)
+    a.increase()
+    assert a == b
+
+
+class TestAID:
+    @pytest.mark.parametrize(
+        "rid,pix,expected_aid",
+        [("0000000000", "AABBCC", b"\x00\x00\x00\x00\x00\xaa\xbb\xcc")],
+    )
+    def test___init__(self, rid, pix, expected_aid):
+        aid = AID(rid=rid, pix=pix)
+        assert aid.aid == expected_aid
