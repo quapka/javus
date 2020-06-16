@@ -28,6 +28,12 @@ class AbstractAttackExecutor(ABC):
         pass
 
 
+class BaseStages:
+    install = "install"
+    send = "send"
+    uninstall = "uninstall"
+
+
 class BaseAttackExecutor(AbstractAttackExecutor):
     def __init__(
         self,
@@ -254,10 +260,10 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         try:
             return stage_data["optional"]
         except KeyError:
-            if stage == "install":
+            if stage == BaseStages.install:
                 # install is required by default
                 return False
-            elif stage == "uninstall":
+            elif stage == BaseStages.uninstall:
                 # uninstall stage is optional as it makes sense to continue uninstalling
                 # applets even if some cannot be uninstalled
                 return True
