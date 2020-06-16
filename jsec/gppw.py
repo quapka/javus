@@ -83,7 +83,6 @@ class GlobalPlatformProWrapper(object):
         self.dry_run = dry_run
         self.version = None
         self.atr = None
-        self._dump_file_content = None
         self.card = None
         # TODO add ready flag
 
@@ -246,6 +245,7 @@ class GlobalPlatformProWrapper(object):
         # TODO consider using context manager for handling temporary files
         # that need to be used by other projects
         tmp_name = None
+        dump_file_content = None
         # dump the apdu communication to temporary file
         if dump:
             _, tmp_name = tempfile.mkstemp(prefix="jsec-")
@@ -266,7 +266,7 @@ class GlobalPlatformProWrapper(object):
 
         if tmp_name is not None:
             with open(tmp_name, "r") as f:
-                self._dump_file_content = f.read()
+                dump_file_content = f.read()
             try:
                 os.remove(tmp_name)
             except NotImplementedError:
@@ -282,6 +282,11 @@ class GlobalPlatformProWrapper(object):
         report["start-time"] = timer.start
         report["end-time"] = timer.end
         report["duration"] = timer.duration
+
+        if dump_file_content is not None:
+            communication = self._parse_gp_dump_file(raw_content=dump_file_content)
+            report["communication"] = communication
+            dump_file_content = None
         return report
 
     def guess_diversifier(self):
@@ -391,13 +396,7 @@ class GlobalPlatformProWrapper(object):
             "--apdu",
             payload.hex(),
         ]
-        self.run(options, dump=True)
-
-        if self._dump_file_content:
-            communication = self._parse_gp_dump_file(
-                raw_content=self._dump_file_content
-            )
-        return communication[payload.hex().upper()]
+        return self.run(options, dump=True)
 
     def _parse_gp_dump_file(self, raw_content):
         # TODO this is a bit naive, but hey, who isn't
