@@ -174,8 +174,11 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         return self.gp.apdu(payload, aid)
 
     def _assess_send(self, result, *args, **kwargs):
-        sucess = True
-        result["success"] = True
+        success = True
+        if result["returncode"] != 0:
+            success = False
+
+        result["success"] = success
         return result
 
     def _parse_payload(self, raw: str) -> bytes:
@@ -236,7 +239,6 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         # determine the newest SDK version supported both by the card and the attack
         attack_versions = SDKVersion.from_list(self.config["BUILD"]["versions"])
         newest = list(set(attack_versions).intersection(set(self.card.sdks)))[-1]
-        print(newest)
         return newest
 
     def execute(self, sdk_version=None, **kwargs) -> list:
