@@ -47,15 +47,21 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         self.workdir = Path(workdir).resolve()
         # FIXME
         self.attack_name = self.workdir.name
+        self.aids = configparser.ConfigParser()
+        self.uninstall_stages = []
 
         self.config = configparser.ConfigParser(strict=False)
         self.installed_applets = []
         self.stages = None
 
         self._load_config()
+        self._load_aids()
 
     def _load_config(self) -> None:
         self.config.read(self.workdir / "config.ini")
+
+    def _load_aids(self) -> None:
+        self.aids.read(self.workdir / "aids.ini")
 
     def get_stages(self) -> List[dict]:
         # first load stages from `<attackname>`.py
@@ -154,8 +160,8 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
     def construct_aid(self) -> bytes:
         # FIXME this method is a gimmick to be overriden by the custom Executors
-        rid = bytes.fromhex(self.config["BUILD"]["pkg.rid"])
-        pix = bytes.fromhex(self.config["BUILD"]["applet.pix"])
+        rid = bytes.fromhex(self.aids["BUILD"]["pkg.rid"])
+        pix = bytes.fromhex(self.aids["BUILD"]["applet.pix"])
         aid = rid + pix
 
         return aid
