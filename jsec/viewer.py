@@ -10,6 +10,25 @@ from jsec.utils import MongoConnection
 app = Flask(__name__)
 
 
+class Marks:
+    tick_sign = "&#10004;"
+    cross_sign = "&#10060;"
+    # circle_sign = "&#9898;"
+    circle_sign = "&#9675;"
+
+    @property
+    def tick(self) -> str:
+        return '<span class="tick">%s</span>' % self.tick_sign
+
+    @property
+    def cross(self) -> str:
+        return '<span class="cross">%s</span>' % self.cross_sign
+
+    @property
+    def circle(self) -> str:
+        return '<span class="circle">%s</span>' % self.circle_sign
+
+
 def load_config():
     config = configparser.ConfigParser()
     config.read()
@@ -26,7 +45,7 @@ def index():
     with MongoConnection(database=name, host=host, port=port) as con:
         last_attack = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
 
-    return render_template("index.html", results=last_attack)
+    return render_template("index.html", results=last_attack, marks=Marks())
 
 
 if __name__ == "__main__":

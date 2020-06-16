@@ -15,11 +15,13 @@
           {% for value in stage.values() %}
             <td>
               {% if value['skipped'] %}
-                -
+                {{ marks.circle | safe }}
               {% else %}
-                {{ value['success'] }}
-                {{ value['args'] }}
-              <!-- <br>{{ value['stdout'] }}<br>{{ value['stderr'] }} -->
+                {% if value['success'] %}
+                  {{ marks.tick | safe }}
+                {% else %}
+                  {{ marks.cross | safe }}
+                {% endif %}
               {% endif %}
             </td>
           {% endfor %}
