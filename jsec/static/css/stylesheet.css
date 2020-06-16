@@ -38,3 +38,17 @@ caption {
 h1 {
     color: red;
 }
+
+.tick {
+    color: rgb(0, 128, 0);
+}
+
+.cross {
+  color: transparent;
+  text-shadow: 0 0 0 rgb(255, 0, 0);
+}
+
+.circle {
+    color: transparent;
+    text-shadow: 0 0 0 rgb(0, 0, 255);
+}
