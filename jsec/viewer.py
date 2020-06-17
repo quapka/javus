@@ -18,6 +18,11 @@ from jsec.settings import STATIC_DIR
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-very-secret-and-should-be-fixed"
 
+# FIXME load from config file
+name = "javacard-analysis"
+host = "localhost"
+port = "27017"
+
 
 class Marks:
     tick_sign = "&#10004;"
@@ -73,13 +78,20 @@ def create_attack_choices() -> List[Tuple[str, str]]:
     return choices
 
 
+# @app.route("/attack/<id>/stage/<stage_index>", methods=["GET"])
+@app.route("/get_stage_data/<analysis_id>/<attack_name>/<stage_index>/<stage_name>")
+def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
+    with MongoConnection(database=name, host=host, port=port) as con:
+        attack = con.col.find_one({"_id": ObjectId(analysis_id)})
+
+    stage = attack["analysis-results"][attack_name][int(stage_index)][stage_name]
+    # return jsonify(stage)
+    return render_template("stage.html", stage=stage)
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     # FIXME add stage viewer
-    # FIXME load from config file
-    name = "javacard-analysis"
-    host = "localhost"
-    port = "27017"
     if request.method == "POST":
         attack_id = request.form["attack"]
         with MongoConnection(database=name, host=host, port=port) as con:
