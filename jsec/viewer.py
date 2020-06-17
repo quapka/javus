@@ -1,14 +1,22 @@
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms.validators import DataRequired
+
 import configparser
 import threading
 import webbrowser
 import pymongo
+from typing import List, Tuple
+from bson.objectid import ObjectId
 
 from flask import Flask, render_template
+from flask import request
 
 from jsec.utils import MongoConnection
 from jsec.settings import STATIC_DIR
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "this-is-very-secret-and-should-be-fixed"
 
 
 class Marks:
@@ -52,27 +60,54 @@ def get_stylesheet_content():
     return stylesheet
 
 
-@app.route("/")
+def create_attack_choices() -> List[Tuple[str, str]]:
+    name = "javacard-analysis"
+    host = "localhost"
+    port = "27017"
+    with MongoConnection(database=name, host=host, port=port) as con:
+        all_attack_ids = con.col.find(
+            projection=["_id"], sort=[("start-time", pymongo.DESCENDING)]
+        )
+
+    choices = [(str(x["_id"]), str(i + 1)) for i, x in enumerate(all_attack_ids)]
+    return choices
+
+
+@app.route("/", methods=["GET", "POST"])
 def index():
     # FIXME add stage viewer
     # FIXME load from config file
     name = "javacard-analysis"
     host = "localhost"
     port = "27017"
+    if request.method == "POST":
+        attack_id = request.form["attack"]
+        with MongoConnection(database=name, host=host, port=port) as con:
+            attack = con.col.find_one({"_id": ObjectId(attack_id)})
+    else:
+        with MongoConnection(database=name, host=host, port=port) as con:
+            attack = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
+            # FIXME get only ids?
 
-    with MongoConnection(database=name, host=host, port=port) as con:
-        last_attack = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
+    form = AnalysisResultForm()
+    form.attack.choices = create_attack_choices()
 
-    with open("analysis-results.html", "w") as f:
-        template = render_template(
-            "index.html",
-            results=last_attack,
-            marks=Marks(),
-            dump_results=True,
-            stylesheet_content=get_stylesheet_content(),
-        )
-        f.write(template)
-    return render_template("index.html", results=last_attack, marks=Marks())
+    # with open("analysis-results.html", "w") as f:
+    #     template = render_template(
+    #         "index.html",
+    #         results=last_attack,
+    #         marks=Marks(),
+    #         dump_results=True,
+    #         stylesheet_content=get_stylesheet_content(),
+    #     )
+    #     f.write(template)
+
+    return render_template("index.html", results=attack, form=form, marks=Marks())
+
+
+class AnalysisResultForm(FlaskForm):
+    submit = SubmitField("Show")
+    attack = SelectField(u"Attack id")
 
 
 if __name__ == "__main__":

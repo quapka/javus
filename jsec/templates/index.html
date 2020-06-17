@@ -22,6 +22,12 @@
         {% endfor %}
       </tbody>
     </table>
+    {% if not dump_results %}
+      <form action="" method="post" novalidate>
+        <p>{{ form.attack.label }}: {{ form.attack }} </p>
+        <p>{{ form.submit() }}</p>
+      </form>
+    {% endif %}
 
     {% for attack_name, stages in results["analysis-results"].items() %}
       {% include "attack.html" %}
