@@ -110,15 +110,16 @@ class PreAnalysisManager:
             sys.exit(1)
         # FIXME don't hardcode it for a card!
         # put JCVersion into a types.ini
-        # print("WARNING: Manually setting JCVersion for Card A!!!")
-        # self.card.jcversion = JCVersion.from_str("0300")
         builder = BaseBuilder(gp=self.gp, workdir=DATA / "jcversion")
         builder.execute(BaseBuilder.COMMANDS.build)
         used_aids = self.card.get_current_aids()
         if not builder.uniq_aids(used_aids):
             builder.uniqfy(used_aids)
             builder.execute(BaseBuilder.COMMANDS.build)
-        self.card.jcversion = self.get_jc_version()
+        print("WARNING: Manually setting JCVersion for Card A!!!")
+        self.card.jcversion = JCVersion.from_str("0300")
+        # FIXME getting the jc version still seems to cause troubles
+        # self.card.jcversion = self.get_jc_version()
         self.card.sdks = self.card.jcversion.get_sdks()
         report["JCVersion"] = self.card.jcversion
         report["SDKs"] = self.card.sdks
