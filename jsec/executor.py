@@ -175,11 +175,14 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         return self.gp.apdu(payload, aid)
 
     def _assess_send(self, result, *args, **kwargs):
+        command_apdu = self._parse_payload(kwargs["payload"])
         success = True
         if result["returncode"] != 0:
             success = False
 
         result["success"] = success
+        # FIXME maybe adding all kwargs is too much
+        result.update(kwargs)
         return result
 
     def _parse_payload(self, raw: str) -> bytes:
