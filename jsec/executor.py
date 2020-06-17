@@ -116,7 +116,8 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         with cd(self.workdir):
             result = self.gp.install(path)
             if result["returncode"] == 0:
-                self.uninstall_stages.append({"name": "uninstall", "path": path})
+                # prepare uninstall stages in reversed order, than installed
+                self.uninstall_stages.insert(0, {"name": "uninstall", "path": path})
 
         return result
 
@@ -261,7 +262,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             stage = stage_data.pop("name")
             report.append({stage: {"success": False, "skipped": True}})
 
-        for i, stage_data in enumerate(self.uninstall_stages[:-1]):
+        for i, stage_data in enumerate(self.uninstall_stages):
             stage = stage_data.pop("name")
             result = self._run_stage(
                 stage, **stage_data, sdk_version=sdk_version, **kwargs
