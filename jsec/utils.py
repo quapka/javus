@@ -345,6 +345,59 @@ class AID:
         return self.aid.hex().upper()
 
 
+JC_FRAMEWORK_ISO7816 = {
+    "6999": {"note": "Applet selection failed", "const": "SW_APPLET_SELECT_FAILED",},
+    "6100": {"note": "Response bytes remaining", "const": "SW_BYTES_REMAINING_00",},
+    "6E00": {"note": "CLA value not supported", "const": "SW_CLA_NOT_SUPPORTED",},
+    "6884": {
+        "note": "Command chaining not supported",
+        "const": "SW_COMMAND_CHAINING_NOT_SUPPORTED",
+    },
+    "6986": {
+        "note": "Command not allowed (no current EF)",
+        "const": "SW_COMMAND_NOT_ALLOWED",
+    },
+    "6985": {
+        "note": "Conditions of use not satisfied",
+        "const": "SW_CONDITIONS_NOT_SATISFIED",
+    },
+    "6C00": {"note": "Correct Expected Length (Le)", "const": "SW_CORRECT_LENGTH_00",},
+    "6984": {"note": "Data invalid", "const": "SW_DATA_INVALID",},
+    "6A84": {"note": "Not enough memory space in the file", "const": "SW_FILE_FULL",},
+    "6983": {"note": "File invalid", "const": "SW_FILE_INVALID",},
+    "6A82": {"note": "File not found", "const": "SW_FILE_NOT_FOUND",},
+    "6A81": {"note": "Function not supported", "const": "SW_FUNC_NOT_SUPPORTED",},
+    "6A86": {"note": "Incorrect parameters (P1,P2)", "const": "SW_INCORRECT_P1P2",},
+    "6D00": {"note": "INS value not supported", "const": "SW_INS_NOT_SUPPORTED",},
+    "6883": {
+        "note": "Last command in chain expected",
+        "const": "SW_LAST_COMMAND_EXPECTED",
+    },
+    "6881": {
+        "note": "Card does not support the operation on the specified logical channel",
+        "const": "SW_LOGICAL_CHANNEL_NOT_SUPPORTED",
+    },
+    "9000": {"note": "No Error", "const": "SW_NO_ERROR",},
+    "6A83": {"note": "Record not found", "const": "SW_RECORD_NOT_FOUND",},
+    "6882": {
+        "note": "Card does not support secure messaging",
+        "const": "SW_SECURE_MESSAGING_NOT_SUPPORTED",
+    },
+    "6982": {
+        "note": "Security condition not satisfied",
+        "const": "SW_SECURITY_STATUS_NOT_SATISFIED",
+    },
+    "6F00": {"note": "No precise diagnosis", "const": "SW_UNKNOWN",},
+    "6200": {
+        "note": "Warning, card state unchanged",
+        "const": "SW_WARNING_STATE_UNCHANGED",
+    },
+    "6A80": {"note": "Wrong data", "const": "SW_WRONG_DATA",},
+    "6700": {"note": "Wrong length", "const": "SW_WRONG_LENGTH",},
+    "6B00": {"note": "Incorrect parameters (P1,P2)", "const": "SW_WRONG_P1P2",},
+}
+
+
 if __name__ == "__main__":
     app = CommandLineApp()
     app.run()
