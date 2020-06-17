@@ -139,3 +139,27 @@ class TestAID:
     def test___init__(self, rid, pix, expected_aid):
         aid = AID(rid=rid, pix=pix)
         assert aid.aid == expected_aid
+
+
+class TestCommandAPDU:
+    r"""Based on
+    https://www.oracle.com/technetwork/articles/java/javacard1-139251.html?printOnly=1
+    """
+
+    @pytest.mark.parametrize(
+        "raw_apdu, cla,ins, p1, p2, le, data, lc",
+        [
+            (
+                "0x80 0x10 0x01 0x02\t0x04\t0x00 0x00 0xc0 0x00\t\t\t\t0x7F",
+                b"\x80",
+                b"\x10",
+                b"\x01",
+                b"\x02",
+                b"\x04",
+                b"\x00\x00\xc0\x00",
+                b"\x7f",
+            ),
+        ],
+    )
+    def test_case1(self, raw_apdu, clas, ins, p1, p2, le, data, lc):
+        CommandAPDU(raw_apdu)

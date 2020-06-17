@@ -398,6 +398,37 @@ JC_FRAMEWORK_ISO7816 = {
 }
 
 
+class RequestAPDU:
+    def __init__(self, string: str):
+        self.data = None
+        self.SW1 = None
+        self.SW2 = None
+
+    def success(self):
+        pass
+
+
+class CommandAPDU:
+    def __init__(
+        self,
+        string: str = "",
+        # cla=None,
+        # ins=None,
+        # p1=None,
+        # p2=None,
+        # lc=None,
+        # data=None,
+        # le=None,
+    ):
+        self.CLA = cla
+        self.INS = ins
+        self.P1 = p1
+        self.P2 = p2
+        self.Lc = lc
+        self.data = data
+        self.Le = le
+
+
 if __name__ == "__main__":
     app = CommandLineApp()
     app.run()
