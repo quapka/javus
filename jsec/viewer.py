@@ -53,7 +53,6 @@ def get_stylesheet_content():
 
 
 @app.route("/")
-@app.route("/analysis/<id>")
 def index():
     # FIXME add stage viewer
     # FIXME load from config file
