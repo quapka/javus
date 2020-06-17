@@ -84,7 +84,7 @@ def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
     with MongoConnection(database=name, host=host, port=port) as con:
         attack = con.col.find_one({"_id": ObjectId(analysis_id)})
 
-    stage = attack["analysis-results"][attack_name][int(stage_index)][stage_name]
+    stage = attack["analysis-results"][attack_name][int(stage_index)]
     # return jsonify(stage)
     return render_template("stage.html", stage=stage)
 
@@ -95,6 +95,7 @@ def index():
     if request.method == "POST":
         attack_id = request.form["attack"]
         with MongoConnection(database=name, host=host, port=port) as con:
+            # FIXME rename attack to analysis
             attack = con.col.find_one({"_id": ObjectId(attack_id)})
     else:
         with MongoConnection(database=name, host=host, port=port) as con:

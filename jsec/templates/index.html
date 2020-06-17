@@ -47,13 +47,7 @@
           {% endwith %}
         {% endfor %}
       </div>
-      <div>
-        {% with stage_name = results['analysis-results']['arraycopy'][0].keys() %}
-          {{stage_name}}
-        {% with stage = results['analysis-results']['arraycopy'][0]['install'] %}
-          {% include "stage.html" %}
-        {% endwith %}
-        {% endwith %}
-      </div>
+      <!-- The following div is populated with AJAX calls -->
+      <div id="stage-details"></div>
     </body>
 </html>

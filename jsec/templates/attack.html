@@ -4,9 +4,7 @@
     <tr>
       <th>Attack Stages</th>
       {% for stage in stages %}
-        {% for name in stage.keys() %}
-          <th>{{ name }}</th>
-        {% endfor %}
+        <th>{{ stage['name'] }}
       {% endfor %}
     </tr>
   </thead>
@@ -15,20 +13,18 @@
         <td>Results</td>
         {% for stage in stages %}
           {% with stage_index = loop.index0 %}
-            {% for value in stage.values() %}
               <!-- FIXME change mouse cursor to pointer on hover -->
-              <td onclick="getStageData('{{ analysis_id }}', '{{attack_name}}', '{{stage_index}}', '{{stage_name}}')">
-                {% if value['skipped'] %}
+              <td onclick="getStageData('{{ analysis_id }}', '{{attack_name}}', '{{stage_index}}', '{{stage["name"]}}')">
+                {% if stage['skipped'] %}
                   {{ marks.circle | safe }}
                 {% else %}
-                  {% if value['success'] %}
+                  {% if stage['success'] %}
                     {{ marks.tick | safe }}
                   {% else %}
                     {{ marks.cross | safe }}
                   {% endif %}
                 {% endif %}
               </td>
-            {% endfor %}
           {% endwith %}
         {% endfor %}
       </tr>

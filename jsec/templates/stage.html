@@ -1,28 +1,26 @@
-<div id="stage-details">
-  <table>
-    <thead></thead>
+<table>
+  <thead></thead>
+    <tr>
+      <th>name</th>
+      <th>value</th>
+    </tr>
+  <tbody>
+    {% for key, value in stage.items() %}
+      {% if key not in ['stdout', 'stderr'] %}
       <tr>
-        <th>name</th>
-        <th>value</th>
-      </tr>
-    <tbody>
-      {% for key, value in stage.items() %}
-        {% if key not in ['stdout', 'stderr'] %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>
-          {% if key == 'args' %}
-            {{ value | join(' ') }}
-          {% elif key == 'start-time' or key == 'end-time' %}
-            <!-- FIXME change to datetime somehow -->
-            {{ value }}
-          {% else %}
-            {{ value }}
-          {% endif %}
-          </td>
-        </tr>
+        <td>{{ key }}</td>
+        <td>
+        {% if key == 'args' %}
+          {{ value | join(' ') }}
+        {% elif key == 'start-time' or key == 'end-time' %}
+          <!-- FIXME change to datetime somehow -->
+          {{ value }}
+        {% else %}
+          {{ value }}
         {% endif %}
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+        </td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+  </tbody>
+</table>

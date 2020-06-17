@@ -256,14 +256,15 @@ class BaseAttackExecutor(AbstractAttackExecutor):
                 stage, **stage_data, sdk_version=sdk_version, **kwargs
             )
 
-            report.append({stage: result})
+            result["name"] = stage
+            report.append(result)
             if not self.optional_stage(stage, stage_data) and not result["success"]:
                 break
 
         # fill in the rest of the stages, that were not executed
         for stage_data in stages[i + 1 :]:
             stage = stage_data.pop("name")
-            report.append({stage: {"success": False, "skipped": True}})
+            report.append({"name": stage, "success": False, "skipped": True})
 
         for i, stage_data in enumerate(self.uninstall_stages):
             stage = stage_data.pop("name")
@@ -271,7 +272,8 @@ class BaseAttackExecutor(AbstractAttackExecutor):
                 stage, **stage_data, sdk_version=sdk_version, **kwargs
             )
 
-            report.append({stage: result})
+            result["name"] = stage
+            report.append(result)
 
         return report
 
