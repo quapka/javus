@@ -45,6 +45,11 @@ def index():
     with MongoConnection(database=name, host=host, port=port) as con:
         last_attack = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
 
+    with open("results.html", "w") as f:
+        template = render_template(
+            "index.html", results=last_attack, marks=Marks(), dump_results=True
+        )
+        f.write(template)
     return render_template("index.html", results=last_attack, marks=Marks())
 
 
