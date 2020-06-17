@@ -47,7 +47,7 @@ dist/
 *.jca
 
 # ignore the results of the analysis
-analysis-results/
+analysis-results.html
 
 # ignore per user configuration files
 aids.ini

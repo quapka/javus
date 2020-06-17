@@ -40,6 +40,14 @@ def get_project_checkdir():
     return get_project_root() / "checks"
 
 
+def get_viewer_static():
+    return get_project_src() / "static"
+
+
+def get_viewer_templates():
+    return get_project_src() / "templates"
+
+
 PROJECT_ROOT = get_project_root()
 PROJECT_SRC = get_project_src()
 DATA = get_project_data()
@@ -47,3 +55,5 @@ LIB_DIR = get_project_lib()
 ATTACKS = get_project_attacks()
 TESTDIR = get_project_testdir()
 CHECKDIR = get_project_checkdir()
+STATIC_DIR = get_viewer_static()
+TEMPLATES_DIR = get_viewer_templates()

@@ -6,9 +6,9 @@
     </head>
     <h1>JavaCard Security Analysis</h1>
     {% if dump_results %}
-    <style type="text/css">
-      {% include "stylesheet.css" %}
-    </style>
+      <style type="text/css">
+        {{ stylesheet_content | safe}}
+      </style>
     {% endif %}
 
     <table>
