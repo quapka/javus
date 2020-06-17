@@ -28,6 +28,15 @@ class Marks:
     def circle(self) -> str:
         return '<span class="circle">%s</span>' % self.circle_sign
 
+    @property
+    def legend(self):
+        items = {
+            "tick": {"message": "stage successful", "html": self.tick,},
+            "cross": {"message": "stage failed", "html": self.cross,},
+            "circle": {"message": "stage skipped", "html": self.circle,},
+        }
+        return items
+
 
 def load_config():
     config = configparser.ConfigParser()
