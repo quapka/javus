@@ -141,6 +141,7 @@ class TestAID:
         assert aid.aid == expected_aid
 
 
+@pytest.mark.skip("Not fully implemented yet")
 class TestCommandAPDU:
     r"""Based on
     https://www.oracle.com/technetwork/articles/java/javacard1-139251.html?printOnly=1
@@ -161,5 +162,5 @@ class TestCommandAPDU:
             ),
         ],
     )
-    def test_case1(self, raw_apdu, clas, ins, p1, p2, le, data, lc):
+    def test_case1(self, raw_apdu, cla, ins, p1, p2, le, data, lc):
         CommandAPDU(raw_apdu)
