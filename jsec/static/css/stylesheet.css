@@ -24,8 +24,17 @@ td, th {
     padding: 8px;
 }
 
+td {
+}
+
 tr:nth-child(even) {
     background-color: #dddddd;
+}
+.stage-td {
+    max-width:600px;
+    max-height: 200px;
+    overflow: scroll;
+    text-align: left;
 }
 
 caption {
