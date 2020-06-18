@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 import configparser
+import copy
+import importlib
 import logging
 import re
-import copy
 from abc import ABC, abstractmethod
 from pathlib import Path
-import importlib
-
 from typing import List, Optional
 
 from jsec.gppw import GlobalPlatformProWrapper
-from jsec.utils import SDKVersion, cd
 from jsec.settings import PROJECT_ROOT
+from jsec.utils import SDKVersion, cd
 
 # TODO add some log initializer
 log = logging.getLogger(__file__)

@@ -10,11 +10,11 @@ import subprocess
 import tempfile
 from typing import List, Optional
 
+import smartcard
+
 from jsec.card import CardState
 from jsec.settings import DATA
 from jsec.utils import Timer
-
-import smartcard
 
 # FIXME what if no card/reader is present?
 

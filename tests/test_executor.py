@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import configparser
+from contextlib import ExitStack as does_not_raise
 from pathlib import Path
 
 import pytest
@@ -7,7 +8,6 @@ import pytest
 from jsec.card import Card
 from jsec.executor import BaseAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
-from contextlib import ExitStack as does_not_raise
 
 
 class TestBaseAttackExecutor:

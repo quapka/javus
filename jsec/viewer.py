@@ -1,21 +1,20 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
-from wtforms.validators import DataRequired
-
 import configparser
+import datetime
 import threading
 import webbrowser
-import pymongo
 from typing import List, Tuple
-from bson.objectid import ObjectId
 
-from flask import Flask, render_template
-from flask import request
+import pymongo
 import pytz
-import datetime
+from bson.objectid import ObjectId
+from flask import Flask, render_template, request
+from flask_wtf import FlaskForm
+from wtforms import (BooleanField, PasswordField, SelectField, StringField,
+                     SubmitField)
+from wtforms.validators import DataRequired
 
-from jsec.utils import MongoConnection
 from jsec.settings import STATIC_DIR
+from jsec.utils import MongoConnection
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-very-secret-and-should-be-fixed"

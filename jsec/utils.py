@@ -9,7 +9,6 @@ import subprocess as sp
 import sys
 import time
 from contextlib import contextmanager
-
 # from collections import namedtuple
 from typing import List, NamedTuple, Optional
 

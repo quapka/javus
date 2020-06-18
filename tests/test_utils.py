@@ -2,8 +2,7 @@ from typing import Optional
 
 import pytest
 
-from jsec.utils import JCVersion, SDKVersion, load_versions
-from jsec.utils import AID
+from jsec.utils import AID, JCVersion, SDKVersion, load_versions
 
 # from pytest_mock import mocker
 

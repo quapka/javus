@@ -2,7 +2,6 @@
 
 
 import argparse
-
 # TODO add docstrings
 # pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
@@ -30,8 +29,8 @@ from jsec.data.jcversion.jcversion import JCVersionExecutor
 from jsec.executor import AbstractAttackExecutor, BaseAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
-from jsec.utils import CommandLineApp, Error, JCVersion, cd, load_versions
-from jsec.utils import MongoConnection
+from jsec.utils import (CommandLineApp, Error, JCVersion, MongoConnection, cd,
+                        load_versions)
 
 # from jsec.data.jcversion import
 
