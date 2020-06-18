@@ -126,7 +126,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
                     "path": path,
                     "installed": False,
                 }
-            self.uninstall_stages.insert(0, uninstall_stage)
+            self.uninstall_stages.append(uninstall_stage)
 
         return result
 
@@ -276,7 +276,8 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             stage = stage_data.pop("name")
             report.append({"name": stage, "success": False, "skipped": True})
 
-        for i, stage_data in enumerate(self.uninstall_stages):
+        while self.uninstall_stages:
+            stage_data = self.uninstall_stages.pop()
             stage = stage_data.pop("name")
             if stage_data["installed"]:
                 result = self._run_stage(
