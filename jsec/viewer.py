@@ -47,9 +47,9 @@ class Marks:
     @property
     def legend(self):
         items = {
-            "tick": {"message": "stage successful", "html": self.tick,},
-            "cross": {"message": "stage failed", "html": self.cross,},
-            "circle": {"message": "stage skipped", "html": self.circle,},
+            "tick": {"message": "stage successful", "html": self.tick},
+            "cross": {"message": "stage failed", "html": self.cross},
+            "circle": {"message": "stage skipped", "html": self.circle},
         }
         return items
 
