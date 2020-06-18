@@ -27,11 +27,9 @@ class JCVersionExecutor(BaseAttackExecutor):
             version = SDKVersion.from_str(version)
             report = self.execute(sdk_version=version)
             # FIXME after changing gppw the version cannot be read like this probably
-            if report[1]["send"]["success"]:
+            if report[1]["success"]:
                 # TODO this is quite cumbersome
-                version_str = report[1]["send"]["communication"]["8004000002"][
-                    "payload"
-                ]
+                version_str = report[1]["communication"]["8004000002"]["payload"]
                 return JCVersion.from_str(version_str)
 
         return JCVersion.from_str("")
