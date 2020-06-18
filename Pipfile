@@ -20,6 +20,7 @@ invoke = "*"
 pyscard = "*"
 flask = "*"
 flask-wtf = "*"
+pytz = "*"
 
 [requires]
 python_version = "3.6"

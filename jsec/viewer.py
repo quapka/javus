@@ -11,6 +11,8 @@ from bson.objectid import ObjectId
 
 from flask import Flask, render_template
 from flask import request
+import pytz
+import datetime
 
 from jsec.utils import MongoConnection
 from jsec.settings import STATIC_DIR
@@ -121,6 +123,17 @@ def index():
 class AnalysisResultForm(FlaskForm):
     submit = SubmitField("Show")
     attack = SelectField(u"Attack id")
+
+
+@app.template_filter()
+def as_datetime(utc_timestamp: str, dt_format: str = "%H:%M:%S %d/%m/%Y") -> str:
+    r"""
+    `timestamp`: assumed to be UTC timestamp, that will be displayed
+    """
+    # FIXME this might still not work for daylight saving time, but is good enough for now
+    dt = datetime.datetime.fromtimestamp(float(utc_timestamp))
+    dt.replace(tzinfo=pytz.utc)
+    return dt.astimezone().strftime(dt_format)
 
 
 if __name__ == "__main__":
