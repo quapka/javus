@@ -14,6 +14,8 @@ from jsec.card import CardState
 from jsec.settings import DATA
 from jsec.utils import Timer
 
+import smartcard
+
 # FIXME what if no card/reader is present?
 
 log = logging.getLogger(__file__)
@@ -82,7 +84,6 @@ class GlobalPlatformProWrapper(object):
         # TODO dry_run is not implemented
         self.dry_run = dry_run
         self.version = None
-        self.atr = None
         self.card = None
         # TODO add ready flag
 
@@ -167,12 +168,12 @@ class GlobalPlatformProWrapper(object):
 
     def infer_diversifier(self):
         log.debug("Try to infer the diversifier from predefined list of known cards.")
-        if self.atr is None:
-            log.info("Cannot infer diversifier, 'self.atr' is None")
+        if self.card.atr is None:
+            log.info("Cannot infer diversifier, 'self.card.atr' is None")
             return
         # iterate over know ATR values and load their diversifier
         for known_atr in self.card_types.sections():
-            if self.same_atr(self.atr, known_atr):
+            if self.card.atr.bytes == smartcard.util.toBytes(known_atr):
                 try:
                     div = self.card_types[known_atr]["diversifier"]
                     log.info("Missing 'diversifier=value' pair")
@@ -185,13 +186,6 @@ class GlobalPlatformProWrapper(object):
                     break
                 except KeyError:
                     continue
-
-    @staticmethod
-    def same_atr(first: str, second: str) -> bool:
-        # TODO use smartcard.ATR
-        clean_first = first.replace(" ", "").upper()
-        clean_second = second.replace(" ", "").upper()
-        return clean_first == clean_second
 
     def _save_state(self) -> Optional[CardState]:
         # state is the output of a --list cmd and setting `save_state` to True
@@ -304,12 +298,6 @@ class GlobalPlatformProWrapper(object):
             self.diversifier = Diversifier.NONE
             log.debug("'%s' diversifier is used.", self.diversifier.name)
             return
-
-        # before running other commmand a potentially harming the card
-        # we can try to grep for the ATR in the previous output
-        # and compare it to known EMV ATRs
-        list_output = proc.stdout.decode("utf8")
-        self.atr = self.find_atr(list_output)
 
         self.infer_diversifier()
         if self.diversifier != Diversifier.UNDETECTED:

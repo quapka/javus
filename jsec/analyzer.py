@@ -17,7 +17,9 @@ import time
 from pathlib import Path
 from typing import List, Optional
 
+# TODO consider importing only toplevel module
 import smartcard
+from smartcard.ATR import ATR
 from smartcard.CardConnection import CardConnection
 from smartcard.CardConnectionDecorator import CardConnectionDecorator
 from smartcard.System import readers
@@ -85,9 +87,9 @@ class PreAnalysisManager:
         r"""We need to ensure, that one and only one card is inserted in all of the readers
         when doing the analysis.
         """
-        cards = self.detect_cards()
+        self.cards = self.detect_cards()
         single_card = True
-        number_of_cards = len(cards)
+        number_of_cards = len(self.cards)
         if number_of_cards < 1:
             log.error("No JavaCards have been detected.")
             print("No JavaCards have been detected, please, insert one.")
@@ -108,8 +110,9 @@ class PreAnalysisManager:
         if not self.single_card_inserted():
             # TODO is it worth having custom errors?
             sys.exit(1)
-        # FIXME don't hardcode it for a card!
-        # put JCVersion into a types.ini
+        else:
+            # now we know, that there is exactly one card connected and we can record its' ATR
+            self.card.atr = ATR(self.cards[0].getATR())
         builder = BaseBuilder(gp=self.gp, workdir=DATA / "jcversion")
         builder.execute(BaseBuilder.COMMANDS.build)
         used_aids = self.card.get_current_aids()
