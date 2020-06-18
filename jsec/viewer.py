@@ -67,7 +67,7 @@ def get_stylesheet_content():
     return stylesheet
 
 
-def create_attack_choices() -> List[Tuple[str, str]]:
+def get_analysis_choices() -> List[Tuple[str, str]]:
     name = "javacard-analysis"
     host = "localhost"
     port = "27017"
@@ -84,9 +84,9 @@ def create_attack_choices() -> List[Tuple[str, str]]:
 @app.route("/get_stage_data/<analysis_id>/<attack_name>/<stage_index>/<stage_name>")
 def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
     with MongoConnection(database=name, host=host, port=port) as con:
-        attack = con.col.find_one({"_id": ObjectId(analysis_id)})
+        analysis = con.col.find_one({"_id": ObjectId(analysis_id)})
 
-    stage = attack["analysis-results"][attack_name][int(stage_index)]
+    stage = analysis["analysis-results"][attack_name][int(stage_index)]
     # return jsonify(stage)
     return render_template("stage.html", stage=stage)
 
@@ -95,17 +95,16 @@ def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
 def index():
     # FIXME add stage viewer
     if request.method == "POST":
-        attack_id = request.form["attack"]
+        attack_id = request.form["analysis"]
         with MongoConnection(database=name, host=host, port=port) as con:
-            # FIXME rename attack to analysis
-            attack = con.col.find_one({"_id": ObjectId(attack_id)})
+            analysis = con.col.find_one({"_id": ObjectId(attack_id)})
     else:
         with MongoConnection(database=name, host=host, port=port) as con:
-            attack = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
+            analysis = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
             # FIXME get only ids?
 
     form = AnalysisResultForm()
-    form.attack.choices = create_attack_choices()
+    form.analysis.choices = get_analysis_choices()
 
     # with open("analysis-results.html", "w") as f:
     #     template = render_template(
@@ -117,12 +116,12 @@ def index():
     #     )
     #     f.write(template)
 
-    return render_template("index.html", results=attack, form=form, marks=Marks())
+    return render_template("index.html", results=analysis, form=form, marks=Marks())
 
 
 class AnalysisResultForm(FlaskForm):
     submit = SubmitField("Show")
-    attack = SelectField(u"Attack id")
+    analysis = SelectField(u"Analysis id")
 
 
 @app.template_filter()
