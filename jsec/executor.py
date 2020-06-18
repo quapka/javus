@@ -117,7 +117,16 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             result = self.gp.install(path)
             if result["returncode"] == 0:
                 # prepare uninstall stages in reversed order, than installed
-                self.uninstall_stages.insert(0, {"name": "uninstall", "path": path})
+                uninstall_stage = {"name": "uninstall", "path": path, "installed": True}
+            else:
+                # when the installation is not successful we still want to add uninstall stage
+                # and mark it as skipped
+                uninstall_stage = {
+                    "name": "uninstall",
+                    "path": path,
+                    "installed": False,
+                }
+            self.uninstall_stages.insert(0, uninstall_stage)
 
         return result
 
@@ -257,6 +266,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             )
 
             result["name"] = stage
+            result["skipped"] = False
             report.append(result)
             if not self.optional_stage(stage, stage_data) and not result["success"]:
                 break
@@ -268,9 +278,14 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
         for i, stage_data in enumerate(self.uninstall_stages):
             stage = stage_data.pop("name")
-            result = self._run_stage(
-                stage, **stage_data, sdk_version=sdk_version, **kwargs
-            )
+            if stage_data["installed"]:
+                result = self._run_stage(
+                    stage, **stage_data, sdk_version=sdk_version, **kwargs
+                )
+                result["skipped"] = False
+            else:
+                result = copy.deepcopy(stage_data)
+                result["skipped"] = True
 
             result["name"] = stage
             report.append(result)
