@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from contextlib import contextmanager
 
 from invoke import task
@@ -18,6 +19,13 @@ def get_project_root():
 
 
 PROJECT_ROOT = get_project_root()
+
+
+def git_dirty(c):
+    cmd = ["git", "status", "--porcelain"]
+    with cd(PROJECT_ROOT):
+        proc = c.run(" ".join(cmd))
+    return proc.stdout != ""
 
 
 def pipenv_is_active():
@@ -119,6 +127,9 @@ def develop(c, restart=False):
 def sort_imports(c):
     r"""Use `isort` to fix the Python imports in the whole project
     """
+    if git_dirty(c):
+        print("Repository is dirty! Commit changes.")
+        sys.exit(1)
     cmd = ["isort", "--recursive", "--atomic", "."]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd))
