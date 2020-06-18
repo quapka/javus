@@ -135,3 +135,10 @@ class Card:
             self.current_state = self.gp._save_state()
 
         return self.current_state.get_all_aids()
+
+    def get_report(self) -> dict:
+        report = {
+            "jcversion": str(self.jcversion),
+            "atr": self.atr.bytes,
+        }
+        return report

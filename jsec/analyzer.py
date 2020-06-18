@@ -291,6 +291,7 @@ class App(CommandLineApp):
                 "end-time": end_time,
                 "duration": end_time - start_time,
                 "message": self.message,
+                "card": self.card.get_report(),
                 "pre-analysis-results": prem_results,
                 "analysis-results": anam_results,
             }
@@ -320,6 +321,9 @@ class PostAnalysisManager:
 
     def run(self):
         self.create_output_dir()
+        # TODO attempt to --delete all the applets, that have not been
+        # uninstalled during the analysis. This is quite cruel - some
+        # dependence might prevent that, but better than nothing I suppose
 
 
 class AnalysisManager:

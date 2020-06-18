@@ -17,7 +17,11 @@
           {{ stylesheet_content | safe}}
         </style>
       {% endif %}
-
+      <div>
+        {% with card = results['card'] %}
+          {% include "card.html" %}
+        {% endwith %}
+      </div>
       <div>
       <table>
         <thead>

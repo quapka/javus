@@ -1,0 +1,16 @@
+<table>
+  <thead>
+    <tr>
+      <th>property</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for prop, value in card.items() %}
+      <tr>
+        <td>{{ prop }}</td>
+        <td>{{ value }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
