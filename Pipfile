@@ -17,10 +17,10 @@ python-pkcs11 = "*"
 dominate = "*"
 beautifulsoup4 = "*"
 invoke = "*"
-pyscard = "*"
 flask = "*"
 flask-wtf = "*"
 pytz = "*"
+pyscard = "*"
 
 [requires]
 python_version = "3.6"

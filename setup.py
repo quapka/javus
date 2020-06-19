@@ -17,5 +17,7 @@ setup(
     # TODO there will be scripts
     scripts=["scripts/jsec", "scripts/builder"],
     # TODO add package_data and/or data_files
+    # package_data={"jsec": ["data/jcversion/jcversion.py"]},
+    include_package_data=True,
     # TODO figure out testing with disutils
 )
