@@ -162,3 +162,9 @@ Contribution
 ------------
 
 https://www.pypa.io/en/latest/code-of-conduct/
+
+Docker
+------
+inv dock
+lsusb
+docker run --name test2 -it --device /dev/bus/usb/001/002:/dev/ttyUSB0 jsec
