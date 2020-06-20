@@ -32,3 +32,20 @@ TODO: add mypy
 TODO: maybe some of the processes create java log files in ~
 TODO: flake8 specific configuration is not defined within the project, see ~/.config/.flake8
 TODO: check duplicate attacks (distinguished by names in jsec/data/attacks?)
+
+TODO:
+Running the pre-analysis..
+Traceback (most recent call last):
+  File "scripts/jsec", line 7, in <module>
+    app.run()
+  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 279, in run
+    prem_results = prem.run()
+  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 125, in run
+    self.card.jcversion = self.get_jc_version()
+  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 134, in get_jc_version
+    card=self.card, gp=self.gp, workdir=DATA / "jcversion", sdk=None
+  File "/home/qup/projects/fi/thesis/jsec/data/jcversion/jcversion.py", line 35, in get_jcversion
+    return JCVersion.from_str("")
+  File "/home/qup/projects/fi/thesis/jsec/utils.py", line 192, in from_str
+    major = int(string[:2])
+ValueError: invalid literal for int() with base 10: ''

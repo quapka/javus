@@ -133,3 +133,16 @@ def sort_imports(c):
     cmd = ["isort", "--recursive", "--atomic", "."]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd))
+
+
+@task
+def dock(c, local=True):
+    # TODO rename task to something like build-docker-image
+    # but only after tab completion for invoke commands is figure out
+    r"""Build the newest docker image"""
+    cmd = ["docker", "build", "-t", "jsec", "."]
+    with cd(PROJECT_ROOT):
+        c.run(" ".join(cmd))
+
+    # TODO if local the build copies the local files and does not use git
+    # to actual clone the source
