@@ -9,6 +9,7 @@ import subprocess as sp
 import sys
 import time
 from contextlib import contextmanager
+
 # from collections import namedtuple
 from typing import List, NamedTuple, Optional
 
@@ -183,30 +184,53 @@ def load_versions(versions):
 
 
 class JCVersion(NamedTuple):
-    major: int
-    minor: int
+    major: Optional[int]
+    minor: Optional[int]
 
     @classmethod
     def from_str(cls_obj, string: str) -> "JCVersion":
+        r"""
+        Parses output from JavaCard from `JCSystem.getVersion()`, which returns
+        a `short` value (two bytes). In case the string is empty `self.major` and
+        `self.minor` will be set to `None`.
+        param `string`: two bytes
+        """
         # TODO add try/except?
-        major = int(string[:2])
-        minor = int(string[2:])
+        try:
+            major = int(string[:2])
+        except ValueError:
+            major = None
+
+        try:
+            minor = int(string[2:])
+        except ValueError:
+            minor = None
+
         return cls_obj(major=major, minor=minor)
 
     def __str__(self) -> str:
+        # TODO how to handle 'None' self values?
         return "JavaCard version: %s.%s" % (self.major, self.minor)
 
     def get_sdks(self) -> List["SDKVersion"]:
-        """
-        Returns a list of sdks, that are worth trying for the specific card
+        r"""
+        Returns a list of sdks, that are worth trying for the specific card.
         """
         sdks = []
         available_sdks = SDKVersion.get_available_sdks()
+        if self.major is None:
+            # be generous and return all the available SDKs
+            return available_sdks
+
         for sdk in available_sdks:
             if sdk.major < self.major:
                 sdks.append(sdk)
-            elif sdk.major == self.major and sdk.minor <= self.minor:
-                sdks.append(sdk)
+            elif sdk.major == self.major:
+                if self.minor is None:
+                    # in case we can't compare we'll use the sdk
+                    sdks.append(sdk)
+                elif sdk.minor <= self.minor:
+                    sdks.append(sdk)
 
         return sdks
 
