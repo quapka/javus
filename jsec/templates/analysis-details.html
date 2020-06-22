@@ -1,43 +1,37 @@
 <div class="row">
-    <div class="col-lg-12">
-        <h3>Analysis details</h3>
-    </div>
-</div>
-<div class="row">
     <div class="col-lg-6">
-        <div class="row">
-            <div class="col-lg-2">ID:</div>
-            <div class="col-lg-6">{{ analysis["_id"] }} </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-2">Started at:</div>
-            <div class="col-lg-6">{{ analysis["start-time"]|as_datetime }} </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-2">Ended at:</div>
-            <div class="col-lg-6">{{ analysis["end-time"]|as_datetime }}</div>
-        </div>
-        <div class="row">
-            <div class="col-lg-2">Duration</div>
-            <div class="col-lg-6">{{ analysis["duration"]|format_duration }}</div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <form action="" method="post" novalidate>
-                    {{ form.csrf_token }}
-                    <!-- <div class="form-inline"> -->
-                    <div class="row">
-                        <div class="col-lg-2">{{ form.analysis.label }}</div>
-                        <div class="col-lg-6">
-                            {{ form.analysis(class="form-control") }}
-                        </div>
-                        <div class="col-lg-4">
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </div>
-                    <!-- </div> -->
-                </form>
-            </div>
-        </div>
+    <form action="" method="post" novalidate>
+    {{ form.csrf_token }}
+    <table class="table">
+        <caption>Analysis Details</caption>
+        <tbody>
+            <tr>
+                <td>ID</td>
+                <td>{{ analysis["_id"] }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Started at</td>
+                <td>{{ analysis["start-time"]|as_datetime }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Ended at</td>
+                <td>{{ analysis["end-time"]|as_datetime }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Duration</td>
+                <td>{{ analysis["duration"]|format_duration }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>{{ form.analysis.label }}</td>
+                <td>{{ form.analysis(class="form-control selectpicker") }}</td>
+                <td>{{ form.submit(class="btn btn-primary") }}</td>
+            </tr>
+        </tbody>
+    </table>
+    </form>
     </div>
 </div>
