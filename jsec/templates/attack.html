@@ -14,9 +14,10 @@
         {% for stage in stages %}
           {% with stage_index = loop.index0 %}
               <!-- FIXME change mouse cursor to pointer on hover -->
-              <td onclick="getStageData('{{ analysis_id }}', '{{attack_name}}', '{{stage_index}}', '{{stage["name"]}}')">
+              <td onclick="getStageData('{{ analysis_id }}', '{{attack_name}}', '{{stage_index}}', '{{stage["name"]}}')"
+                  class="stage">
                 {% if stage['skipped'] %}
-                  {{ marks.circle | safe }}
+                  {{ marks.skip | safe }}
                 {% else %}
                   {% if stage['success'] %}
                     {{ marks.tick | safe }}

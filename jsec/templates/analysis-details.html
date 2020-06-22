@@ -4,16 +4,40 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-3">
-        Started at {{ analysis["start-time"]|as_datetime }}
-    </div>
-    <div class="col-lg-3">
-        Ended at {{ analysis["end-time"]|as_datetime }}
-    </div>
-    <div class="col-lg-3">
-        Duration {{ analysis["duration"]|format_duration }}
-    </div>
-    <div class="col-lg-3">
-        ID {{ analysis["_id"] }}
+    <div class="col-lg-6">
+        <div class="row">
+            <div class="col-lg-2">ID:</div>
+            <div class="col-lg-6">{{ analysis["_id"] }} </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2">Started at:</div>
+            <div class="col-lg-6">{{ analysis["start-time"]|as_datetime }} </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2">Ended at:</div>
+            <div class="col-lg-6">{{ analysis["end-time"]|as_datetime }}</div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2">Duration</div>
+            <div class="col-lg-6">{{ analysis["duration"]|format_duration }}</div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <form action="" method="post" novalidate>
+                    {{ form.csrf_token }}
+                    <!-- <div class="form-inline"> -->
+                    <div class="row">
+                        <div class="col-lg-2">{{ form.analysis.label }}</div>
+                        <div class="col-lg-6">
+                            {{ form.analysis(class="form-control") }}
+                        </div>
+                        <div class="col-lg-4">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </div>
+                    <!-- </div> -->
+                </form>
+            </div>
+        </div>
     </div>
 </div>

@@ -12,30 +12,42 @@
     font-family: titillium;
 }
 
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    /* width: 100%; */
-}
-
-td, th {
-    border: 1px solid #dddddd;
+td.stage {
+    background-clip: border-box;
+    background-radius: 5px;
     text-align: center;
-    padding: 8px;
+    vertical-align: center;
 }
 
-td {
-}
 
-tr:nth-child(even) {
-    background-color: #dddddd;
+td.stage:hover {
+    cursor: pointer;
+    background: #ddd;
 }
-.stage-td {
-    max-width:600px;
-    max-height: 200px;
-    overflow: scroll;
-    text-align: left;
-}
+/* table { */
+/*     font-family: arial, sans-serif; */
+/*     border-collapse: collapse; */
+/*     /1* width: 100%; *1/ */
+/* } */
+
+/* td, th { */
+/*     border: 1px solid #dddddd; */
+/*     text-align: center; */
+/*     padding: 8px; */
+/* } */
+
+/* td { */
+/* } */
+
+/* tr:nth-child(even) { */
+/*     background-color: #dddddd; */
+/* } */
+/* .stage-td { */
+/*     max-width:600px; */
+/*     max-height: 200px; */
+/*     overflow: scroll; */
+/*     text-align: left; */
+/* } */
 
 caption {
   display: table-caption;
@@ -44,9 +56,9 @@ caption {
   font-weight: bold;
 }
 
-h1 {
-    color: red;
-}
+/* h1 { */
+/*     color: red; */
+/* } */
 
 .tick {
     color: rgb(0, 128, 0);
@@ -57,7 +69,12 @@ h1 {
   text-shadow: 0 0 0 rgb(255, 0, 0);
 }
 
-.circle {
+.skip {
     color: transparent;
     text-shadow: 0 0 0 rgb(0, 0, 255);
+}
+
+.unknown {
+    color: transparent;
+    text-shadow: 0 0 0 rgb(255, 102, 0);
 }

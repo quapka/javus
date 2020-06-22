@@ -16,16 +16,6 @@
     {% include "analysis-details.html" %}
     <div class="row">
         <div class="col-lg-6">
-            <form action="" method="post" novalidate>
-                {{ form.csrf_token }}
-                <div class="form-inline">
-                    {{ form.analysis.label }}
-                    {{ form.analysis(class="form-control") }}
-                    {{ form.submit(class="btn btn-primary") }}
-                </div>
-            </form>
-        </div>
-        <div class="col-lg-6">
             <div>
               {% with card = analysis['card'] %}
                 {% include "card.html" %}
