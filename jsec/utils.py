@@ -210,7 +210,7 @@ class JCVersion(NamedTuple):
 
     def __str__(self) -> str:
         # TODO how to handle 'None' self values?
-        return "JavaCard version: %s.%s" % (self.major, self.minor)
+        return "%s.%s" % (self.major, self.minor)
 
     def get_sdks(self) -> List["SDKVersion"]:
         r"""
