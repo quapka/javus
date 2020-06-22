@@ -1,0 +1,36 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>JavaCard Security Analysis</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div>
+              {% with card = results['card'] %}
+                {% include "card.html" %}
+              {% endwith %}
+            </div>
+            <div>
+                {% include "legend.html" %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            {% if not dump_results %}
+              <form action="" method="post" novalidate>
+                <p>{{ form.analysis.label }}: {{ form.analysis }} </p>
+                <p>{{ form.submit() }}</p>
+              </form>
+            {% endif %}
+            {% for attack_name, stages in results["analysis-results"].items() %}
+              {% with analysis_id = results['_id'] %}
+                {% include "attack.html" %}
+              {% endwith %}
+            {% endfor %}
+        </div>
+        <!-- The following div is populated with AJAX calls -->
+        <div class="col-sm-6" id="stage-details"></div>
+    </div>
+</div>

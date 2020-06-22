@@ -1,52 +1,13 @@
 <!doctype html>
 <html>
     <head>
-      <title>JavaCard Security Analysis</title>
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}">
-      <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+        {% block head %}
+            {% include "head.html" %}
+        {% endblock head %}
     </head>
     <body>
-      <h1>JavaCard Security Analysis</h1>
-      {% if dump_results %}
-        <style type="text/css">
-          {{ stylesheet_content | safe}}
-        </style>
-      {% endif %}
-      <div>
-        {% with card = results['card'] %}
-          {% include "card.html" %}
-        {% endwith %}
-      </div>
-      <div>
-      <table>
-        <thead>
-          <tr><th colspan="2">Legend</th></tr>
-        </thead>
-        <tbody>
-          {% for value, item in marks.legend.items() %}
-            <tr>
-              <td>{{ item['html'] | safe }} </td>
-              <td style="text-align: left">{{ item['message'] }}</td>
-            </td>
-          {% endfor %}
-        </tbody>
-      </table>
-      </div>
-      <div>
-        {% if not dump_results %}
-          <form action="" method="post" novalidate>
-            <p>{{ form.analysis.label }}: {{ form.analysis }} </p>
-            <p>{{ form.submit() }}</p>
-          </form>
-        {% endif %}
-
-        {% for attack_name, stages in results["analysis-results"].items() %}
-          {% with analysis_id = results['_id'] %}
-            {% include "attack.html" %}
-          {% endwith %}
-        {% endfor %}
-      </div>
-      <!-- The following div is populated with AJAX calls -->
-      <div id="stage-details"></div>
+        {% block body %}
+            {% include "body.html" %}
+        {% endblock body %}
     </body>
 </html>

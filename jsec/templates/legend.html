@@ -1,0 +1,13 @@
+<table>
+    <thead>
+        <tr><th colspan="2">Legend</th></tr>
+    </thead>
+    <tbody>
+    {% for value, item in marks.legend.items() %}
+    <tr>
+        <td>{{ item['html'] | safe }} </td>
+        <td style="text-align: left">{{ item['message'] }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
