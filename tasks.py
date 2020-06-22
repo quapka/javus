@@ -140,7 +140,7 @@ def dock(c, local=True):
     # TODO rename task to something like build-docker-image
     # but only after tab completion for invoke commands is figure out
     r"""Build the newest docker image"""
-    cmd = ["docker", "build", "-t", "jsec", "."]
+    cmd = ["docker", "build", "--tag", "jsec:latest", "."]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd))
 
