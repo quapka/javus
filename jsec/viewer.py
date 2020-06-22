@@ -134,6 +134,44 @@ def as_datetime(utc_timestamp: str, dt_format: str = "%H:%M:%S %d/%m/%Y") -> str
     return dt.astimezone().strftime(dt_format)
 
 
+@app.template_filter()
+def format_duration(utc_timestamp: str) -> str:
+    r"""
+    `utc_timestamp`:
+    """
+    try:
+        utc_timestamp = float(utc_timestamp)
+    except ValueError:
+        return "Invalid value: %s" % utc_timestamp
+
+    microseconds = int(round((utc_timestamp - int(utc_timestamp)) * 1000))
+
+    if utc_timestamp < 1:
+        # microseconds = int(utc_timestamp * 1000)
+        return "%dms" % microseconds
+
+    minutes, seconds = divmod(utc_timestamp, 60)
+    if not minutes:
+        duration = "%d" % seconds
+        if microseconds:
+            duration += ".%03d" % microseconds
+        duration += "s"
+
+        return duration
+
+    hours, minutes = divmod(minutes, 60)
+    if not hours:
+        duration = "%02d:%02d" % (minutes, seconds)
+        if microseconds:
+            duration += ".%d" % microseconds
+        return duration
+
+    td = datetime.timedelta(seconds=utc_timestamp)
+    return str(td)
+    # hours, i_sec = divmod(utc_timestamp, 3600)
+    # minutes, seconds = divmod(i_sec, 60)
+
+
 if __name__ == "__main__":
     # FIXME only for development
     # the following lines are meant for testing and development

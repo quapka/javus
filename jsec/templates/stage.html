@@ -19,11 +19,7 @@
                   <!-- FIXME change to datetime somehow -->
                   {{ value|as_datetime }}
                 {% elif key == 'duration' %}
-                  {% if value < 1 %}
-                    {{ "%0dms"|format(value * 1000 | int) }}
-                  {% else %}
-                    {{ "%0.2fs"|format(value|float) }}
-                  {% endif %}
+                    {{ value|format_duration }}
                 {% elif key in ["stdout", "stderr"] %}
                     <span style="white-space: pre-wrap;">{{ value }}</span>
                 {% else %}
