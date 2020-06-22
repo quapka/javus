@@ -1,11 +1,21 @@
-<div class="container-fluid">
+<div class="container">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-12">
             <h1>JavaCard Security Analysis</h1>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-lg-6">
+            <form action="" method="post" novalidate>
+                {{ form.csrf_token }}
+                <div class="form-inline">
+                    {{ form.analysis.label }}
+                    {{ form.analysis(class="form-control") }}
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-6">
             <div>
               {% with card = results['card'] %}
                 {% include "card.html" %}
@@ -17,13 +27,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
-            {% if not dump_results %}
-              <form action="" method="post" novalidate>
-                <p>{{ form.analysis.label }}: {{ form.analysis }} </p>
-                <p>{{ form.submit() }}</p>
-              </form>
-            {% endif %}
+        <div class="col-lg-6">
             {% for attack_name, stages in results["analysis-results"].items() %}
               {% with analysis_id = results['_id'] %}
                 {% include "attack.html" %}
@@ -31,6 +35,6 @@
             {% endfor %}
         </div>
         <!-- The following div is populated with AJAX calls -->
-        <div class="col-sm-6" id="stage-details"></div>
+        <div class="col-lg-6" id="stage-details"></div>
     </div>
 </div>

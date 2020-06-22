@@ -1,5 +1,5 @@
-<table>
-  <caption>stage: {{ stage["name"] }} </caption>
+<table class="table">
+    <caption>stage {{ stage["name"] }} of {{ attack_name }} </caption>
   <thead>
     <tr>
       <th>name</th>
@@ -12,20 +12,24 @@
         <td>{{ key }}</td>
         <td>
           <div class="stage-td">
-            {% if key == 'args' %}
-              {{ value | join(' ') }}
-            {% elif key == 'start-time' or key == 'end-time' %}
-              <!-- FIXME change to datetime somehow -->
-              {{ value|as_datetime }}
-            {% elif key == 'duration' %}
-              {% if value < 1 %}
-                {{ "%0dms"|format(value * 1000 | int) }}
-              {% else %}
-                {{ "%0.2fs"|format(value|float) }}
-              {% endif %}
-            {% else %}
-              {{ value }}
-            {% endif %}
+              <span class="text-wrap">
+                {% if key == 'args' %}
+                  {{ value | join(' ') }}
+                {% elif key == 'start-time' or key == 'end-time' %}
+                  <!-- FIXME change to datetime somehow -->
+                  {{ value|as_datetime }}
+                {% elif key == 'duration' %}
+                  {% if value < 1 %}
+                    {{ "%0dms"|format(value * 1000 | int) }}
+                  {% else %}
+                    {{ "%0.2fs"|format(value|float) }}
+                  {% endif %}
+                {% elif key in ["stdout", "stderr"] %}
+                    <span style="white-space: pre-wrap;">{{ value }}</span>
+                {% else %}
+                  {{ value }}
+                {% endif %}
+              </span>
           </div>
         </td>
       </tr>
