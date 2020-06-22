@@ -1,16 +1,16 @@
-<table>
-  <thead>
-    <tr>
-      <th>property</th>
-      <th>value</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for prop, value in card.items() %}
-      <tr>
-        <td>{{ prop }}</td>
-        <td>{{ value }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
+<table class="table">
+    <caption>Card details</caption>
+    <tbody>
+        <tr>
+            <td>JavaCard Version</td>
+            <td>{{ card["jcversion"] }}</td>
+        </tr>
+        <tr>
+            <td>ATR</td>
+            <td>{{ card["atr"] }}</td>
+        <tr>
+        <tr>
+            <td colspan="2">For further details about the card visit <a href="{{ card["smartcard-atr-link"] }}">smartcard-atr.apdu.fr</a>.</td>
+        </tr>
+    </tbody>
 </table>

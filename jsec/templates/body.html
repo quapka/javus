@@ -1,9 +1,19 @@
 <div class="container">
     <div class="row">
-        <div class="col-12">
+        <div class="col-lg-12">
             <h1>JavaCard Security Analysis</h1>
         </div>
     </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <p>
+                This rather minimalistic website will help you investigate the results of the analysis of you cards.
+                You can pick which analysis run you'd like to review. By clicking on the individual stages of the attack
+                a new table will appear with the additional details about the stage.
+            </p>
+        </div>
+    </div>
+    {% include "analysis-details.html" %}
     <div class="row">
         <div class="col-lg-6">
             <form action="" method="post" novalidate>
@@ -17,7 +27,7 @@
         </div>
         <div class="col-lg-6">
             <div>
-              {% with card = results['card'] %}
+              {% with card = analysis['card'] %}
                 {% include "card.html" %}
               {% endwith %}
             </div>
@@ -28,8 +38,8 @@
     </div>
     <div class="row">
         <div class="col-lg-6">
-            {% for attack_name, stages in results["analysis-results"].items() %}
-              {% with analysis_id = results['_id'] %}
+            {% for attack_name, stages in analysis["analysis-results"].items() %}
+              {% with analysis_id = analysis['_id'] %}
                 {% include "attack.html" %}
               {% endwith %}
             {% endfor %}
