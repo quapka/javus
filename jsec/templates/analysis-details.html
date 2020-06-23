@@ -1,37 +1,33 @@
-<div class="row">
-    <div class="col-lg-6">
-    <form action="" method="post" novalidate>
-    {{ form.csrf_token }}
-    <table class="table">
-        <caption>Analysis Details</caption>
-        <tbody>
-            <tr>
-                <td>ID</td>
-                <td>{{ analysis["_id"] }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Started at</td>
-                <td>{{ analysis["start-time"]|as_datetime }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Ended at</td>
-                <td>{{ analysis["end-time"]|as_datetime }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Duration</td>
-                <td>{{ analysis["duration"]|format_duration }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>{{ form.analysis.label }}</td>
-                <td>{{ form.analysis(class="form-control selectpicker") }}</td>
-                <td>{{ form.submit(class="btn btn-primary") }}</td>
-            </tr>
-        </tbody>
-    </table>
-    </form>
-    </div>
-</div>
+<form action="" method="post" novalidate>
+{{ form.csrf_token }}
+<table class="table">
+    <caption>Analysis Details</caption>
+    <tbody>
+        <tr>
+            <td>ID</td>
+            <td class="analysis-details-id-value">{{ analysis["_id"]|add_whitespace_id }}</td>
+            <td><i class="glyphicon glyphicon-copy" onclick="copyAnalysisID({{ analysis['_id'] }})"></i></td>
+        </tr>
+        <tr>
+            <td>Started at</td>
+            <td>{{ analysis["start-time"]|as_datetime }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Ended at</td>
+            <td>{{ analysis["end-time"]|as_datetime }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Duration</td>
+            <td>{{ analysis["duration"]|format_duration }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>{{ form.analysis.label }}</td>
+            <td>{{ form.analysis(class="form-control selectpicker") }}</td>
+            <td>{{ form.submit(class="btn btn-primary") }}</td>
+        </tr>
+    </tbody>
+</table>
+</form>
