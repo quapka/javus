@@ -1,34 +1,44 @@
-<table class="table">
-    <caption>stage {{ stage["name"] }} of {{ attack_name }} </caption>
-  <thead>
-    <tr>
-      <th>name</th>
-      <th>value</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for key, value in stage.items() %}
-      <tr>
-        <td>{{ key }}</td>
-        <td>
-          <div class="stage-td">
-              <span class="text-wrap">
+<div class="table-responsive">
+    <table class="table stage-details">
+        <!-- TODO add mark to the caption as well? -->
+        <caption>stage {{ stage["name"] }} of {{ attack_name }} </caption>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, value in stage.items() %}
+          <tr>
+              <td>
+                  {% if key == 'args' %}
+                      command
+                  {% else %}
+                      {{ key }}
+                  {% endif %}
+              </td>
+            <td>
                 {% if key == 'args' %}
-                  {{ value | join(' ') }}
+                    {{ value | join(' ') }}
                 {% elif key == 'start-time' or key == 'end-time' %}
-                  <!-- FIXME change to datetime somehow -->
-                  {{ value|as_datetime }}
+                    {{ value|as_datetime }}
                 {% elif key == 'duration' %}
                     {{ value|format_duration }}
                 {% elif key in ["stdout", "stderr"] %}
-                    <span style="white-space: pre-wrap;">{{ value }}</span>
+                    <div class="wrap-row">
+                        <span>{{ value }}</span>
+                    </div>
+                {% elif key == "communication" %}
+                    {% with communication = value %}
+                        {% include "communication.html" %}
+                    {% endwith %}
                 {% else %}
-                  {{ value }}
+                    {{ value }}
                 {% endif %}
-              </span>
-          </div>
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>

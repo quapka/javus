@@ -1,33 +1,35 @@
-<table class="table">
-  <caption>{{ attack_name }}</caption>
-  <thead>
-    <tr>
-      <th>Attack Stages</th>
-      {% for stage in stages %}
-        <th>{{ stage['name'] }}
-      {% endfor %}
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Results</td>
-        {% for stage in stages %}
-          {% with stage_index = loop.index0 %}
-              <!-- FIXME change mouse cursor to pointer on hover -->
-              <td onclick="getStageData('{{ analysis_id }}', '{{attack_name}}', '{{stage_index}}', '{{stage["name"]}}')"
-                  class="stage">
-                {% if stage['skipped'] %}
-                  {{ marks.skip | safe }}
-                {% else %}
-                  {% if stage['success'] %}
-                    {{ marks.tick | safe }}
-                  {% else %}
-                    {{ marks.cross | safe }}
-                  {% endif %}
-                {% endif %}
-              </td>
-          {% endwith %}
-        {% endfor %}
-      </tr>
-  </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table">
+      <caption>{{ attack_name }}</caption>
+      <thead>
+        <tr>
+          <th>Attack Stages</th>
+          {% for stage in stages %}
+            <th>{{ stage['name'] }}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+          <tr>
+            <td>Results</td>
+            {% for stage in stages %}
+              {% with stage_index = loop.index0 %}
+                  <!-- FIXME change mouse cursor to pointer on hover -->
+                  <td onclick="getStageData('{{ analysis_id }}', '{{attack_name}}', '{{stage_index}}', '{{stage["name"]}}')"
+                      class="stage">
+                    {% if stage['skipped'] %}
+                      {{ marks.skip | safe }}
+                    {% else %}
+                      {% if stage['success'] %}
+                        {{ marks.tick | safe }}
+                      {% else %}
+                        {{ marks.cross | safe }}
+                      {% endif %}
+                    {% endif %}
+                  </td>
+              {% endwith %}
+            {% endfor %}
+          </tr>
+      </tbody>
+    </table>
+</div>

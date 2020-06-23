@@ -8,6 +8,10 @@
     src: url('/static/fonts/TitilliumWeb-Bold.ttf');
     font-weight: bold;
 }
+
+.container {
+    width: 1200px;
+}
 * {
     font-family: titillium;
 }
@@ -69,11 +73,57 @@ table.card-details th {
     height: 0px;
 }
 
-/* table { */
-/*     font-family: arial, sans-serif; */
-/*     border-collapse: collapse; */
-/*     /1* width: 100%; *1/ */
-/* } */
+table.stage-details {
+    table-layout: fixed;
+}
+
+table.stage-details th:nth-child(1) {
+    width: auto;
+}
+
+table.stage-details th:nth-child(2) {
+    width: 80%;
+}
+
+table.stage-details td {
+    /* max-height: 100px; */
+    min-height: 40px;
+    height: auto;
+
+}
+
+table.stage-details div.wrap-row {
+    max-height: 200px;
+    min-height: auto;
+    height: auto;
+    overflow: auto;
+    word-wrap: break-word;
+    /* white-space: pre-wrap; */
+}
+
+table.stage-details div.wrap-row span {
+    white-space: pre-wrap;
+}
+
+table.communication {
+    table-layout: fixed;
+}
+
+table.communication tr th:nth-child(1) {
+    width: auto;
+}
+
+table.communication tr th:nth-child(2) {
+    width: 60%;
+    text-align: right;
+}
+table.communication td {
+    word-wrap: break-word;
+}
+
+table.communication tr td:nth-child(2) {
+    text-align: right;
+}
 
 /* td, th { */
 /*     border: 1px solid #dddddd; */
@@ -100,10 +150,6 @@ caption {
   font-size: 20px;
   font-weight: bold;
 }
-
-/* h1 { */
-/*     color: red; */
-/* } */
 
 .tick {
     color: rgb(0, 128, 0);

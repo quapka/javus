@@ -1,0 +1,20 @@
+<table class="table communication">
+    <thead>
+        <tr>
+            <th>Reader</th>
+            <th>Card</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for command, response in communication.items() %}
+            <tr>
+                <td>{{ command }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>{{ response["payload"] }} {{ response["status"] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
