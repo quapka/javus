@@ -40,15 +40,20 @@ class Marks:
         return '<span class="cross">%s</span>' % self.cross_sign
 
     @property
-    def circle(self) -> str:
-        return '<span class="circle">%s</span>' % self.circle_sign
+    def skip(self) -> str:
+        return '<span class="skip">%s</span>' % self.circle_sign
+
+    @property
+    def unknown(self) -> str:
+        return '<span class="unknown">%s</span>' % self.circle_sign
 
     @property
     def legend(self):
         items = {
             "tick": {"message": "stage successful", "html": self.tick},
             "cross": {"message": "stage failed", "html": self.cross},
-            "circle": {"message": "stage skipped", "html": self.circle},
+            "skip": {"message": "stage skipped", "html": self.skip},
+            "unknown": {"message": "stage unknown", "html": self.unknown},
         }
         return items
 
