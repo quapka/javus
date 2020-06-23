@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+import argparse
 import configparser
+import time
 import datetime
 import threading
 import webbrowser
@@ -9,8 +12,7 @@ import pytz
 from bson.objectid import ObjectId
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
-from wtforms import (BooleanField, PasswordField, SelectField, StringField,
-                     SubmitField)
+from wtforms import BooleanField, PasswordField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
 
 from jsec.settings import STATIC_DIR
@@ -126,19 +128,22 @@ def index():
     #         stylesheet_content=get_stylesheet_content(),
     #     )
     #     f.write(template)
+    now = time.time()
+    analysis["start-time-ago"] = now - analysis["start-time"]
+    analysis["end-time-ago"] = now - analysis["end-time"]
 
-    return render_template("index.html", results=analysis, form=form, marks=Marks())
+    return render_template("index.html", analysis=analysis, form=form, marks=Marks())
 
 
 class AnalysisResultForm(FlaskForm):
+    analysis = SelectField(u"Run")
     submit = SubmitField("Show")
-    analysis = SelectField(u"Analysis id")
 
 
 @app.template_filter()
 def as_datetime(utc_timestamp: str, dt_format: str = "%H:%M:%S %d/%m/%Y") -> str:
     r"""
-    `timestamp`: assumed to be UTC timestamp, that will be displayed
+    `utc_timestamp`: assumed to be UTC timestamp, that will be displayed
     """
     # FIXME this might still not work for daylight saving time, but is good enough for now
     dt = datetime.datetime.fromtimestamp(float(utc_timestamp))
@@ -175,16 +180,21 @@ def format_duration(utc_timestamp: str) -> str:
     if not hours:
         duration = "%02d:%02d" % (minutes, seconds)
         if microseconds:
-            duration += ".%d" % microseconds
+            duration += ".%03d" % microseconds
         return duration
 
     td = datetime.timedelta(seconds=utc_timestamp)
     return str(td)
-    # hours, i_sec = divmod(utc_timestamp, 3600)
-    # minutes, seconds = divmod(i_sec, 60)
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", default="localhost")
+    parser.add_argument("--port", default="27017")
+
+    args = parser.parse_args()
+    host = args.host
+    port = args.port
     # FIXME only for development
     # the following lines are meant for testing and development
     # the real server should be launched differently
