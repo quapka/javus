@@ -11,9 +11,8 @@ import pymongo
 import pytz
 from bson.objectid import ObjectId
 from flask import Flask, render_template, request
-from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, SelectField, StringField, SubmitField
-from wtforms.validators import DataRequired
+import flask_wtf
+import wtforms
 
 from jsec.settings import STATIC_DIR
 from jsec.utils import MongoConnection
@@ -93,6 +92,26 @@ def get_analysis_choices() -> List[Tuple[str, str]]:
     return choices[::-1]
 
 
+def get_card_atr_choices() -> List[Tuple[str, str]]:
+    with MongoConnection(database=name, host=host, port=port) as con:
+        records = con.col.find(projection=["card"])
+
+    choices = []
+    for record in records:
+        try:
+            atr = record["card"]["atr"]
+        except KeyError:
+            continue
+
+        if isinstance(atr, list):
+            # FIXME remove on fresh database, where 'atr's are string
+            atr = " ".join(["{:02X}".format(byte) for byte in atr])
+
+        choices.append((atr, atr))
+    choices = list(set(choices))
+    return choices
+
+
 # @app.route("/attack/<id>/stage/<stage_index>", methods=["GET"])
 @app.route("/get_stage_data/<analysis_id>/<attack_name>/<stage_index>/<stage_name>")
 def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
@@ -108,7 +127,7 @@ def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
 def index():
     # FIXME add stage viewer
     if request.method == "POST":
-        attack_id = request.form["analysis"]
+        attack_id = request.form["run-analysis"]
         with MongoConnection(database=name, host=host, port=port) as con:
             analysis = con.col.find_one({"_id": ObjectId(attack_id)})
     else:
@@ -116,18 +135,10 @@ def index():
             analysis = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
             # FIXME get only ids?
 
-    form = AnalysisResultForm()
-    form.analysis.choices = get_analysis_choices()
+    form = MainForm()
+    form.run.analysis.choices = get_analysis_choices()
+    form.card.atr.choices = get_card_atr_choices()
 
-    # with open("analysis-results.html", "w") as f:
-    #     template = render_template(
-    #         "index.html",
-    #         results=last_attack,
-    #         marks=Marks(),
-    #         dump_results=True,
-    #         stylesheet_content=get_stylesheet_content(),
-    #     )
-    #     f.write(template)
     now = time.time()
     analysis["start-time-ago"] = now - analysis["start-time"]
     analysis["end-time-ago"] = now - analysis["end-time"]
@@ -135,9 +146,19 @@ def index():
     return render_template("index.html", analysis=analysis, form=form, marks=Marks())
 
 
-class AnalysisResultForm(FlaskForm):
-    analysis = SelectField(u"Run")
-    submit = SubmitField("Show")
+class AnalysisResultForm(flask_wtf.FlaskForm):
+    analysis = wtforms.SelectField(u"Run")
+    submit = wtforms.SubmitField("Show")
+
+
+class CardSelectForm(flask_wtf.FlaskForm):
+    atr = wtforms.SelectField(u"ATR")
+    submit = wtforms.SubmitField("Show")
+
+
+class MainForm(flask_wtf.FlaskForm):
+    run = wtforms.FormField(AnalysisResultForm)
+    card = wtforms.FormField(CardSelectForm)
 
 
 @app.template_filter()
