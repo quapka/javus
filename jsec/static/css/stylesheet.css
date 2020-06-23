@@ -48,6 +48,27 @@ ul.dropdown-menu.inner > li > a > span.text {
     font-size: 13px;
 }
 
+table.card-details {
+    table-layout: fixed;
+}
+
+table.card-details th:nth-child(1) {
+    width: auto;
+}
+table.card-details th:nth-child(2) {
+    width: 80%;
+}
+table.card-details th:nth-child(3) {
+    width: auto;
+}
+
+table.card-details th {
+    border: none !important;
+    font-size: 0em;
+    padding: 0px !important;
+    height: 0px;
+}
+
 /* table { */
 /*     font-family: arial, sans-serif; */
 /*     border-collapse: collapse; */

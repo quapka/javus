@@ -1,16 +1,30 @@
-<table class="table">
+<table class="table card-details">
     <caption>Card details</caption>
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
     <tbody>
         <tr>
             <td>JavaCard Version</td>
             <td>{{ card["jcversion"] }}</td>
+            <td></td>
         </tr>
         <tr>
             <td>ATR</td>
             <td>{{ card["atr"] }}</td>
+            <td></td>
         <tr>
         <tr>
-            <td colspan="2">For further details about the card visit <a href="{{ card["smartcard-atr-link"] }}">smartcard-atr.apdu.fr</a>.</td>
+            <td colspan="3">For further details about the card visit <a href="{{ card["smartcard-atr-link"] }}">smartcard-atr.apdu.fr</a>.</td>
         </tr>
+        <tr>
+            <td>{{ form.card.atr.label }}</td>
+            <td>{{ form.card.atr(class="form-control selectpicker") }}</td>
+            <td>{{ form.card.submit(class="btn btn-primary") }}</td>
+        <tr>
     </tbody>
 </table>
