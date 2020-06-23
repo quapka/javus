@@ -72,11 +72,18 @@ def get_analysis_choices() -> List[Tuple[str, str]]:
     port = "27017"
     with MongoConnection(database=name, host=host, port=port) as con:
         all_attack_ids = con.col.find(
-            projection=["_id"], sort=[("start-time", pymongo.DESCENDING)]
+            projection=["_id"], sort=[("start-time", pymongo.ASCENDING)]
         )
 
-    choices = [(str(x["_id"]), str(i + 1)) for i, x in enumerate(all_attack_ids)]
-    return choices
+    choices = []
+    for index, attack in enumerate(all_attack_ids):
+        _id = attack["_id"]
+        label = str(index) + ": " + add_whitespace_id(str(_id))
+        choices.append((str(_id), label))
+
+    # choices = [(str(x["_id"]), str(i + 1)) for i, x in enumerate(all_attack_ids)]
+    # we will reverse the order to show the newest analysis runs on top
+    return choices[::-1]
 
 
 # @app.route("/attack/<id>/stage/<stage_index>", methods=["GET"])
