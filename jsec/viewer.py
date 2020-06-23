@@ -187,6 +187,26 @@ def format_duration(utc_timestamp: str) -> str:
     return str(td)
 
 
+@app.template_filter()
+def add_whitespace_id(_id: str) -> str:
+    r"""Adds white spaces each 8 characters to `_id` to improve readability.
+    `_id`: 24 characaters long ObjectID assigned to MongoDB objects
+    """
+    try:
+        _id = str(_id)
+    except ValueError:
+        return _id
+
+    chunks = [_id[8 * i : 8 * (i + 1)] for i in range(len(_id) // 8)]
+    return " ".join(chunks)
+
+
+# @app.route('/dump')
+# def dump():
+# html to include stylesheets
+# {% if dump_results %}
+#       <style type="text/css">{{ stylesheet_content | safe}}</style>
+# {% endif %}
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", default="localhost")
