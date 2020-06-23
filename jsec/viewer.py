@@ -99,7 +99,7 @@ def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
 
     stage = analysis["analysis-results"][attack_name][int(stage_index)]
     # return jsonify(stage)
-    return render_template("stage.html", stage=stage)
+    return render_template("stage.html", stage=stage, attack_name=attack_name)
 
 
 @app.route("/", methods=["GET", "POST"])
