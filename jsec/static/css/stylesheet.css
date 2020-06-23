@@ -24,6 +24,30 @@ td.stage:hover {
     cursor: pointer;
     background: #ddd;
 }
+
+div.scrollable {
+    width: inherit;
+    height: inherit;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+}
+
+td.analysis-details-id-value {
+    font-family: Courier New;
+    font-size: 13px;
+}
+
+div.filter-option-inner-inner {
+    font-family: Courier New;
+    font-size: 13px;
+}
+
+ul.dropdown-menu.inner > li > a > span.text {
+    font-family: Courier New;
+    font-size: 13px;
+}
+
 /* table { */
 /*     font-family: arial, sans-serif; */
 /*     border-collapse: collapse; */
