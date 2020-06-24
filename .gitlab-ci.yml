@@ -4,7 +4,7 @@ image: ubuntu:18.04
 variables:
     JCVM_ANALYSIS_HOME: "$CI_PROJECT_DIR"
 
-before-script:
+before_script:
     - apt-get update
     - apt-get install --yes 
       python3
@@ -14,10 +14,13 @@ before-script:
     - pip3 install .
 
 run-tests:
-    - invoke test
+    script:
+        - invoke test
 
 run-checks:
-    - invoke check
+    script:
+        - invoke check
 
 build-docker:
-    - invoke dock
+    script:
+        - invoke dock
