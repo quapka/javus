@@ -163,6 +163,7 @@ class App(CommandLineApp):
         self.report: dict = {}
         super().__init__()
         self.setup_logging(log)
+        self._system = platform.system()
 
     def add_options(self):
         # TODO add option for making copy of the attack CAP files for later investigation
@@ -253,6 +254,19 @@ class App(CommandLineApp):
                 )
             )
         return Path(value)
+
+    def in_docker(self):
+        r"""Based on answer from: https://stackoverflow.com/a/20012536
+        """
+        docker = False
+        # TODO technically we won't ever be inside Windows container, therefore
+        # we only need to check for "Linux" systems
+        if self._system == "Linux":
+            with open("/proc/1/cgroup", "r") as f:
+                for line in f.readlines():
+                    if "docker" in line:
+                        docker = True
+        return docker
 
     # TODO unify load_configuration and load_config
     def load_configuration(self):
