@@ -145,6 +145,9 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         result["success"] = success
         return result
 
+    def _prepare_uninstall(self, *args, **kwargs):
+        pass
+
     def _uninstall(self, path: str, sdk_version: SDKVersion, *args, **kwargs):
         # result = []
         # setting SDKVersion is done in _install, that is kinda weird
@@ -176,6 +179,9 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         aid = rid + pix
 
         return aid
+
+    def _prepare_send(self, *args, **kwargs):
+        pass
 
     def _send(self, *args, payload: str, **kwargs):
         # TODO prepare payload
