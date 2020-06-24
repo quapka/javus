@@ -31,7 +31,7 @@ parseReaderLine() {
 }
 
 buildDockerCommand() {
-    cmdParts=("docker" "run" "--interactive" "--tty=true")
+    cmdParts=("docker" "run" "--interactive" "--tty=true" "--publish" "127.0.0.1:5000:5000")
     for devicePath in $(getSmartcardDriverPaths);
     do
         cmdParts+=("--device=$devicePath")
