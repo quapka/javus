@@ -137,8 +137,13 @@ class Card:
         return self.current_state.get_all_aids()
 
     def get_report(self) -> dict:
+        smartcard_link = "https://smartcard-atr.apdu.fr/parse?ATR=%s" % str(
+            self.atr
+        ).replace(" ", "")
+
         report = {
             "jcversion": str(self.jcversion),
-            "atr": self.atr.bytes,
+            "atr": str(self.atr),
+            "smartcard-atr-link": smartcard_link,
         }
         return report
