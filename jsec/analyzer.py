@@ -2,6 +2,7 @@
 
 
 import argparse
+
 # TODO add docstrings
 # pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
@@ -29,8 +30,14 @@ from jsec.data.jcversion.jcversion import JCVersionExecutor
 from jsec.executor import AbstractAttackExecutor, BaseAttackExecutor
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import ATTACKS, DATA
-from jsec.utils import (CommandLineApp, Error, JCVersion, MongoConnection, cd,
-                        load_versions)
+from jsec.utils import (
+    CommandLineApp,
+    Error,
+    JCVersion,
+    MongoConnection,
+    cd,
+    load_versions,
+)
 
 # from jsec.data.jcversion import
 
@@ -63,6 +70,7 @@ if int(PY_VERSION[0]) < 3:
 class PreAnalysisManager:
     # make sure, that all the attacks are build
     # and have the scenario.py or whatever to run them
+    # TODO handle pcscd not running exception smartcard.pcsc.PCSCExceptions.EstablishContextException
     def __init__(self, card: "Card", gp: "GlobalPlatformProWrapper"):
         self.card = card
         self.gp = gp
