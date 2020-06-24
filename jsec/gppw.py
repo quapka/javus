@@ -227,7 +227,10 @@ class GlobalPlatformProWrapper(object):
             self.determine_diversifier()
 
         if save_state:
-            self._save_state()
+            # TODO setting state to _items, because of final saving to Mongo
+            state = self._save_state()._items
+        else:
+            state = None
 
         cmd = self.gp_prefix()
         # FIXME better way of having self.value and value passed as a parameter?
@@ -276,6 +279,8 @@ class GlobalPlatformProWrapper(object):
         report["start-time"] = timer.start
         report["end-time"] = timer.end
         report["duration"] = timer.duration
+        if state is not None:
+            report["state"] = state
 
         if dump_file_content is not None:
             communication = self._parse_gp_dump_file(raw_content=dump_file_content)

@@ -8,6 +8,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Optional
 
+import deepdiff
+
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import PROJECT_ROOT
 from jsec.utils import SDKVersion, cd
@@ -266,6 +268,12 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
             result["name"] = stage
             result["skipped"] = False
+            if i:
+                result["diff-state"] = deepdiff.DeepDiff(
+                    result["state"], report[-1]["state"]
+                ).to_dict()
+            else:
+                result["diff-state"] = {}
             report.append(result)
             if not self.optional_stage(stage, stage_data) and not result["success"]:
                 break
@@ -273,7 +281,22 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         # fill in the rest of the stages, that were not executed
         for stage_data in stages[i + 1 :]:
             stage = stage_data.pop("name")
-            report.append({"name": stage, "success": False, "skipped": True})
+            # print(stage)
+            result = {
+                "name": stage,
+                "success": False,
+                "skipped": True,
+                # "state": None,
+                "diff-state": None,
+            }
+            try:
+                # in case we skip, we just copy the previous state - assuming, that skipping
+                # a stage cannot change the data on the card
+                result["state"] = report[-1]["stage"]
+            except KeyError:
+                result["state"] = None
+
+            report.append(result)
 
         while self.uninstall_stages:
             stage_data = self.uninstall_stages.pop()
@@ -288,6 +311,18 @@ class BaseAttackExecutor(AbstractAttackExecutor):
                 result["skipped"] = True
 
             result["name"] = stage
+            if report[-1]["state"] is not None:
+                result["diff-state"] = deepdiff.DeepDiff(
+                    result["state"], report[-1]["state"]
+                ).to_dict()
+            else:
+                result["diff-state"] = {}
+                try:
+                    # in case we skip, we just copy the previous state - assuming, that skipping
+                    # a stage cannot change the data on the card
+                    result["state"] = report[-1]["stage"]
+                except KeyError:
+                    result["state"] = None
             report.append(result)
 
         return report
