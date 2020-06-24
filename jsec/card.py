@@ -120,6 +120,7 @@ class Card:
         self.gp = gp
         self.jcversion = None
         self.atr = None
+        self.reader = None
 
     def add_state(self, state: CardState):
         r"""Add CardState to the list of states"""
@@ -146,5 +147,6 @@ class Card:
             "jcversion": str(self.jcversion),
             "atr": str(self.atr),
             "smartcard-atr-link": smartcard_link,
+            "reader": self.reader,
         }
         return report

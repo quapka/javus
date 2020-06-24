@@ -120,6 +120,7 @@ class PreAnalysisManager:
         else:
             # now we know, that there is exactly one card connected and we can record its' ATR
             self.card.atr = ATR(self.cards[0].getATR())
+            self.card.reader = self.cards[0].getReader()
         builder = BaseBuilder(gp=self.gp, workdir=DATA / "jcversion")
         builder.execute(BaseBuilder.COMMANDS.build)
         used_aids = self.card.get_current_aids()
