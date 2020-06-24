@@ -21,6 +21,7 @@ flask = "*"
 flask-wtf = "*"
 pytz = "*"
 pyscard = "*"
+deepdiff = "*"
 
 [requires]
 python_version = "3.6"
