@@ -119,6 +119,7 @@ class Card:
         self.current_state = None
         self.gp = gp
         self.jcversion = None
+        self.atr = None
 
     def add_state(self, state: CardState):
         r"""Add CardState to the list of states"""

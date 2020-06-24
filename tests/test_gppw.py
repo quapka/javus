@@ -4,6 +4,8 @@ import configparser
 import pytest
 
 from jsec.gppw import Diversifier, GlobalPlatformProWrapper
+from jsec.card import Card
+from smartcard.ATR import ATR
 
 
 def test__gp_prefix__from_config():
@@ -77,7 +79,9 @@ def test_detecting_diversifier_from_card_types():
     }
 
     gp = GlobalPlatformProWrapper(config=config, card_types=types, dry_run=True)
-    gp.atr = atr
+    card = Card(gp=gp)
+    card.atr = ATR([int(x, 16) for x in atr.split()])
+    gp.card = card
     gp.infer_diversifier()
     assert gp.diversifier == Diversifier.EMV
 
