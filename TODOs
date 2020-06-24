@@ -49,3 +49,10 @@ Traceback (most recent call last):
   File "/home/qup/projects/fi/thesis/jsec/utils.py", line 192, in from_str
     major = int(string[:2])
 ValueError: invalid literal for int() with base 10: ''
+
+IDEAS
+- add ago to start and end analysis times
+- show communication nicely
+- allow hiding unnecessary output of stages
+- scrolling output stages
+- Better explanation for the legend
