@@ -7,7 +7,7 @@ This `README.md` follows common practices and terminology, but since this projec
 - the dollar symbol `$` used in `the code sections` denotes the prompt of a shell (Bash) on Unix based systems
 - the right angle bracket symbol `>` used in `the code sections` denotes the prompt of a Windows command line (`cmd.exe`) or PowerShell (`powershell.exe`)
 - the `PROJECT_ROOT` means th topmost/root directory of this project
-- 
+
 
 Diploma thesis topic
 --------------------
@@ -172,6 +172,38 @@ https://www.pypa.io/en/latest/code-of-conduct/
 
 # Docker
 
+Using virtualization and containers has become more popular in the recent years
+and it is not always for the better as it adds another layer of complexity to
+the system. In this case however a lof technologies come together to make this
+project possible. To name some of them:
+
+- [PC/SC Smart Card Daemon](https://linux.die.net/man/8/pcscd)- service for communicating with JavaCards
+- [GlobalPlatformPro](https://github.com/martinpaljak/GlobalPlatformPro) - command line utility for managing applets (un/installing, sending APDUs) on JavaCards
+- [Python3](https://docs.python.org/3.6/) - the main _glue_ for putting it all together
+- [pip3](https://docs.python.org/3.6/installing/index.html) - to install Pipenv and other
+- [Pipenv](https://github.com/pypa/pipenv) - for managing project's Python dependencies
+- [OpenJDK](https://openjdk.java.net/) and [Ant](https://ant.apache.org/) - for building the JavaCard applets
+- [ant-javacard](https://github.com/martinpaljak/ant-javacard) - for building the JavaCard applets
+- and a few more...
+
+Also, this project is meant to work cross-platform (at least on Linux and Windows)
+therefore two different setups would be needed. Those were the main reasons for
+containerizing the application. Of course, it is meant as a convenience and 
+nothing stops you from using this project natively (for further details see the 
+paragraphs about Development).
+
+Using Docker does not simplify everything, because we need to talk directly with
+the hardware peripheries (the JavaCards) and now the added virtualization makes 
+matters actually worse. The simplest workaround this is making custom entry points
+for the different platforms (a Bash script for Linux and PowerShell script for Windows).
+
+Therefore the only requirements for this project are:
+- compatible operating system, the project was tested on Ubuntu 18.04 and Windows 10
+- physical (external or built-in) reader for JavaCards
+- Docker installed (see below for details)
+- ability to execute Bash script or Powershell script, respectively.
+- _a bit of luck never hurts_
+ 
 inv dock
 lsusb
 docker run --name test2 -it --device /dev/bus/usb/001/002:/dev/ttyUSB0 jsec
@@ -196,4 +228,14 @@ In order to build the Docker image locally you need to execute the following com
 
 The name `jsec` is required in case you want to use the tooling explained in the
 following sections, because it will be used to start the right Docker container.
-The `build` command takes a while 
+The `build` command takes a while (several minutes), because a lot needs to be set up. Therefore,
+it is a good place to take a break and sip a coffee.
+
+
+
+## Development
+
+As the initial development was done under Linux the setup will be explained only 
+n this environment. It is in general possible to overcome this by creating slightly
+altered Docker image, that won't have this application as the entry point, but will
+allow to enter the Shell and make the necessary changes from there.
