@@ -162,6 +162,7 @@ class App(CommandLineApp):
         self.gp: Optional[GlobalPlatformProWrapper] = None
         self.card: Optional[Card] = None
         self.report: dict = {}
+        self.list = False
         super().__init__()
         self.setup_logging(log)
         self._system = platform.system()
@@ -227,6 +228,12 @@ class App(CommandLineApp):
         # TODO def add options attempting to uninstall all applets, that were installed
         # TODO add argument to dump to json file intead of MongoDB
         # but this should be the implicit behaviour
+        self.parser.add_argument(
+            "-t",
+            "--list",
+            help="List the registered attacks and exit",
+            action="store_true",
+        )
 
     def validate_json_flag(self, value):
         # FIXME finish
@@ -245,6 +252,7 @@ class App(CommandLineApp):
             )
         self.message = self.args.message
         self.json = self.args.json
+        self.list = self.args.list
 
     def validate_config(self, value: str) -> Path:
         if not os.path.exists(value):
@@ -293,7 +301,41 @@ class App(CommandLineApp):
         self.card = Card(gp=self.gp)
         self.gp.card = self.card
 
+    # TODO currently copied from AnalysisManager...
+    def load_attacks(self) -> configparser.ConfigParser:
+        registry = configparser.ConfigParser()
+        registry_file = Path(DATA / "registry.ini")
+        if not registry_file.exists():
+            log.error("Missing registry file '%s'", registry_file)
+            # TODO how to handle clean exit?
+        # FIXME does not fail on missing file, check it before
+        registry.read(registry_file)
+        return registry
+
+    def print_attack_list(self):
+        registry = self.load_attacks()
+        print("List of attacks.")
+        enabled = []
+        disabled = []
+        for section in registry.sections():
+            for attack, value in registry[section].items():
+                if attack == "module":
+                    continue
+                if registry.getboolean(section, attack):
+                    enabled.append(attack)
+                else:
+                    disabled.append(attack)
+        # TODO nicer way of printig?
+        print("enabled:\n    ", end="")
+        print("\n    ".join(enabled))
+        print("\ndisabled:\n    ", end="")
+        print("\n    ".join(disabled))
+
     def run(self):
+        if self.list:
+            self.print_attack_list()
+            sys.exit(0)
+
         start_time = time.time()
         self.prepare()
 
