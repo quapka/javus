@@ -168,3 +168,20 @@ Docker
 inv dock
 lsusb
 docker run --name test2 -it --device /dev/bus/usb/001/002:/dev/ttyUSB0 jsec
+
+TODO add explanation about why the setup is so complicated.
+
+Currently the project does not have its premade Docker image, that you could simply download and execute. However, you can clone the project and build a local Docker image.
+
+
+On windows
+==========
+
+Installing Docker
+----------------------------
+
+In case you don't have Docker already installed it is not very difficult. As usual, you need to go through the common steps of downloading and installing this software. At the time of writing the latest information on how to do that are at https://docs.docker.com/docker-for-windows/install/.
+
+Building the Docker image
+-------------------------
+As
