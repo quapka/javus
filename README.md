@@ -2,6 +2,13 @@ Repository description
 ----------------------
 This repository consists of the code, materials and diploma thesis sources.
 
+### Notation
+This `README.md` follows common practices and terminology, but since this project uses multiple technologies and is meant to be cross-platform we provide an explanatory list:
+- the dollar symbol `$` used in `the code sections` denotes the prompt of a shell (Bash) on Unix based systems
+- the right angle bracket symbol `>` used in `the code sections` denotes the prompt of a Windows command line (`cmd.exe`) or PowerShell (`powershell.exe`)
+- the `PROJECT_ROOT` means th topmost/root directory of this project
+- 
+
 Diploma thesis topic
 --------------------
 The current topic of the thesis is: Security analysis of JavaCard Virtual Machine
@@ -163,8 +170,8 @@ Contribution
 
 https://www.pypa.io/en/latest/code-of-conduct/
 
-Docker
-------
+# Docker
+
 inv dock
 lsusb
 docker run --name test2 -it --device /dev/bus/usb/001/002:/dev/ttyUSB0 jsec
@@ -174,14 +181,19 @@ TODO add explanation about why the setup is so complicated.
 Currently the project does not have its premade Docker image, that you could simply download and execute. However, you can clone the project and build a local Docker image.
 
 
-On windows
-==========
+## On windows
 
-Installing Docker
-----------------------------
+### Installing Docker
 
 In case you don't have Docker already installed it is not very difficult. As usual, you need to go through the common steps of downloading and installing this software. At the time of writing the latest information on how to do that are at https://docs.docker.com/docker-for-windows/install/.
 
-Building the Docker image
--------------------------
-As
+### Building the Docker image
+
+In order to build the Docker image locally you need to execute the following command in the `PROJECT_ROOT` either in `cmd` or PowerShell
+```
+> docker build --tag jsec .
+```
+
+The name `jsec` is required in case you want to use the tooling explained in the
+following sections, because it will be used to start the right Docker container.
+The `build` command takes a while 
