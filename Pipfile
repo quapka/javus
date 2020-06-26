@@ -10,6 +10,7 @@ pytest-cov = "*"
 mypy = "*"
 ipython = "*"
 pytest-mock = "*"
+mock = "*"
 jsecdev = {editable = true, path = "./pkgs/jsecdev"}
 
 [packages]
