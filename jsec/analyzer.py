@@ -35,6 +35,7 @@ from jsec.utils import (
     Error,
     JCVersion,
     MongoConnection,
+    SDKVersion,
     cd,
     load_versions,
 )
@@ -418,35 +419,35 @@ class AnalysisManager:
         report = {}
         for section in self.attacks.sections():
             log.info("Executing attacks from '%s'", section)
-            builder_module = self.attacks[section]["builder"]
+            module = self.attacks[section]["module"]
             for attack, value in self.attacks[section].items():
                 # TODO this is ugly and not easy to extend in the future, maybe ditch the
                 # idea of ini files and get json?
-                if attack == "builder":
+                if attack == "module":
                     continue
+                AttackExecutor = self.get_executor(attack_name=attack, module=module)
+                executor = AttackExecutor(
+                    card=self.card, gp=self.gp, workdir=ATTACKS / attack
+                )
                 if self.attacks.getboolean(section, attack):
-                    AttackBuilder = self.get_builder(
-                        attack_name=attack, builder_module=builder_module
-                    )
-                    builder = AttackBuilder(gp=self.gp, workdir=ATTACKS / attack)
-                    # FIXME when to build the attacks?
-                    builder.execute(BaseBuilder.COMMANDS.build)
-                    if not builder.uniq_aids(self.card.get_current_aids()):
-                        builder.uniqfy(used=self.card.get_current_aids())
-                        # rebuild the applet
-                        # TODO or call build directly? much nicer..
+                    for version in executor.sdks:
+                        AttackBuilder = self.get_builder(
+                            attack_name=attack, module=module
+                        )
+                        builder = AttackBuilder(gp=self.gp, workdir=ATTACKS / attack)
+                        # FIXME when to build the attacks?
                         builder.execute(BaseBuilder.COMMANDS.build)
-                    AttackExecutor = self.get_executor(
-                        attack_name=attack, builder_module=builder_module
-                    )
-                    executor = AttackExecutor(
-                        card=self.card, gp=self.gp, workdir=ATTACKS / attack
-                    )
-                    report[attack] = executor.execute()
+                        if not builder.uniq_aids(self.card.get_current_aids()):
+                            builder.uniqfy(used=self.card.get_current_aids())
+                            # rebuild the applet
+                            # TODO or call build directly? much nicer..
+                            builder.execute(BaseBuilder.COMMANDS.build)
+                        report[attack + version] = executor.execute(sdk_version=version)
+                        # report[attack]["sdk-version"] = version
         return report
 
     # FIXME finish loading the builder
-    def get_builder(self, attack_name: str, builder_module: str):
+    def get_builder(self, attack_name: str, module: str):
         try:
             builder = getattr(
                 importlib.import_module(
@@ -460,8 +461,7 @@ class AnalysisManager:
 
         try:
             builder = getattr(
-                importlib.import_module(f"jsec.data.attacks.{builder_module}"),
-                "AttackBuilder",
+                importlib.import_module(f"jsec.data.attacks.{module}"), "AttackBuilder",
             )
             return builder
         except AttributeError:
@@ -472,9 +472,7 @@ class AnalysisManager:
 
         return BaseBuilder
 
-    def get_executor(
-        self, attack_name: str, builder_module: str
-    ) -> AbstractAttackExecutor:
+    def get_executor(self, attack_name: str, module: str) -> AbstractAttackExecutor:
         # first load the executor from the directory of the attack
         try:
             executor = getattr(
@@ -491,7 +489,7 @@ class AnalysisManager:
 
         try:
             executor = getattr(
-                importlib.import_module(f"jsec.data.attacks.{builder_module}"),
+                importlib.import_module(f"jsec.data.attacks.{module}"),
                 "AttackExecutor",
             )
             # TODO maybe add ModuleNotFoundError, but if it is in config.ini it is actually an
