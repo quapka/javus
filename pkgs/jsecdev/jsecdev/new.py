@@ -8,18 +8,15 @@ import shutil
 from jsecdev.settings import DATA, JSEC_ATTACKS_DIR
 
 
-def dry_run_guard(fun, flag, *args, **kwargs):
-    if not flag:
-        return fun(*args, **kwargs)
-
-
 class App(object):
     NEW_SKELETON_CMD = "new-skeleton"
     NEW_SKELETON_CMD_ALIAS = "ns"
 
     def __init__(self):
         self.parser = argparse.ArgumentParser(
-            description="This script creates a new project folder for a new Java Card applet",
+            description=(
+                "This script creates a new project folder for a new Java Card applet"
+            ),
         )
         self.add_subparsers()
         self.process_options()
@@ -32,6 +29,7 @@ class App(object):
             description="Here follows the list of sub-commands, that you can run",
             dest="sub_command",
         )
+        # TODO in Python3.8 required is already a keyword
         self.subparsers.required = True
         self.add_template_parser()
 
@@ -79,10 +77,6 @@ class App(object):
             "--dest-name",
             help="The name of the directory in jsec/data/attacks. Defaults to --project-name",
             type=str.isidentifier,
-        )
-
-        self.template_parser.add_argument(
-            "-u", "--dry-run", help="Will not write to the disk", action="store_true",
         )
 
     def validate_dest_name(self, value) -> str:
