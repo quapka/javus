@@ -93,10 +93,10 @@
             <!-- FIXME should we support verification for others? -->
             <cap output="${build.dir}/${version}/${cap_prefix}-${version}.cap"
                  sources="${src.dir}/com"
-                 package="com.jsec"
+                package="com.<PackageName>"
                  aid="${pkg.rid}"
                  verify="false">
-                <applet class="com.jsec.JCVersion"
+                <applet class="com.<PackageName>.<ProjectName>"
                         aid="${AID}" />
             </cap>
         </javacard>

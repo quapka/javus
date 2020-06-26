@@ -10,7 +10,7 @@ def get_project_root() -> Path:
 
 
 def get_project_src() -> Path:
-    return get_project_root() / "jsec"
+    return get_project_root() / "jsecdev"
 
 
 def get_project_data() -> Path:

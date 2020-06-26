@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
-import binascii
 import os
 import re
 import shutil
 
 from jsecdev.settings import DATA, JSEC_ATTACKS_DIR
-
-from functools import partial
 
 
 def dry_run_guard(fun, flag, *args, **kwargs):
@@ -18,12 +15,12 @@ def dry_run_guard(fun, flag, *args, **kwargs):
 
 class App(object):
     NEW_SKELETON_CMD = "new-skeleton"
+    NEW_SKELETON_CMD_ALIAS = "ns"
 
     def __init__(self):
         self.parser = argparse.ArgumentParser(
             description="This script creates a new project folder for a new Java Card applet",
         )
-        # self.add_options()
         self.add_subparsers()
         self.process_options()
 
@@ -33,7 +30,7 @@ class App(object):
         self.subparsers = self.parser.add_subparsers(
             title="Available commands",
             description="Here follows the list of sub-commands, that you can run",
-            dest="sub-command",
+            dest="sub_command",
         )
         self.subparsers.required = True
         self.add_template_parser()
@@ -60,19 +57,19 @@ class App(object):
             help="Package name of the new applet",
         )
 
-        named.add_argument(
+        self.template_parser.add_argument(
             "-r",
             "--rid",
             help="The RID - Registered Application Provider Identifier for the applet",
-            required=True,
+            default="0011223344",
             type=self.validate_rid,
         )
 
-        named.add_argument(
+        self.template_parser.add_argument(
             "-p",
             "--pix",
             help="The PIX - Proprietary Application Identifier Extension for the applet",
-            required=True,
+            default="AABB",
             type=self.validate_pix,
         )
 
@@ -143,14 +140,14 @@ class App(object):
 
     def process_options(self):
         self.args = self.parser.parse_args()
-        if self.args.subparsers_name == self.NEW_SKELETON_CMD:
+        if self.new_skeleton_cmd():
             self.project_name = self.args.project_name
             self.package_name = self.args.package_name
             self.rid = self.args.rid
             self.pix = self.args.pix
-            self.source_path = DATA
-            # TODO dest_path should really be attack name
-            if self.args.dest_path is None:
+            self.source_path = DATA / "applet_template"
+            # TODO dest_name should really be attack name
+            if self.args.dest_name is None:
                 if self.project_name.isidentifier():
                     self.dest_path = JSEC_ATTACKS_DIR / self.project_name.lower()
                 else:
@@ -159,94 +156,28 @@ class App(object):
                         "is a valid Python identifier, because it will be dynamically imported "
                     )
             else:
-                self.dest_path = JSEC_ATTACKS_DIR / self.args.dest_path
+                self.dest_path = JSEC_ATTACKS_DIR / self.args.dest_name
 
     def create_applet_template(self):
-        # create project directory
         os.makedirs(os.path.join(self.dest_path))
 
-        # # create the build file
         self.create_build_file()
-        # with open(os.path.join(self.source_path, "build.xml"), "r") as f:
-        #     data = f.read()
-
-        # data = re.sub("<ProjectName>", self.project_name, data)
-        # data = re.sub("<PackageName>", self.package_name, data)
-        # data = re.sub("<RID>", self.rid, data)
-        # if not self.pix:
-        #     self.pix = ""
-        # data = re.sub("<PIX>", self.pix, data)
-
-        # with open(os.path.join(self.dest_path, "build.xml"), "w") as f:
-        #     f.write(data)
-
-        # # create the makefile
-        # with open(os.path.join(self.source_path, "makefile"), "r") as f:
-        #     data = f.read()
-
-        # data = re.sub("<PackageName>", self.package_name.lower(), data)
-        # data = re.sub("<RID>", self.rid, data)
-        # if not self.pix:
-        #     self.pix = ""
-        # data = re.sub("<PIX>", self.pix, data)
-        # apdu_data_len = int(len(self.rid + self.pix) / 2)
-        # apdu_data_len = binascii.hexlify(apdu_data_len.to_bytes(1, "little"))
-        # apdu_data_len = apdu_data_len.decode("ascii")
-        # data = re.sub(r"<DATA_LEN>", apdu_data_len, data)
-
-        # with open(os.path.join(self.dest_path, "makefile"), "w") as f:
-        #     f.write(data)
-
-        # create the source file
         self.create_source_file()
 
         self.create_aid_file()
         self.copy_files()
 
-        # os.makedirs(os.path.join(self.dest_path, "src", "com", self.project_name))
-        # with open(
-        #     os.path.join(
-        #         self.source_path, "src", "com", "ProjectName", "ProjectName.java"
-        #     ),
-        #     "r",
-        # ) as f:
-        #     data = f.read()
-        # data = re.sub("<ProjectName>", self.project_name, data)
-        # data = re.sub("<PackageName>", self.package_name, data)
-
-        # with open(
-        #     os.path.join(
-        #         self.dest_path,
-        #         "src",
-        #         "com",
-        #         self.project_name,
-        #         self.project_name + ".java",
-        #     ),
-        #     "w",
-        # ) as f:
-        #     f.write(data)
-
-        # os.symlink(
-        #     os.path.join(self.repo_dir, "ext"), os.path.join(self.dest_path, "ext")
-        # )
-
     def create_build_file(self):
-        # create the build file
         with open(self.source_path / "build.xml") as f:
             data = f.read()
 
         data = re.sub("<ProjectName>", self.project_name, data)
         data = re.sub("<PackageName>", self.package_name, data)
-        # data = re.sub("<RID>", self.rid, data)
-        # if not self.pix:
-        #     self.pix = ""
-        # data = re.sub("<PIX>", self.pix, data)
 
         with open(os.path.join(self.dest_path, "build.xml"), "w") as f:
             f.write(data)
 
     def create_source_file(self):
-        # os.makedirs(os.path.join(self.dest_path, "src", "com", self.project_name))
         dest_dir = self.dest_path / "src" / "com" / self.project_name
         os.makedirs(dest_dir)
 
@@ -263,12 +194,12 @@ class App(object):
             f.write(data)
 
     def create_aid_file(self):
-        with open(self.source_path / "aids.ini") as f:
+        with open(self.source_path / "aids.ini", "r") as f:
             data = f.read()
         data = re.sub("<RID>", self.rid, data)
         data = re.sub("<PIX>", self.pix, data)
 
-        with open(self.dest_path / "aids.ini") as f:
+        with open(self.dest_path / "aids.ini", "w") as f:
             f.write(data)
 
     def copy_files(self):
@@ -276,8 +207,14 @@ class App(object):
         for filename in ["config.ini", "applet_template.py"]:
             shutil.copy(self.source_path / filename, self.dest_path / filename)
 
+    def new_skeleton_cmd(self):
+        return self.args.sub_command in [
+            self.NEW_SKELETON_CMD,
+            self.NEW_SKELETON_CMD_ALIAS,
+        ]
+
     def run(self):
-        if self.args.subparsers_name == self.NEW_SKELETON_CMD:
+        if self.new_skeleton_cmd():
             self.create_applet_template()
 
     def validate_rid(self, value):
