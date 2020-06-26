@@ -239,3 +239,6 @@ As the initial development was done under Linux the setup will be explained only
 n this environment. It is in general possible to overcome this by creating slightly
 altered Docker image, that won't have this application as the entry point, but will
 allow to enter the Shell and make the necessary changes from there.
+
+- Make sure to `pip3 install --upgrade pipenv` to run the latest Pipenv
+- Install `jsecdev`
