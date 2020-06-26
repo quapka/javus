@@ -1,13 +1,15 @@
-package <PackageName>;
+package com.<PackageName>;
 
 import javacard.framework.*;
 
 public class <ProjectName> extends Applet {
+
     private static final byte INS_SUCCESS = 0x01;
-    private static final byte INS_FAILURE = 0x01;
+    private static final byte INS_FAILURE = 0x02;
 
     byte[] success = {(byte) 0x01, (byte) 0x02, (byte) 0x01, (byte) 0x02};
     byte[] failure = {(byte) 0x80, (byte) 0x40, (byte) 0x80, (byte) 0x40};
+    short msgLen = 4;
 
     public static void install(byte[] array, short off, byte len) {
         new <ProjectName>().register();
