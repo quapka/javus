@@ -12,6 +12,7 @@ ipython = "*"
 pytest-mock = "*"
 mock = "*"
 jsecdev = {editable = true, path = "./pkgs/jsecdev"}
+jsec = {editable = true, path = "."}
 
 [packages]
 pymongo = "*"
