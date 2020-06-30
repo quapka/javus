@@ -32,13 +32,18 @@
                  list="${versions}"
                  target="build-version" />
     </target>
+    <target name="clean-all-versions">
+        <foreach param="version"
+                 list="${versions}"
+                 target="clean-version" />
+    </target>
     <!-- Target for doing all build steps for one specific version for a specific attack -->
     <target name="build-version"
-            depends="clean,bootstrap,build">
+            depends="clean-version,bootstrap,build">
         <!-- <mkdir dir="${classes.dir}" /> -->
         <echo message="building version: ${version}" />
     </target>
-    <target name="clean">
+    <target name="clean-version">
         <echo message="cleaning version: ${version}" />
         <delete dir="${build.dir}/${version}" />
     </target>
@@ -55,6 +60,8 @@
                  sources="${src.dir}/com"
                  package="com.jsec"
                  aid="${pkg.rid}"
+                 export="${build.dir}/${version}"
+                 jca="${build.dir}/${version}/${version}.jca"
                  verify="false">
                 <applet class="com.jsec.JCVersion"
                         aid="${AID}" />
