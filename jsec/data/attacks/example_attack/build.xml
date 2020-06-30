@@ -1,0 +1,104 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
+<!-- <project name="ExampleAttack" default="default" basedir="."> -->
+<!--         <description>Builds, tests, and runs the project ExampleAttack.</description> -->
+<!--     <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ext/ant-javacard.jar"/> -->
+
+<!--     <!-1- <property name="JC222" value="ext/java_card_kit-2_2_2"/> -1-> -->
+<!--     <property name="JC212" value="ext/jc212_kit"/> -->
+<!--     <property name="JC221" value="ext/jc221_kit"/> -->
+<!--     <property name="JC222" value="ext/jc222_kit"/> -->
+<!--     <property name="JC305u3" value="ext/jc305u3_kit"/> -->
+
+<!--     <target name="com.examplepackage.jc212"> -->
+<!--             <javacard jckit="${JC212}"> -->
+<!--             <cap output="com.examplepackage-jc212.cap" sources="src/com" aid="<RID>" -->
+<!--                 verify="false"> -->
+<!--                 <applet class="com.examplepackage.ExampleAttack" aid="<RID><PIX>"/> -->
+<!--             </cap> -->
+<!--         </javacard> -->
+<!--     </target> -->
+<!--     <target name="com.examplepackage.jc221"> -->
+<!--             <javacard jckit="${JC221}"> -->
+<!--             <cap output="com.examplepackage-jc221.cap" sources="src/com" aid="<RID>"> -->
+<!--                 <applet class="com.examplepackage.ExampleAttack" aid="<RID><PIX>"/> -->
+<!--             </cap> -->
+<!--         </javacard> -->
+<!--     </target> -->
+<!--     <target name="com.examplepackage.jc222"> -->
+<!--             <javacard jckit="${JC222}"> -->
+<!--             <cap output="com.examplepackage-jc222.cap" sources="src/com" aid="<RID>"> -->
+<!--                 <applet class="com.examplepackage.ExampleAttack" aid="<RID><PIX>"/> -->
+<!--             </cap> -->
+<!--         </javacard> -->
+<!--     </target> -->
+<!--     <target name="com.examplepackage.jc305u3"> -->
+<!--             <javacard jckit="${JC305u3}"> -->
+<!--             <cap output="com.examplepackage-jc305u3.cap" sources="src/com" aid="<RID>"> -->
+<!--                 <applet class="com.examplepackage.ExampleAttack" aid="<RID><PIX>"/> -->
+<!--             </cap> -->
+<!--         </javacard> -->
+<!--     </target> -->
+<!-- </project> -->
+<project name="ExampleAttack">
+    <property environment="env" />
+    <property name="project.root"
+              value="${env.JCVM_ANALYSIS_HOME}" />
+    <property file="${project.root}/jsec/lib/jsec.properties" />
+    <!-- Define Ant JavaCard task -->
+    <!-- TODO make sure the relative paths are ok -->
+    <taskdef name="javacard"
+             classname="pro.javacard.ant.JavaCard"
+             classpath="${project.root}/jsec/lib/ant-javacard.jar" />
+    <!-- Import Ant contribution definitions -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <!-- FIXME load this location dynamically -->
+            <pathelement location="/usr/share/java/lib/ant-contrib-0.3.jar" />
+        </classpath>
+    </taskdef>
+    <!-- Define properties common for all attacks -->
+    <property file="config.ini" />
+    <property file="aids.ini" />
+    <property name="src.dir"
+              value="src" />
+    <property name="build.dir"
+              value="build" />
+    <property name="classes.dir"
+              value="${build.dir}/classes" />
+    <property name="AID"
+              value="${pkg.rid}${applet.pix}" />
+    <!-- Target for building all supported versions for particular an attack -->
+    <target name="build-all-versions">
+        <foreach param="version"
+                 list="${versions}"
+                 target="build-version" />
+    </target>
+    <!-- Target for doing all build steps for one specific version for a specific attack -->
+    <target name="build-version"
+            depends="clean,bootstrap,build">
+        <!-- <mkdir dir="${classes.dir}" /> -->
+        <echo message="building version: ${version}" />
+    </target>
+    <target name="clean">
+        <echo message="cleaning version: ${version}" />
+        <delete dir="${build.dir}/${version}" />
+    </target>
+    <target name="bootstrap">
+        <echo message="boostrap version: ${version}" />
+        <mkdir dir="${build.dir}/${version}" />
+    </target>
+    <target name="build">
+        <javacard jckit="${project.root}/oracle_javacard_sdks/${version}_kit">
+            <!-- Verification is not supported JavaCard version 212 -->
+            <!-- FIXME should we support verification for others? -->
+            <cap output="${build.dir}/${version}/${cap_prefix}-${version}.cap"
+                 sources="${src.dir}/com"
+                package="com.examplepackage"
+                 aid="${pkg.rid}"
+                 verify="false">
+                <applet class="com.examplepackage.ExampleAttack"
+                        aid="${AID}" />
+            </cap>
+        </javacard>
+    </target>
+</project>
