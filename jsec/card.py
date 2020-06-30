@@ -25,6 +25,7 @@ class CardState:
             r"(?P<aid>[A-Z0-9]+)\s*"
             r"\((?P<state>\w+)\)"
         )
+        # TODO there have been things added!
         prop = re.compile(
             r"(?P<name>Privs|Version|Applet):\s*"
             r"(?P<value>.*)"

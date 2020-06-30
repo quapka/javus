@@ -197,3 +197,14 @@ PKG: 0011223344 (LOADED)
             }
         }
     }
+
+
+# TODO add a test for this input
+# raw = """ Warning: no keys given, defaulting to 404142434445464748494A4B4C4D4E4F
+# ISD: A000000003000000 (OP_READY)
+#      Parent:  A000000003000000
+#      From:    A0000000620001
+#      Privs:   SecurityDomain, CardLock, CardTerminate, CardReset, CVMManagement, TrustedPath, AuthorizedManagement, TokenVerification, GlobalDelete, GlobalLock, GlobalRegistry, FinalApplication, ReceiptGeneration
+
+# PKG: A0000001515350 (LOADED)
+#      Applet:  A000000151535041"""
