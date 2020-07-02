@@ -283,7 +283,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
     def execute(self, sdk_version=None, **kwargs) -> list:
         stages = self.get_stages()
-        report = []
+        self.report = []
 
         # FIXME perform next stage only if the previous one was successful
         for i, stage_data in enumerate(stages):
@@ -294,13 +294,13 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
             result["name"] = stage
             result["skipped"] = False
-            if i:
-                result["diff-state"] = deepdiff.DeepDiff(
-                    result["state"], report[-1]["state"]
-                ).to_dict()
-            else:
-                result["diff-state"] = {}
-            report.append(result)
+            # if i:
+            #     result["diff-state"] = deepdiff.DeepDiff(
+            #         result["state"], self.report[-1]["state"]
+            #     ).to_dict()
+            # else:
+            #     result["diff-state"] = {}
+            self.report.append(result)
             if not self.optional_stage(stage, stage_data) and not result["success"]:
                 break
 
@@ -313,20 +313,21 @@ class BaseAttackExecutor(AbstractAttackExecutor):
                 "success": False,
                 "skipped": True,
                 # "state": None,
-                "diff-state": None,
+                # "diff-state": None,
             }
             try:
                 # in case we skip, we just copy the previous state - assuming, that skipping
                 # a stage cannot change the data on the card
-                result["state"] = report[-1]["stage"]
+                result["state"] = self.report[-1]["stage"]
             except KeyError:
                 result["state"] = None
 
-            report.append(result)
+            self.report.append(result)
 
         while self.uninstall_stages:
             stage_data = self.uninstall_stages.pop()
             stage = stage_data.pop("name")
+            print(stage)
             if stage_data["installed"]:
                 result = self._run_stage(
                     stage, **stage_data, sdk_version=sdk_version, **kwargs
@@ -337,21 +338,21 @@ class BaseAttackExecutor(AbstractAttackExecutor):
                 result["skipped"] = True
 
             result["name"] = stage
-            if report[-1]["state"] is not None:
-                result["diff-state"] = deepdiff.DeepDiff(
-                    result["state"], report[-1]["state"]
-                ).to_dict()
-            else:
-                result["diff-state"] = {}
-                try:
-                    # in case we skip, we just copy the previous state - assuming, that skipping
-                    # a stage cannot change the data on the card
-                    result["state"] = report[-1]["stage"]
-                except KeyError:
-                    result["state"] = None
-            report.append(result)
+            # if self.report[-1]["state"] is not None:
+            #     result["diff-state"] = deepdiff.DeepDiff(
+            #         result["state"], self.report[-1]["state"]
+            #     ).to_dict()
+            # else:
+            #     result["diff-state"] = {}
+            #     try:
+            #         # in case we skip, we just copy the previous state - assuming, that skipping
+            #         # a stage cannot change the data on the card
+            #         result["state"] = self.report[-1]["stage"]
+            #     except KeyError:
+            #         result["state"] = None
+            self.report.append(result)
 
-        return report
+        return self.report
 
     @staticmethod
     def optional_stage(stage: str, stage_data: dict) -> bool:
