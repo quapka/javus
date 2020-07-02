@@ -242,3 +242,8 @@ allow to enter the Shell and make the necessary changes from there.
 
 - Make sure to `pip3 install --upgrade pipenv` to run the latest Pipenv
 - Install `jsecdev`
+
+Fix GlobalPlatformPro to version:
+2d4bb36c145bd8c13606f12aa14e6e29d8ecef78
+Docker
+sudo apt install maven

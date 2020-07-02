@@ -56,3 +56,5 @@ IDEAS
 - allow hiding unnecessary output of stages
 - scrolling output stages
 - Better explanation for the legend
+
+Test if the applet AID has to be a0000000000062 or not. - javacard package

@@ -137,6 +137,7 @@ def sort_imports(c):
 
 @task
 def dock(c, local=True):
+    # TODO probably there should be release and development version of the image
     # TODO rename task to something like build-docker-image
     # but only after tab completion for invoke commands is figure out
     r"""Build the newest docker image"""
