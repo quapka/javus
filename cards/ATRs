@@ -45,3 +45,6 @@ I: ATR: 3B7B1800000031C06477E91000019000
 Name: ID-ONE COSMO64
 JCVersion: 0202
 Problem: partially works = e.g. can retrieve the ATR, but GPPro fails  with an exception
+
+NXP nova
+JCVersion: 0300
