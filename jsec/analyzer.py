@@ -500,7 +500,7 @@ class AnalysisManager:
             # TODO maybe add ModuleNotFoundError, but if it is in config.ini it is actually an
             # error - either missing module or should not be in config
             return executor
-        except AttributeError:
+        except (ModuleNotFoundError, AttributeError):
             pass
 
         # then fallback to the type of the attack executor
