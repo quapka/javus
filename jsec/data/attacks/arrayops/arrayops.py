@@ -45,12 +45,4 @@ class Stages:
             "payload": "0x80 0x10 0x01 0x02	0x04	0x00 0x00 0xc0 0x01				0x7F",
             "optional": False,
         },
-        # {
-        #     "name": "uninstall",
-        #     "path": "build/{version}/com/se/vulns/javacard/vulns.new.cap",
-        # },
-        # {
-        #     "name": "uninstall",
-        #     "path": "build/{version}/com/se/applets/javacard/applets.cap",
-        # },
     ]
