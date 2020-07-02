@@ -434,7 +434,9 @@ class AnalysisManager:
                         AttackBuilder = self.get_builder(
                             attack_name=attack, module=module
                         )
-                        builder = AttackBuilder(gp=self.gp, workdir=ATTACKS / attack)
+                        builder = AttackBuilder(
+                            gp=self.gp, workdir=ATTACKS / attack, version=version
+                        )
                         # FIXME when to build the attacks?
                         builder.execute(BaseBuilder.COMMANDS.build)
                         if not builder.uniq_aids(self.card.get_current_aids()):
