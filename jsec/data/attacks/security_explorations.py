@@ -39,21 +39,21 @@ class AttackBuilder(BaseBuilder):
         # we can reuse the existing build process
         super()._build()
         # but we also need to generate some files after the build
-        if self.version == None:
+        if self.version is None:
             self._generate_all_versions()
         else:
             self._generate_version(version=self.version)
 
     def _generate_all_versions(self):
-        for version in self.config["BUILD"]["versions"].split(","):
+        versions = self.config.get_sdk_versions("BUILD", "versions")
+        for version in versions:
             self._generate_version(version=version)
 
     def _generate_version(self, version=None):
         r"""Generate the vulns.new.cap file for the given version"""
-
         vulns_dir = os.path.realpath(
             os.path.join(
-                self.workdir, "build", version, "com", "se", "vulns", "javacard",
+                self.workdir, "build", version.raw, "com", "se", "vulns", "javacard",
             )
         )
 
