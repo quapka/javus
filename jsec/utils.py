@@ -10,6 +10,8 @@ import sys
 import time
 from contextlib import contextmanager
 
+from bson.codec_options import TypeCodec
+
 # from collections import namedtuple
 from typing import List, NamedTuple, Optional
 
@@ -94,6 +96,7 @@ class CommandLineApp(object):
         self.args = None
 
         self.parser = argparse.ArgumentParser(description=self.APP_DESCRIPTION,)
+        self.add_subparsers()
         self.add_options()
         self.parse_options()
 
@@ -108,6 +111,13 @@ class CommandLineApp(object):
         log.debug(
             "logging level for %s changed from %s to %s ", target_log.name, old, new
         )
+
+    def add_subparsers(self):
+        r"""
+        Allows to add subparsers for parsing sub-commands. To be overriden
+        by the subclasses
+        """
+        pass
 
     def add_options(self):
         levels = ", ".join([str(lvl) for lvl in LOG_LEVELS])
@@ -290,12 +300,16 @@ class SDKVersion(NamedTuple):
         return sdks
 
     def __str__(self) -> str:
-        output = "SDK Version: %s.%s.%s." % (self.major, self.minor, self.patch)
-        if self.update:
-            output += "u%s" % self.update
-        elif self.b_value:
-            output += "b%s" % self.b_value
-        return output
+        return self.raw
+        # output = "SDK Version: %s.%s.%s." % (self.major, self.minor, self.patch)
+        # if self.update:
+        #     output += "u%s" % self.update
+        # elif self.b_value:
+        #     output += "b%s" % self.b_value
+        # return output
+
+    def __repr__(self) -> str:
+        return self.raw
 
     # TODO load only once and get them from the class afterwards
     @classmethod
@@ -450,6 +464,29 @@ class CommandAPDU:
         self.Lc = lc
         self.data = data
         self.Le = le
+
+
+class AttackConfigParser(configparser.ConfigParser):
+    def getlist(self, section: str, option: str, *args, sep=",", **kwargs) -> List[str]:
+        value = self.get(section, option)
+        items = value.split(sep)
+        return [x.strip() for x in items if x]
+
+    def get_sdk_versions(self, section: str, option: str, *args, **kwargs) -> List[str]:
+        strings = self.getlist(section, option, *args, **kwargs)
+        sdks = [SDKVersion.from_str(ver) for ver in strings]
+        return sdks
+
+
+class SDKVersionTypeCodec(TypeCodec):
+    python_type = SDKVersion
+    bson_type = str
+
+    def transform_python(self, value: "SDKVersion") -> str:
+        return str(value)
+
+    def transform_bson(self, value: str) -> "SDKVersion":
+        return SDKVersion.from_str(value)
 
 
 if __name__ == "__main__":
