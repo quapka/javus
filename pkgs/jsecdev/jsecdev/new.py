@@ -8,6 +8,7 @@ import shutil
 from jsecdev.settings import DATA, JSEC_ATTACKS_DIR
 
 
+# TODO unify naming 'skeleton' and 'template'
 class App(object):
     NEW_SKELETON_CMD = "new-skeleton"
     NEW_SKELETON_CMD_ALIAS = "ns"
@@ -76,7 +77,7 @@ class App(object):
             "-d",
             "--dest-name",
             help="The name of the directory in jsec/data/attacks. Defaults to --project-name",
-            type=str.isidentifier,
+            type=self.validate_dest_name,
         )
 
     def validate_dest_name(self, value) -> str:
@@ -143,23 +144,34 @@ class App(object):
             # TODO dest_name should really be attack name
             if self.args.dest_name is None:
                 if self.project_name.isidentifier():
-                    self.dest_path = JSEC_ATTACKS_DIR / self.project_name.lower()
+                    self.dest_name = self.project_name.lower()
                 else:
                     raise argparse.ArgumentTypeError(
                         "Either provide --dest-name or set --project-name such, that it "
                         "is a valid Python identifier, because it will be dynamically imported "
                     )
             else:
-                self.dest_path = JSEC_ATTACKS_DIR / self.args.dest_name
+                self.dest_name = self.args.dest_name
+
+            self.dest_path = JSEC_ATTACKS_DIR / self.dest_name
 
     def create_applet_template(self):
-        os.makedirs(os.path.join(self.dest_path))
+        print("creating the skeleton directories")
+        os.makedirs(self.dest_path)
 
+        print("creating a build.xml file")
         self.create_build_file()
+
+        print("creating *.java source files")
         self.create_source_file()
 
+        print("creating aids.ini file")
         self.create_aid_file()
-        self.copy_files()
+
+        print("creating config.ini file")
+        self.copy_config_file()
+
+        self.create_attack_module_file()
 
     def create_build_file(self):
         with open(self.source_path / "build.xml") as f:
@@ -196,10 +208,16 @@ class App(object):
         with open(self.dest_path / "aids.ini", "w") as f:
             f.write(data)
 
-    def copy_files(self):
+    def copy_config_file(self):
         r"""Copies the files, that do not to be altered in any way"""
-        for filename in ["config.ini", "applet_template.py"]:
-            shutil.copy(self.source_path / filename, self.dest_path / filename)
+        shutil.copy(self.source_path / "config.ini", self.dest_path / "config.ini")
+
+    def create_attack_module_file(self):
+        filename = self.dest_name + ".py"
+        print("creating attack module %s file" % filename)
+        shutil.copy(
+            self.source_path / "applet_template.py", self.dest_path / filename,
+        )
 
     def new_skeleton_cmd(self):
         return self.args.sub_command in [
