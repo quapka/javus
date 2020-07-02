@@ -422,7 +422,8 @@ class AnalysisManager:
             module = self.attacks[section]["module"]
             for attack, value in self.attacks[section].items():
                 # TODO this is ugly and not easy to extend in the future, maybe ditch the
-                # idea of ini files and get json?
+                # idea of ini files and get json? - that is not possible as long as the config
+                # is share with ant
                 if attack == "module":
                     continue
                 AttackExecutor = self.get_executor(attack_name=attack, module=module)
