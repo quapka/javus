@@ -118,9 +118,12 @@ def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
     with MongoConnection(database=name, host=host, port=port) as con:
         analysis = con.col.find_one({"_id": ObjectId(analysis_id)})
 
-    stage = analysis["analysis-results"][attack_name][int(stage_index)]
+    stage = analysis["analysis-results"][attack_name]["results"][int(stage_index)]
+    sdk_version = analysis["analysis-results"][attack_name]["sdk_version"]
     # return jsonify(stage)
-    return render_template("stage.html", stage=stage, attack_name=attack_name)
+    return render_template(
+        "stage.html", stage=stage, attack_name=attack_name, sdk_version=sdk_version
+    )
 
 
 @app.route("/", methods=["GET", "POST"])

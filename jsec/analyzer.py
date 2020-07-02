@@ -442,7 +442,10 @@ class AnalysisManager:
                             # rebuild the applet
                             # TODO or call build directly? much nicer..
                             builder.execute(BaseBuilder.COMMANDS.build)
-                        report[attack + version] = executor.execute(sdk_version=version)
+                        report[attack + "-" + version.raw] = {
+                            "results": executor.execute(sdk_version=version),
+                            "sdk_version": version.raw,
+                        }
                         # report[attack]["sdk-version"] = version
         return report
 
