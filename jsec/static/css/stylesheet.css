@@ -109,21 +109,31 @@ table.communication {
     table-layout: fixed;
 }
 
-table.communication tr th:nth-child(1) {
-    width: auto;
-}
-
-table.communication tr th:nth-child(2) {
-    width: 60%;
-    text-align: right;
-}
-table.communication td {
+table.communication tr  {
+    text-align:right;
     word-wrap: break-word;
 }
 
-table.communication tr td:nth-child(2) {
-    text-align: right;
+table.communication th:nth-child(2) {
+    text-align:right;
 }
+
+
+/* table.communication tr th:nth-child(2) { */
+/*     width: 20%; */
+/* } */
+
+/* table.communication tr th:nth-child(3) { */
+/*     width: 60%; */
+/*     /1* text-align: right; *1/ */
+/* } */
+/* table.communication td { */
+/*     word-wrap: break-word; */
+/* } */
+
+/* table.communication tr td:nth-child(3) { */
+/*     /1* text-align: right; *1/ */
+/* } */
 
 /* td, th { */
 /*     border: 1px solid #dddddd; */
