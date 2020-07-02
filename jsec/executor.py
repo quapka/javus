@@ -272,7 +272,13 @@ class BaseAttackExecutor(AbstractAttackExecutor):
     def _determine_version(self) -> "SDKVersion":
         # determine the newest SDK version supported both by the card and the attack
         attack_versions = SDKVersion.from_list(self.config["BUILD"]["versions"])
-        newest = list(set(attack_versions).intersection(set(self.card.sdks)))[-1]
+        try:
+            newest = list(set(attack_versions).intersection(set(self.card.sdks)))[-1]
+        except IndexError:
+            newest = attack_versions[0]
+            log.warning(
+                "Could not determine SDK Version, defaulting to '%s'", str(newest)
+            )
         return newest
 
     def execute(self, sdk_version=None, **kwargs) -> list:
