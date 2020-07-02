@@ -70,6 +70,8 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         self.aids.read(self.workdir / "aids.ini")
 
     def get_stages(self) -> List[dict]:
+        # TODO should we double check the content of th STAGES before
+        # proceeding? e.g. the types of the entries
         # first load stages from `<attackname>`.py
         stages = self.import_stages()
         if stages is not None:
@@ -195,10 +197,17 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         payload = self._parse_payload(payload)
         return self.gp.apdu(payload, aid)
 
-    def _assess_send(self, result, *args, **kwargs):
-        command_apdu = self._parse_payload(kwargs["payload"])
+    def _assess_send(self, result, *args, expected: str = "9000", **kwargs):
+        command_apdu = self._parse_payload(kwargs["payload"]).hex().upper()
         success = True
         if result["returncode"] != 0:
+            success = False
+        # TODO verify expected
+        # by default we expect 9000 status word
+        try:
+            if result["communication"][command_apdu]["status"] != expected:
+                success = False
+        except KeyError:
             success = False
 
         result["success"] = success
