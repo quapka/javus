@@ -13,6 +13,7 @@ import deepdiff
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import PROJECT_ROOT
 from jsec.utils import SDKVersion, cd
+from jsec.utils import AttackConfigParser
 
 # TODO add some log initializer
 log = logging.getLogger(__file__)
@@ -51,12 +52,16 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         self.aids = configparser.ConfigParser()
         self.uninstall_stages = []
 
-        self.config = configparser.ConfigParser(strict=False)
+        self.config = AttackConfigParser(strict=False)
         self.installed_applets = []
         self.stages = None
 
         self._load_config()
         self._load_aids()
+        try:
+            self.sdks = self.config.get_sdk_versions("BUILD", "versions")
+        except KeyError:
+            self.sdks = None
 
     def _load_config(self) -> None:
         self.config.read(self.workdir / "config.ini")
