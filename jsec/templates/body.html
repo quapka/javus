@@ -33,7 +33,9 @@
     </div>
     <div class="row">
         <div class="col-lg-6">
-            {% for attack_name, stages in analysis["analysis-results"].items() %}
+            {% set attacks = analysis["analysis-results"] %}
+            {% for attack_name, attack_data in attacks.items() %}
+              {% set stages = attack_data["results"] %}
               {% with analysis_id = analysis['_id'] %}
                 {% include "attack.html" %}
               {% endwith %}

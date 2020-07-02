@@ -1,8 +1,8 @@
 <table class="table communication">
     <thead>
         <tr>
-            <th>Reader</th>
-            <th>Card</th>
+            <th>Command</th>
+            <th>Response:Status</th>
         </tr>
     </thead>
     <tbody>
@@ -10,10 +10,14 @@
             <tr>
                 <td>{{ command }}</td>
                 <td></td>
+                <!-- <td></td> -->
             </tr>
             <tr>
                 <td></td>
-                <td>{{ response["payload"] }} {{ response["status"] }}</td>
+                <!-- <td></td> -->
+                <td>
+                    {{ response["payload"] }}:{{ response["status"] }}
+                </td>
             </tr>
         {% endfor %}
     </tbody>
