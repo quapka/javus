@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 
 # sort imports
-from jsec.utils import CommandLineApp, cd
+from jsec.utils import CommandLineApp, cd, AttackConfigParser
 
 log = logging.getLogger(__file__)
 handler = logging.StreamHandler()
@@ -113,23 +113,23 @@ class BaseBuilder(AbstractAttackBuilder):
         self.load_aids()
 
         if self.version is not None and self.version not in self.supported_versions:
-            log.warning("Unsupported version '%s' set.", self.version)
+            log.warning("Unsupported version '%s' set.", self.version.raw)
 
         self._validate_workdir()
 
         self.ready = True
 
     def _load_config(self):
-        config = configparser.ConfigParser(strict=False)
+        config = AttackConfigParser(strict=False)
         with cd(self.wd):
             config.read("config.ini")
 
         self.config = config
 
     def _set_versions(self):
-        self.supported_versions = self._parse_versions(self.config["BUILD"]["versions"])
-        self.unsupported_versions = self._parse_versions(
-            self.config["BUILD"]["unsupported.versions"]
+        self.supported_versions = self.config.get_sdk_versions("BUILD", "versions")
+        self.unsupported_versions = self.config.get_sdk_versions(
+            "BUILD", "unsupported.versions"
         )
 
     @staticmethod
