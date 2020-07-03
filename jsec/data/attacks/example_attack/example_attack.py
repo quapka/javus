@@ -48,9 +48,9 @@ class Stages:
 
 
 class AttackExecutor(BaseAttackExecutor):
-    def _pre_custom_stage(self, *args, **kwargs):
+    def _prepare_custom_stage(self, *args, **kwargs):
         """
-        The `_pre_<stage-name>` is the place, where you can perform some additional setup
+        The `_prepare_<stage-name>` is the place, where you can perform some additional setup
         in case you need to do so. The difference from the other stage methods is, that in
         case it returns something it is not saved anywhere.
         """
@@ -61,11 +61,13 @@ class AttackExecutor(BaseAttackExecutor):
         This is the main stage method. For example for `send` stage this is the place, where
         the `payload` is sent to the JavaCard.
         """
-        pass
+        result = {}
+        return result
 
     def _assess_custom_stage(self, result, *args, **kwargs):
         """
         This is the method, that can interpret the results of the stage. It's main goal
         is to set the `result['success']` to either `True` or `False`.
         """
-        pass
+        result["success"] = True
+        return result
