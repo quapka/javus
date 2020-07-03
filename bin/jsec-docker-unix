@@ -1,10 +1,5 @@
 #!/bin/bash
 
-usage() {
-    # TODO finish
-    echo "Usage"
-}
-
 getSmartcardDriverPaths() {
     if ! [ -x "$(command -v lsusb)" ]; then
         echo "Error: 'lsusb' is not installed - cannot find the Smartcard readers" >&2
