@@ -29,7 +29,7 @@ class AbstractAttackBuilder(abc.ABC):
 # FIXME add tests
 class CommandLineBuilder(CommandLineApp):
     def __init__(self):
-        self.wd = None
+        self.workdir = None
         self.version = None
         self.cmd = None
 
@@ -63,7 +63,7 @@ class CommandLineBuilder(CommandLineApp):
     def parse_options(self):
         super().parse_options()
         if self.args.working_dir is not None:
-            self.wd = self.args.working_dir
+            self.workdir = self.args.working_dir
 
         if self.args.version is not None:
             self.version = self.args.version
@@ -83,7 +83,7 @@ class CommandLineBuilder(CommandLineApp):
         return value
 
     def run(self):
-        builder = BaseBuilder(workdir=self.wd, dry_run=False, version=self.version)
+        builder = BaseBuilder(workdir=self.workdir, dry_run=False, version=self.version)
         builder.execute(self.cmd)
 
 
@@ -94,7 +94,7 @@ class BaseBuilder(AbstractAttackBuilder):
         build = enum.auto()
 
     def __init__(self, gp, workdir, dry_run=False, version=None, tempdir=None):
-        self.wd = Path(workdir).resolve()
+        self.workdir = Path(workdir).resolve()
         self.dry_run = dry_run
         self.version = version
         self.tempdir = tempdir
@@ -121,7 +121,7 @@ class BaseBuilder(AbstractAttackBuilder):
 
     def _load_config(self):
         config = AttackConfigParser(strict=False)
-        with cd(self.wd):
+        with cd(self.workdir):
             config.read("config.ini")
 
         self.config = config
@@ -143,7 +143,7 @@ class BaseBuilder(AbstractAttackBuilder):
         if options is not None:
             cmd.extend(options)
 
-        with cd(self.wd):
+        with cd(self.workdir):
             proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,)
 
         try:
@@ -158,7 +158,7 @@ class BaseBuilder(AbstractAttackBuilder):
 
     def _validate_workdir(self):
         # TODO add to call pipeline
-        with cd(self.wd):
+        with cd(self.workdir):
             if not os.path.exists("build.xml"):
                 log.error(
                     "Cannot find 'build.xml'. Have you set working directory correctly?"
@@ -190,23 +190,15 @@ class BaseBuilder(AbstractAttackBuilder):
     def execute_attack(self, detailed=False):
         pass
 
-    # def uniqfy(self):
-    #     # TODO add explanation of uniqfy method - unique AIDs
-    #     raise NotImplementedError(
-    #         "BaseBuilder does not implement uniqfy method. "
-    #         "Your builder must implement it's own version."
-    #     )
-
-    # FIXME unify self.wd and self.workidr etc
     def load_aids(self):
         aids = configparser.ConfigParser()
-        with cd(self.wd):
+        with cd(self.workdir):
             aids.read("aids.ini")
 
         self.aids = aids
 
     def save_aids(self):
-        with cd(self.wd):
+        with cd(self.workdir):
             with open("aids.ini", "w") as aids_file:
                 self.aids.write(aids_file)
 
