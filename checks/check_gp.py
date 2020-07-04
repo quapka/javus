@@ -15,17 +15,24 @@ class CheckGlobalPlatformPro:
             "gp.jar": "/home/qup/projects/fi/crocs/GlobalPlatformPro/gp.jar",
         }
 
-    @pytest.mark.skip("Takes too long")
     def check_for_specific_gp_version(self):
+        """
+        Unfortunately, we need to use a specific commit, before the `--dump`
+        command line option has been removed.
+        """
         gp = GlobalPlatformProWrapper(config=self.config, dry_run=False)
         gp.process_config()
 
         gp.read_gp_version()
-        assert gp.version == "GlobalPlatformPro v20.01.23-0-g5ad373b"
+        expected_version = "GlobalPlatformPro v20.01.23-6-g2d4bb36"
+        assert gp.version == expected_version, (
+            "The GlobalPlatformPro version currently needs to be fixed to the commit "
+            "with hash %s. Make sure, that you are using this version."
+            % expected_version
+        )
 
     def check_that_gp_is_working(self):
         gp = GlobalPlatformProWrapper(config=self.config, dry_run=False)
-        gp.process_config()
 
         gp.verify_gp()
         assert gp.works == True
