@@ -194,9 +194,6 @@ class BaseBuilder(AbstractAttackBuilder):
         pass
 
     def set_default_aids(self):
-        import pudb
-
-        pudb.set_trace()
         self.aids["BUILD"]["pkg.rid"] = "0011223344"
         self.aids["BUILD"]["applet.pix"] = "AABB"
 
