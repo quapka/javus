@@ -1,0 +1,13 @@
+**/target
+*.cap
+*.class
+*.iml
+*~
+/*.iml
+/*.jar
+/.idea
+/.mvn/wrapper/maven-wrapper.jar
+/target
+/testlib
+hs_err_pid*
+pom.xml.versionsBackup
