@@ -1,7 +1,8 @@
 <project>
     <property environment="env" />
+    <!-- the relative path is from the attack 'build.xml' file -->
     <property name="project.root"
-              value="${env.JCVM_ANALYSIS_HOME}" />
+        value="${basedir}/../../../../" />
     <property file="${project.root}/lib/jcversions.properties" />
     <!-- Define Ant JavaCard task -->
     <taskdef name="javacard"
