@@ -28,6 +28,8 @@ echo "updating the repositories.."
 sudo apt update
 echo "installing the software dependencies.."
 sudo apt install --yes\
+    swig\
+    libpcsclite-dev\
     git \
     python3 \
     python3-pip\
