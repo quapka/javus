@@ -4,3 +4,6 @@
 [submodule "submodules/ant-javacard"]
 	path = submodules/ant-javacard
 	url = https://github.com/MartinPaljak/ant-javacard
+[submodule "submodules/GlobalPlatformPro"]
+	path = submodules/GlobalPlatformPro
+	url = https://github.com/MartinPaljak/GlobalPlatformPro.git
