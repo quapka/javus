@@ -13,6 +13,8 @@ pytest-mock = "*"
 mock = "*"
 jsecdev = {editable = true, path = "./pkgs/jsecdev"}
 jsec = {editable = true, path = "."}
+pydoc-markdown = "*"
+sphinx = "*"
 
 [packages]
 pymongo = "*"
