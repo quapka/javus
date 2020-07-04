@@ -338,7 +338,7 @@ class GlobalPlatformProWrapper(object):
         # the version of GlobalPlatformPro used during the analysis has a bug in the CLI
         # more information at: https://github.com/martinpaljak/GlobalPlatformPro/issues/217
         if proc["returncode"] in [0, 1]:
-            self.version = proc.stdout.decode("utf8").split("\n")[0]
+            self.version = proc["stdout"].split("\n")[0]
 
     def verify_gp(self):
         """
