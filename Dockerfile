@@ -17,20 +17,21 @@ RUN apt-get update && apt-get install --yes \
     python3-pip \
     git \
     openjdk-8-jdk-headless \
+    openjdk-8-jre-headless \
     maven \
     mongodb
 
 RUN pip3 install pipenv
 
 # prepare GlobalPlatformPro
-RUN mkdir /dependencies
-WORKDIR /dependencies
-RUN git clone https://github.com/martinpaljak/GlobalPlatformPro
-WORKDIR /dependencies/GlobalPlatformPro
-# NOTE: we are using older version of GlobalPlatformPro, because we
-# depend on the --dump commang line flag
-RUN git checkout git checkout 2d4bb36c145bd8c13606f12aa14e6e29d8ecef78
-RUN ./mvn package
+# RUN mkdir /dependencies
+# WORKDIR /dependencies
+# RUN git clone https://github.com/martinpaljak/GlobalPlatformPro
+# WORKDIR /dependencies/GlobalPlatformPro
+# # NOTE: we are using older version of GlobalPlatformPro, because we
+# # depend on the --dump commang line flag
+# RUN git checkout git checkout 2d4bb36c145bd8c13606f12aa14e6e29d8ecef78
+# RUN ./mvn package
 # This command is for the newest version of GlobalPlatformPro
 # RUN ./mvnw package
 
@@ -59,11 +60,21 @@ RUN pipenv install --system --deploy --ignore-pipfile
 
 COPY . /jsec
 WORKDIR /jsec
-RUN pipenv install .
+RUN pipenv install --dev .
+
+# build the required submodules
 RUN git submodule update --init --recursive --jobs 8
+WORKDIR /jsec/submodules/GlobalPlatformPro
+# GlobalPlatformPro is currently fixed to one particular version,
+# we need the `--dump` flag
+RUN git checkout 2d4bb36c145bd8c13606f12aa14e6e29d8ecef78 && mvn package
+
+WORKDIR /jsec/submodules/ant-javacard
+RUN ./mvnw package
 
 ENV JCVM_ANALYSIS_HOME /jsec
 ENV FLASK_APP /jsec/viewer.py
 
+WORKDIR /jsec
 RUN chmod +x "bin/entrypoint-docker-jsec.sh"
 ENTRYPOINT ["bin/entrypoint-docker-jsec.sh"]
