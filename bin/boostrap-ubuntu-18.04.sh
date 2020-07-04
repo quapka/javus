@@ -58,20 +58,20 @@ pushd ../
 # GlobalPlatformPro
 git clone https://github.com/MartinPaljak/GlobalPlatformPro.git
 pushd GlobalPlatformPro
-git checkout z2d4bb36c145bd8c13606f12aa14e6e29d8ecef78
+git checkout 2d4bb36c145bd8c13606f12aa14e6e29d8ecef78
 ./mvn package
 popd
 
 git clone https://github.com/MartinPaljak/ant-javacard
 pushd ant-javacard
-./mvn package
+./mvnw package
 popd
 
 echo "installing the Python dependencies.."
 # go to the project root directory and install all Pipenv dependencies
 pipenv install
 # update oracle_javacard_sdks
-RUN git submodule update --init --recursive --jobs 8
+git submodule update --init --recursive --jobs 8
 export JCVM_ANALYSIS_HOME="$(pwd)"
 export FLASK_APP="$(pwd)/jsec/viewer.py"
 popd
