@@ -113,21 +113,21 @@ class AttackBuilder(BaseBuilder):
 class AttackExecutor(BaseAttackExecutor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.aids = None
+        self.aids = configparser.ConfigParser()
 
-    def load_aids(self):
-        aids = configparser.ConfigParser()
-        with cd(self.workdir):
-            aids.read("aids.ini")
+    # def load_aids(self):
+    #     aids = configparser.ConfigParser()
+    #     with cd(self.workdir):
+    #         aids.read("aids.ini")
 
-        self.aids = aids
-        return
+    #     self.aids = aids
+    #     return
 
     def construct_aid(self) -> bytes:
         # FIXME this is so weird and ugly, each send should somehow define to which applet
         # it sends its data
-        if self.aids is None:
-            self.load_aids()
+        # if self.aids is None:
+        self._load_aids()
         rid = self.aids["BUILD"]["pkg.rid"]
         pix = self.aids["BUILD"]["applet.pix"]
         return bytes.fromhex(rid + pix)
