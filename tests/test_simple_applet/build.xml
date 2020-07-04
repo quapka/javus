@@ -71,7 +71,7 @@
     <!-- Define Ant JavaCard task -->
     <taskdef name="javacard"
              classname="pro.javacard.ant.JavaCard"
-             classpath="${project.root}/lib/ant-javacard.jar" />
+        classpath="${project.root}/submodules/ant-javacard/target/ant-javacard.jar" />
     <!-- Import Ant contribution definitions -->
     <taskdef resource="net/sf/antcontrib/antcontrib.properties">
         <classpath>
