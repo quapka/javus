@@ -247,3 +247,15 @@ Fix GlobalPlatformPro to version:
 2d4bb36c145bd8c13606f12aa14e6e29d8ecef78
 Docker
 sudo apt install maven
+
+## Fresh Ubuntu 18.04
+#. Install `git`:
+```
+$ apt install git
+```
+#. 
+```
+$ git clone https://gitlab.fi.muni.cz/x408788/jcvm-analysis.git
+$ cd jcvm-analysis/bin
+$ ./bootstrap-ubuntu-18.04.sh
+```
