@@ -4,6 +4,7 @@ import sys
 from contextlib import contextmanager
 
 from invoke import task
+import pathlib
 
 # TODO add logging, might require setting flags through tasks
 # log = logging.getLogger(__file__)
@@ -14,8 +15,8 @@ from invoke import task
 
 
 def get_project_root():
-    this_file = os.path.realpath(__file__)
-    return os.path.dirname(this_file)
+    this_file = pathlib.Path(__file__).resolve()
+    return this_file.parent
 
 
 PROJECT_ROOT = get_project_root()
@@ -147,3 +148,10 @@ def dock(c, local=True):
 
     # TODO if local the build copies the local files and does not use git
     # to actual clone the source
+
+
+@task
+def docs(c):
+    cmd = ["make", "html"]
+    with cd(PROJECT_ROOT / "docs"):
+        c.run(" ".join(cmd))
