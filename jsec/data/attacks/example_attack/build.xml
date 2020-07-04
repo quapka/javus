@@ -1,7 +1,7 @@
 <project name="ExampleAttack">
     <property environment="env" />
     <property name="project.root"
-              value="${env.JCVM_ANALYSIS_HOME}" />
+        value="${basedir}/../../../../" />
     <property file="${project.root}/jsec/lib/jsec.properties" />
     <!-- Define Ant JavaCard task -->
     <!-- TODO make sure the relative paths are ok -->
