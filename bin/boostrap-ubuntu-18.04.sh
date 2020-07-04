@@ -35,6 +35,8 @@ sudo apt install --yes\
     maven\
     pcscd\
     mongodb\
+    ant\
+    ant-contrib
     
 
 echo "installing pipenv.."
