@@ -338,6 +338,8 @@ class GlobalPlatformProWrapper(object):
 
         if proc["returncode"] == 0:
             self.works = True
+        else:
+            self.works = False
 
     def find_atr(self, string):
         # fragile and naive way of getting the ATR, but does the job
