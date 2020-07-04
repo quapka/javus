@@ -55,3 +55,6 @@ aids.ini
 .mypy_cache
 
 *@neomake*
+
+# Sphinx documentation
+docs/_build/
