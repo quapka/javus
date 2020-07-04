@@ -179,7 +179,7 @@ def load_versions(versions):
     from newest to oldest
     """
     props = configparser.ConfigParser()
-    props.read(LIB_DIR / "jcversions.properties")
+    props.read(LIB_DIR / "sdkversions.properties")
     known = list(props["SUPPORTED_VERSIONS"])
 
     filtered = []
@@ -187,7 +187,7 @@ def load_versions(versions):
         if version in known:
             filtered.append(version)
 
-    # sort the values based on the order of JC versions in jcversions.properties
+    # sort the values based on the order of JC versions in sdkversions.properties
     filtered.sort(key=known.index)
 
     return filtered[::-1]
@@ -316,7 +316,7 @@ class SDKVersion(NamedTuple):
     def get_available_sdks(cls) -> List["SDKVersion"]:
         sdks = []
         properties = configparser.ConfigParser()
-        properties.read(LIB_DIR / "jcversions.properties")
+        properties.read(LIB_DIR / "sdkversions.properties")
         for version, _ in properties["SUPPORTED_VERSIONS"].items():
             sdks.append(SDKVersion.from_str(version))
 

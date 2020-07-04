@@ -3,7 +3,7 @@
     <!-- the relative path is from the attack 'build.xml' file -->
     <property name="project.root"
         value="${basedir}/../../../../" />
-    <property file="${project.root}/lib/jcversions.properties" />
+    <property file="${project.root}/lib/sdkversions.properties" />
     <!-- Define Ant JavaCard task -->
     <taskdef name="javacard"
              classname="pro.javacard.ant.JavaCard"

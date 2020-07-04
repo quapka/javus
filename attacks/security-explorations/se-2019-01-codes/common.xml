@@ -2,7 +2,7 @@
     <property environment="env" />
     <property name="project.root"
               value="${env.JCVM_ANALYSIS_HOME}" />
-    <property file="${project.root}/lib/jcversions.properties" />
+    <property file="${project.root}/lib/sdkversions.properties" />
     <!-- Define Ant JavaCard task -->
     <taskdef name="javacard"
              classname="pro.javacard.ant.JavaCard"
