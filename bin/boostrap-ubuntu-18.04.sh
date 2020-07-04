@@ -48,6 +48,7 @@ if pip3 install --user pipenv; then
         echo "You can try to find it by running:"
         echo "$ find / -iname pipenv 2>/dev/null"
         echo "Once it is in your PATH run this bootstrap script again"
+        PIPENV_TO_PATH=true
     fi
 else
     echo "Error: pipenv could not be installed."
@@ -72,9 +73,18 @@ pushd ../
 
 echo "installing the Python dependencies.."
 # go to the project root directory and install all Pipenv dependencies
-pipenv install --dev
+~/.local/bin/pipenv install --dev
 # update oracle_javacard_sdks
 git submodule update --init --recursive --jobs 8
+
+echo "updating Java alternative to 1.8.0"
+java_8_jdk="$(update-java-alternatives -l | grep 1.8.0 | awk '{ print $3 }')"
+if [[ java_8_jdk == "" ]]; then
+    echo "Error: cannot find java-1.8.0-openjdk. Please, try to install it manually."
+    NEED_INSTALL_JAVA_8_JDK=true
+else
+    sudo update-java-alternatives --set "$java_8_jdk"
+fi
 
 # prepare GlobalPlatformPro
 pushd submodules/GlobalPlatformPro
@@ -94,19 +104,24 @@ popd
 # export FLASK_APP="$(pwd)/jsec/viewer.py"
 popd
 
-# swig3.0 \
-# swig \
-# python3-swiglpk \
-# libpcsclite-dev \
-# # smartcard deamon
-# pcscd \
-# # install pkcs11-tool - only for development
-# opensc \
-# ant \
-# ant-contrib \
-# software-properties-common \
-# python3-pip \
-# git \
-# openjdk-8-jdk \
-# maven \
-# mongodb
+echo "The installations and setup to bootstrap your environment is done."
+echo "See below for any errors, that need to be resolved."
+
+if [ "$PIPENV_TO_PATH" = true ]; then
+    echo "In order to use 'pipenv' in the future you'll need to add it to your PATH"
+    echo "environment variable. It should be located in $HOME/.local/bin."
+    echo "If so, add the following line to your .bashrc or .profile, whichever you"
+    echo "prefere."
+    echo "export PATH=\"\$PATH:$HOME/.local/bin\""
+fi
+
+if [ "$NEED_INSTALL_JAVA_8_JDK" = true ]; then
+    echo "In order to run the application a Java 1.8.0 is needed."
+    echo "You can try to install it manually by running:"
+    echo "$ apt install openjdk-8-jdk-headless"
+    echo "Once it is installed you also need to set it up as your current Java alternative"
+    echo "To do so run and follow the instructions of:"
+    echo "$ update-alternatives --config java"
+    echo" Afterwards validate, that it is setup correctly by running:"
+    echo "$ java -version"
+fi
