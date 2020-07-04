@@ -68,7 +68,7 @@ pushd ../
 
 echo "installing the Python dependencies.."
 # go to the project root directory and install all Pipenv dependencies
-pipenv install
+pipenv install --dev
 # update oracle_javacard_sdks
 git submodule update --init --recursive --jobs 8
 
