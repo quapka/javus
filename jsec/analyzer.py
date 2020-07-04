@@ -418,7 +418,9 @@ class AnalysisManager:
         self.attacks = self.load_attacks()
         report = {}
         for section in self.attacks.sections():
+            print("Executing attacks from %s" % section)
             log.info("Executing attacks from '%s'", section)
+
             module = self.attacks[section]["module"]
             for attack, value in self.attacks[section].items():
                 # TODO this is ugly and not easy to extend in the future, maybe ditch the
@@ -432,6 +434,7 @@ class AnalysisManager:
                 )
                 if self.attacks.getboolean(section, attack):
                     for version in executor.sdks:
+                        print("%s (SDK: %s)" % (attack, version.raw))
                         AttackBuilder = self.get_builder(
                             attack_name=attack, module=module
                         )
@@ -449,7 +452,9 @@ class AnalysisManager:
                             "results": executor.execute(sdk_version=version),
                             "sdk_version": version.raw,
                         }
-                        # report[attack]["sdk-version"] = version
+                else:
+                    print("%s: skip" % attack)
+                    # report[attack]["sdk-version"] = version
         return report
 
     # FIXME finish loading the builder

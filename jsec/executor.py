@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Optional
 
-import deepdiff
+# import deepdiff
 
 from jsec.gppw import GlobalPlatformProWrapper
 from jsec.settings import PROJECT_ROOT
@@ -262,8 +262,10 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         return reduced
 
     def possible_versions(self) -> List["SDKVersion"]:
-        r"""Returns the intersection of SDKVersions the attack can be build for
-        and the ones supported by the Card"""
+        """
+        Returns the intersection of SDKVersions the attack can be build for
+        and the ones supported by the Card
+        """
         attack_sdk_versions = SDKVersion.from_list(
             self.config["BUILD"]["versions"], sep=","
         )
@@ -285,9 +287,15 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         stages = self.get_stages()
         self.report = []
 
+        n_stages = self.get_stages_len(stages)
+        x = 1
+
         # FIXME perform next stage only if the previous one was successful
         for i, stage_data in enumerate(stages):
             stage = stage_data.pop("name")
+            # TODO calculate the number of stages
+            print("    [%2d/%2d] %s" % (x, n_stages, stage))
+            x += 1
             result = self._run_stage(
                 stage, **stage_data, sdk_version=sdk_version, **kwargs
             )
@@ -307,6 +315,8 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         # fill in the rest of the stages, that were not executed
         for stage_data in stages[i + 1 :]:
             stage = stage_data.pop("name")
+            print("    [%2d/%2d] %s: skip" % (x, n_stages, stage))
+            x += 1
             # print(stage)
             result = {
                 "name": stage,
@@ -327,15 +337,18 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         while self.uninstall_stages:
             stage_data = self.uninstall_stages.pop()
             stage = stage_data.pop("name")
-            print(stage)
+            print("    [%2d/%2d] %s" % (x, n_stages, stage), end="")
+            x += 1
             if stage_data["installed"]:
                 result = self._run_stage(
                     stage, **stage_data, sdk_version=sdk_version, **kwargs
                 )
                 result["skipped"] = False
+                print()
             else:
                 result = copy.deepcopy(stage_data)
                 result["skipped"] = True
+                print(" skip")
 
             result["name"] = stage
             # if self.report[-1]["state"] is not None:
@@ -409,6 +422,17 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         if not stage:
             raise RuntimeError("'stage' name cannot be empty")
         return stage
+
+    @staticmethod
+    def get_stages_len(stages):
+        """
+        The actual number of stages unknown before runtime, because the `uninstall`
+        stages are called only in case of successful installation.
+        """
+        length = len(stages)
+        install_stages = [1 for stage in stages if stage["name"] == "install"]
+        length += sum(install_stages)
+        return length
 
 
 if __name__ == "__main__":
