@@ -256,6 +256,8 @@ class App(CommandLineApp):
         self.list = self.args.list
 
     def validate_config(self, value: str) -> Path:
+        # FIXME with GlobalPlatformPro as a submodule we don't have to
+        # setup up anything in the configuration, it does not need to be required!!
         if not os.path.exists(value):
             raise argparse.ArgumentTypeError(
                 "\nError: Can't open the configuration file '{}'. "
