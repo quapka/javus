@@ -107,6 +107,9 @@ class BaseBuilder(AbstractAttackBuilder):
 
         self.ready = False
 
+        self.aids = configparser.ConfigParser()
+        self.aids.add_section("BUILD")
+
     def _prepare(self):
         self._load_config()
         self._set_versions()
@@ -190,12 +193,20 @@ class BaseBuilder(AbstractAttackBuilder):
     def execute_attack(self, detailed=False):
         pass
 
-    def load_aids(self):
-        aids = configparser.ConfigParser()
-        with cd(self.workdir):
-            aids.read("aids.ini")
+    def set_default_aids(self):
+        import pudb
 
-        self.aids = aids
+        pudb.set_trace()
+        self.aids["BUILD"]["pkg.rid"] = "0011223344"
+        self.aids["BUILD"]["applet.pix"] = "AABB"
+
+    def load_aids(self):
+        with cd(self.workdir):
+            read = self.aids.read("aids.ini")
+
+        if not read:
+            self.set_default_aids()
+            self.save_aids()
 
     def save_aids(self):
         with cd(self.workdir):

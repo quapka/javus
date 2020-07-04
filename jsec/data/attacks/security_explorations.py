@@ -76,6 +76,12 @@ class AttackBuilder(BaseBuilder):
             ]
             output = subprocess.check_output(cmd).decode("utf8")
 
+    def set_default_aids(self):
+        self.aids["BUILD"]["pkg.rid"] = "1000000000"
+        self.aids["BUILD"]["vulns.pix"] = "03010C02"
+        self.aids["BUILD"]["pkg.pix"] = "03010C01"
+        self.aids["BUILD"]["applet.pix"] = "03010C0101"
+
     def uniqfy(self, used=None):
         if used is None:
             used = []

@@ -57,7 +57,6 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         self.stages = None
 
         self._load_config()
-        self._load_aids()
         try:
             self.sdks = self.config.get_sdk_versions("BUILD", "versions")
         except KeyError:
@@ -284,6 +283,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         return newest
 
     def execute(self, sdk_version=None, **kwargs) -> list:
+        self._load_aids()
         stages = self.get_stages()
         self.report = []
 
