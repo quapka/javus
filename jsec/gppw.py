@@ -13,7 +13,7 @@ from typing import List, Optional
 import smartcard
 
 from jsec.card import CardState
-from jsec.settings import DATA
+from jsec.settings import DATA, PROJECT_ROOT
 from jsec.utils import Timer
 
 # FIXME what if no card/reader is present?
@@ -99,6 +99,16 @@ class GlobalPlatformProWrapper(object):
 
     def gp_prefix(self):
         # TODO 'java' might not work on Windows and could require java.exe
+        self.gp_path = str(
+            (
+                PROJECT_ROOT
+                / "submodules"
+                / "GlobalPlatformPro"
+                / "tool"
+                / "target"
+                / "gp.jar"
+            ).resolve()
+        )
         cmd = [
             "java",
             "-jar",

@@ -1,6 +1,9 @@
 [submodule "oracle_javacard_sdks"]
 	path = oracle_javacard_sdks
 	url = https://github.com/martinpaljak/oracle_javacard_sdks.git
+[submodule "submodules/GlobalPlatformPro"]
+	path = submodules/GlobalPlatformPro
+	url = https://github.com/MartinPaljak/GlobalPlatformPro
 [submodule "submodules/ant-javacard"]
 	path = submodules/ant-javacard
 	url = https://github.com/MartinPaljak/ant-javacard
