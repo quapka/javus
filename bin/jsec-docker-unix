@@ -31,7 +31,7 @@ buildDockerCommand() {
     do
         cmdParts+=("--device=$devicePath")
     done
-    cmdParts+=("bubu:latest")
+    cmdParts+=("jsec-container:latest")
 
     # pass the command line arguments
     for cmdArgument in "${cmdArguments[@]}";
