@@ -289,11 +289,9 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
         n_stages = self.get_stages_len(stages)
         x = 1
-
-        # FIXME perform next stage only if the previous one was successful
+        # FIXME print successes of stages
         for i, stage_data in enumerate(stages):
             stage = stage_data.pop("name")
-            # TODO calculate the number of stages
             print("    [%2d/%2d] %s" % (x, n_stages, stage))
             x += 1
             result = self._run_stage(
