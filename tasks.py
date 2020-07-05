@@ -155,3 +155,11 @@ def docs(c):
     cmd = ["make", "html"]
     with cd(PROJECT_ROOT / "docs"):
         c.run(" ".join(cmd))
+
+
+@task
+def update_sdks(c):
+    # TODO implement
+    # this task updates jsec/lib/jcversion.properties
+    # according to oracle_javacard_sdks
+    pass
