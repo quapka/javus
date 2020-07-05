@@ -7,18 +7,28 @@ import pytest
 
 from jsec.card import Card
 from jsec.executor import BaseAttackExecutor
+from jsec.utils import AttackConfigParser
 from jsec.gppw import GlobalPlatformProWrapper
+import mock
 
 
 class TestBaseAttackExecutor:
     def setup_method(self):
-        config = configparser.ConfigParser()
-        config["PATHS"] = {
+        gp_config = configparser.ConfigParser()
+        gp_config["PATHS"] = {
             "gp.jar": "/path/to/the/gp.jar",
         }
-        self.gp = GlobalPlatformProWrapper(config=config)
+
+        self.gp = GlobalPlatformProWrapper(config=gp_config)
         self.path = Path()
         self.card = Card(gp=self.gp)
+
+    @staticmethod
+    def _load_test_config(self, *args, **kwargs):
+        self.config = AttackConfigParser()
+        self.config["BUILD"] = {
+            "versions": "jc222",
+        }
 
     @pytest.mark.parametrize(
         "raw_payload,parsed_payload",
@@ -35,8 +45,14 @@ class TestBaseAttackExecutor:
         ],
     )
     def test__parse_payload(self, raw_payload: str, parsed_payload: bytes) -> None:
-        bae = BaseAttackExecutor(card=self.card, gp=self.gp, workdir=self.path)
-        assert bae._parse_payload(raw_payload) == parsed_payload
+        with mock.patch.object(
+            BaseAttackExecutor, "_load_config", new=self._load_test_config
+        ):
+            import pudb
+
+            pudb.set_trace()
+            bae = BaseAttackExecutor(card=self.card, gp=self.gp, workdir=self.path)
+            assert bae._parse_payload(raw_payload) == parsed_payload
 
     @pytest.mark.parametrize(
         "raw,cleaned",
