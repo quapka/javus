@@ -452,6 +452,7 @@ class App(CommandLineApp):
             self.start_webserver()
 
         elif self.run_subcommand:
+            # FIXME add interactive disclaimer!!!
             if self.list:
                 self.print_attack_list()
                 sys.exit(0)

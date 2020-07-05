@@ -138,7 +138,6 @@ def index():
     else:
         with MongoConnection(database=name, host=host, port=port) as con:
             analysis = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
-            # FIXME get only ids?
 
     form = MainForm()
     form.run.analysis.choices = get_analysis_choices()

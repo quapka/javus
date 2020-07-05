@@ -290,6 +290,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         n_stages = self.get_stages_len(stages)
         x = 1
         # FIXME print successes of stages
+        # FIXME stop on SCARD_NO_TRANSANCT in STDOUT/STDERR
         for i, stage_data in enumerate(stages):
             stage = stage_data.pop("name")
             print("    [%2d/%2d] %s" % (x, n_stages, stage))
