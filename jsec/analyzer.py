@@ -39,6 +39,7 @@ from jsec.utils import (
     cd,
     load_versions,
 )
+from jsec.viewer import app
 
 # from jsec.data.jcversion import
 
@@ -167,14 +168,49 @@ class App(CommandLineApp):
         super().__init__()
         self.setup_logging(log)
         self._system = platform.system()
+        # self.registry = None
 
-    def add_options(self):
-        # TODO add option for making copy of the attack CAP files for later investigation
-        super().add_options()
-        self.parser.add_argument(
-            "-c", "--config-file", default="user-config.ini", type=self.validate_config,
+    def add_subparsers(self):
+        self.subparsers = self.parser.add_subparsers(
+            title="Available commands",
+            description=(
+                "Here follows the list of sub-commands, that you can execute."
+                "Use: %s <sub-command> -h/--help"
+                "to get help about the subcommands"
+            ),
+            dest="sub_command",
         )
-        self.parser.add_argument(
+        self.add_web_parser()
+        self.add_run_parser()
+        self.add_list_parser()
+
+    def add_web_parser(self):
+
+        web_parser = self.subparsers.add_parser(
+            "web", help="Start a local webserver to view the analysis results"
+        )
+        web_parser.add_argument("--host", type=str, default="localhost")
+        web_parser.add_argument("--port", type=int, default="5000")
+
+    def add_list_parser(self):
+        list_parser = self.subparsers.add_parser(
+            "list", help="List all the registered attacks."
+        )
+
+    def add_run_parser(self):
+        # TODO improve the analysis
+        run_parser = self.subparsers.add_parser(
+            "run", help="Execute the attacks on a real JavaCard",
+        )
+        # pass
+
+        # def add_options(self):
+        #     # TODO add option for making copy of the attack CAP files for later investigation
+        #     super().add_options()
+        run_parser.add_argument(
+            "-c", "--config-file", type=self.validate_config,
+        )
+        run_parser.add_argument(
             "-r",
             "--rebuild",
             default=False,
@@ -184,7 +220,7 @@ class App(CommandLineApp):
                 "running. If no card is present this effectively rebuilds all attacks."
             ),
         )
-        self.parser.add_argument(
+        run_parser.add_argument(
             "-l",
             "--long-description",
             default=False,
@@ -192,7 +228,7 @@ class App(CommandLineApp):
             help="Will display long description of the tool and end.",
         )
 
-        self.parser.add_argument(
+        run_parser.add_argument(
             "-n",
             "--dry-run",
             default=False,
@@ -200,21 +236,21 @@ class App(CommandLineApp):
             help="No external programs are called, useful when developing the analyzer",
         )
         # TODO test if argparse defaults are validated
-        self.parser.add_argument(
+        run_parser.add_argument(
             "-o",
             "--output-dir",
             default=Path("jsec-analysis-result"),
             help="A directory, that will store the results of the analysis",
         )
 
-        self.parser.add_argument(
+        run_parser.add_argument(
             "-m",
             "--message",
             type=str,
             default="",
             help="A message/comment, that will be saved together with this analysis run.",
         )
-        self.parser.add_argument(
+        run_parser.add_argument(
             "-j",
             "--json",
             type=self.validate_json_flag,
@@ -222,38 +258,102 @@ class App(CommandLineApp):
             help="Save the results as JSON into the specified file.",
         )
         # FIXME probably go with subcommands
-        self.parser.add_argument(
+        run_parser.add_argument(
             "-w", "--web", action="store_true", help="Start the web application"
         )
+        # FIXME localhost won't work in Docker!
+        run_parser.add_argument(
+            "--web-host",
+            type=str,
+            default="localhost",
+            help="Hostname for the web application",
+        )
+        run_parser.add_argument(
+            "--web-port", type=str, default="5000", help="Port for the web application",
+        )
+
+        # TODO implement execution of a single attack
+        run_parser.add_argument(
+            "--attack",
+            type=self.validate_attack_name,
+            help="execute only this particular attack",
+        )
+
         # TODO add -t/--tag for tagging analysis runs?
         # TODO def add options attempting to uninstall all applets, that were installed
         # TODO add argument to dump to json file intead of MongoDB
         # but this should be the implicit behaviour
-        self.parser.add_argument(
-            "-t",
-            "--list",
-            help="List the registered attacks and exit",
-            action="store_true",
-        )
+        # run_parser.add_argument(
+        #     "-t",
+        #     "--list",
+        #     help="List the registered attacks and exit",
+        #     action="store_true",
+        # )
+        # FIXME
 
     def validate_json_flag(self, value):
         # FIXME finish
         return value
 
+    def validate_attack_name(self, value):
+        raise NotImplementedError(
+            "Execution of a single attack is not implemented at the moment."
+        )
+        registry = self.load_attacks()
+        valid = True
+
+        attack_names = []
+        for section in registry.sections():
+            for key in registry[section]:
+                if key != "module":
+                    attack_names.append(key)
+
+        if value not in attack_names:
+            valid = False
+
+        if not valid:
+            raise argparse.ArgumentTypeError(
+                "The attack '%s' is not registered. The list of registered attacks is: %s."
+                % (value, ", ".join(attack_names))
+            )
+        return value
+
+    @property
+    def web_subcommand(self):
+        return self.args.sub_command == "web"
+
+    @property
+    def run_subcommand(self):
+        return self.args.sub_command == "run"
+
+    @property
+    def list_subcommand(self):
+        return self.args.sub_command == "list"
+
     def parse_options(self):
         super().parse_options()
-        if self.args.config_file is not None:
-            self.config_file = self.args.config_file
+        if self.web_subcommand:
+            self.web_host = self.args.host
+            self.web_port = self.args.port
 
-        self.dry_run = self.args.dry_run
-        if self.dry_run:
-            print(
-                "[Note] '--dry-run' was set, no external commands are called "
-                "and no report is created."
-            )
-        self.message = self.args.message
-        self.json = self.args.json
-        self.list = self.args.list
+        elif self.run_subcommand:
+            if self.args.config_file is not None:
+                self.config_file = self.args.config_file
+
+            self.dry_run = self.args.dry_run
+            if self.dry_run:
+                print(
+                    "[Note] '--dry-run' was set, no external commands are called "
+                    "and no report is created."
+                )
+            self.message = self.args.message
+            self.json = self.args.json
+            self.list = self.args.list
+            # options for the web application
+            self.start_web = self.args.web
+            self.web_host = self.host
+            self.web_port = self.port
+            self.attack_name = self.args.attack
 
     def validate_config(self, value: str) -> Path:
         # FIXME with GlobalPlatformPro as a submodule we don't have to
@@ -316,8 +416,9 @@ class App(CommandLineApp):
         return registry
 
     def print_attack_list(self):
+        # TODO print also the section names?
         registry = self.load_attacks()
-        print("List of attacks.")
+        print("List of registered attacks.")
         enabled = []
         disabled = []
         for section in registry.sections():
@@ -334,37 +435,49 @@ class App(CommandLineApp):
         print("\ndisabled:\n    ", end="")
         print("\n    ".join(disabled))
 
+    def start_webserver(self):
+        app.run(host=self.web_host, port=self.web_port)
+
     def run(self):
-        if self.list:
+        if self.web_subcommand:
+            self.start_webserver()
+
+        elif self.run_subcommand:
+            if self.list:
+                self.print_attack_list()
+                sys.exit(0)
+
+            start_time = time.time()
+            self.prepare()
+
+            print("Running the pre-analysis..")
+            prem = PreAnalysisManager(self.card, self.gp)
+            prem_results = prem.run()
+
+            print("Running the analysis..")
+            anam = AnalysisManager(self.card, self.gp, self.config)
+            anam_results = anam.run()
+
+            print("Running the post-analysis..")
+            end_time = time.time()
+
+            self.report.update(
+                {
+                    "start-time": start_time,
+                    "end-time": end_time,
+                    "duration": end_time - start_time,
+                    "message": self.message,
+                    "card": self.card.get_report(),
+                    "pre-analysis-results": prem_results,
+                    "analysis-results": anam_results,
+                }
+            )
+            self.save_record()
+            if not self.start_web:
+                self.start_web()
+
+        elif self.list_subcommand:
             self.print_attack_list()
-            sys.exit(0)
-
-        start_time = time.time()
-        self.prepare()
-
-        print("Running the pre-analysis..")
-        prem = PreAnalysisManager(self.card, self.gp)
-        prem_results = prem.run()
-
-        print("Running the analysis..")
-        anam = AnalysisManager(self.card, self.gp, self.config)
-        anam_results = anam.run()
-
-        print("Running the post-analysis..")
-        end_time = time.time()
-
-        self.report.update(
-            {
-                "start-time": start_time,
-                "end-time": end_time,
-                "duration": end_time - start_time,
-                "message": self.message,
-                "card": self.card.get_report(),
-                "pre-analysis-results": prem_results,
-                "analysis-results": anam_results,
-            }
-        )
-        self.save_record()
 
 
 class PostAnalysisManager:
@@ -415,6 +528,34 @@ class AnalysisManager:
         # FIXME does not fail on missing file, check it before
         registry.read(registry_file)
         return registry
+
+    # TODO implement execution of a single attack
+    # def execute_attack(
+    #     self, attack, module, version,
+    # ):
+    #     AttackExecutor = self.get_executor(attack_name=attack, module=module)
+    #     executor = AttackExecutor(card=self.card, gp=self.gp, workdir=ATTACKS / attack)
+    #     if self.attacks.getboolean(section, attack):
+    #         for version in executor.sdks:
+    #             print("%s (SDK: %s)" % (attack, version.raw))
+    #             AttackBuilder = self.get_builder(attack_name=attack, module=module)
+    #             builder = AttackBuilder(
+    #                 gp=self.gp, workdir=ATTACKS / attack, version=version
+    #             )
+    #             # FIXME when to build the attacks?
+    #             builder.execute(BaseBuilder.COMMANDS.build)
+    #             if not builder.uniq_aids(self.card.get_current_aids()):
+    #                 builder.uniqfy(used=self.card.get_current_aids())
+    #                 # rebuild the applet
+    #                 # TODO or call build directly? much nicer..
+    #                 builder.execute(BaseBuilder.COMMANDS.build)
+    #             self.report[attack + "-" + version.raw] = {
+    #                 "results": executor.execute(sdk_version=version),
+    #                 "sdk_version": version.raw,
+    #             }
+    #     else:
+    #         print("%s: skip" % attack)
+    #         # report[attack]["sdk-version"] = version
 
     def run(self):
         self.attacks = self.load_attacks()
