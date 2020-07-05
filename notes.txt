@@ -6,7 +6,7 @@ add filters for smartcard readers
 	- however internal reader still cannot be used
 
 docker-machine start default
-docker-ssh
+docker-machine ssh
 docker run -i
 
 install newest VB and the extensions
