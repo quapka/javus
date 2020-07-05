@@ -348,11 +348,11 @@ class App(CommandLineApp):
                 )
             self.message = self.args.message
             self.json = self.args.json
-            self.list = self.args.list
+            # self.list = self.args.list
             # options for the web application
             self.start_web = self.args.web
-            self.web_host = self.host
-            self.web_port = self.port
+            self.web_host = self.args.web_host
+            self.web_port = self.args.web_port
             self.attack_name = self.args.attack
 
     def validate_config(self, value: str) -> Path:
@@ -382,15 +382,24 @@ class App(CommandLineApp):
 
     # TODO unify load_configuration and load_config
     def load_configuration(self):
+        # FIXME load configuration
         self.config = configparser.ConfigParser()
-        self.config.read(self.config_file)
+        if self.config_file:
+            self.config.read(self.config_file)
+        else:
+            pass
 
     def save_record(self) -> None:
         if self.dry_run:
             return
-        database = self.config["DATABASE"]["name"]
-        host = self.config["DATABASE"]["host"]
-        port = self.config["DATABASE"]["port"]
+        try:
+            database = self.config["DATABASE"]["name"]
+            host = self.config["DATABASE"]["host"]
+            port = self.config["DATABASE"]["port"]
+        except KeyError:
+            database = "javacard-analysis"
+            host = "localhost"
+            port = "27017"
 
         with MongoConnection(database=database, host=host, port=port) as con:
             con.col.insert_one(self.report)
@@ -474,7 +483,7 @@ class App(CommandLineApp):
             )
             self.save_record()
             if not self.start_web:
-                self.start_web()
+                self.start_webserver()
 
         elif self.list_subcommand:
             self.print_attack_list()
