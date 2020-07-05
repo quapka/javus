@@ -18,6 +18,8 @@ from jsec.settings import STATIC_DIR
 from jsec.utils import MongoConnection
 
 app = Flask(__name__)
+# NOTE: this web app is meant to be run locally, therefore we are not
+# worried about SECRET_KEY not being secret
 app.config["SECRET_KEY"] = "this-is-very-secret-and-should-be-fixed"
 
 # FIXME load from config file
