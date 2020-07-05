@@ -99,16 +99,6 @@ class GlobalPlatformProWrapper(object):
 
     def gp_prefix(self):
         # TODO 'java' might not work on Windows and could require java.exe
-        self.gp_path = str(
-            (
-                PROJECT_ROOT
-                / "submodules"
-                / "GlobalPlatformPro"
-                / "tool"
-                / "target"
-                / "gp.jar"
-            ).resolve()
-        )
         cmd = [
             "java",
             "-jar",
@@ -125,8 +115,18 @@ class GlobalPlatformProWrapper(object):
         try:
             section = self.config["PATHS"]
         except KeyError:
-            log.critical("Config does not contain 'PATHS' section. Please, add it.")
-            raise RuntimeError("Incomplete configuration.")
+            log.warning("Config does not contain 'PATHS' section. Please, add it.")
+            self.gp_path = str(
+                (
+                    PROJECT_ROOT
+                    / "submodules"
+                    / "GlobalPlatformPro"
+                    / "tool"
+                    / "target"
+                    / "gp.jar"
+                ).resolve()
+            )
+            return
 
         try:
             self.gp_path = section["gp.jar"]
