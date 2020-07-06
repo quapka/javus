@@ -52,7 +52,7 @@
         <mkdir dir="${build.dir}/${version}" />
     </target>
     <target name="build">
-        <javacard jckit="${project.root}/oracle_javacard_sdks/${version}_kit">
+        <javacard jckit="${project.root}/submodules/oracle_javacard_sdks/${version}_kit">
 
             <!-- Verification is not supported JavaCard version 212 -->
             <!-- FIXME should we support verification for others? -->

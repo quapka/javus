@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # compile
-sdks_dir="oracle_javacard_sdks"
+sdks_dir="submodules/oracle_javacard_sdks"
 classdir="classes-221"
 build_dir="build-221"
 
