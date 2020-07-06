@@ -180,6 +180,7 @@ class App(CommandLineApp):
             ),
             dest="sub_command",
         )
+        self.subparsers.required = True
         self.add_web_parser()
         self.add_run_parser()
         self.add_list_parser()
