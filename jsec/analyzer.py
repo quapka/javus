@@ -588,10 +588,50 @@ class AnalysisManager:
                             "results": executor.execute(sdk_version=version),
                             "sdk_version": version.raw,
                         }
+                        if self.card_not_working(result=result):
+                            print(
+                                "It seems, that the card stopped working during the execution of"
+                                "the attack %s\nYou can try replugging the card/reader (and "
+                                "wait a few minutes, before the card starts working again) and "
+                                "start the analysis again or maybe skip this attack."
+                                % attack
+                            )
+                            sys.exit(0)
                 else:
                     print("%s: skip" % attack)
                     # report[attack]["sdk-version"] = version
         return report
+
+    def card_not_working(self, result):
+        """
+        """
+        try:
+            out = result["stdout"]
+        except KeyError:
+            out = ""
+
+        try:
+            err = result["stderr"]
+        except KeyError:
+            err = ""
+
+        error_constansts = ["SCARD_E_NOT_TRANSACTED", "SCARD_W_UNPOWERED_CARD"]
+
+        works = True
+        for err_const in error_constansts:
+            if err_const in out or err_const in stderr:
+                works = False
+                if not works:
+                    break
+
+        if not works:
+            cards = self.detect_cards()
+            if not cards:
+                return True
+            # TODO it is of question, whether to return True on else or not
+            # but for now we won't do it
+
+        return False
 
     # FIXME finish loading the builder
     def get_builder(self, attack_name: str, module: str):
