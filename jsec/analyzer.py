@@ -435,11 +435,6 @@ implementation it is running.
         elif self.run_subcommand:
             self.handle_user_consent()
 
-            # FIXME add interactive disclaimer!!!
-            if self.list:
-                self.print_attack_list()
-                sys.exit(0)
-
             start_time = time.time()
             self.prepare()
 
