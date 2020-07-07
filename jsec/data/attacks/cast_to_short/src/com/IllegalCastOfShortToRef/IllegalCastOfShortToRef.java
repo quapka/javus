@@ -18,12 +18,12 @@ import javacard.security.*;
 public class IllegalCastOfShortToRef extends Applet {
   // Constants
 
-  private static final byte INS_SUCCESS = 0x01;
-  private static final byte INS_FAILURE = 0x02;
+  // private static final byte INS_SUCCESS = 0x01;
+  // private static final byte INS_FAILURE = 0x02;
 
-  byte[] success = {(byte) 0x01, (byte) 0x02, (byte) 0x01, (byte) 0x02};
-  byte[] failure = {(byte) 0x80, (byte) 0x40, (byte) 0x80, (byte) 0x40};
-  short msgLen = 4;
+  // byte[] success = {(byte) 0x01, (byte) 0x02, (byte) 0x01, (byte) 0x02};
+  // byte[] failure = {(byte) 0x80, (byte) 0x40, (byte) 0x80, (byte) 0x40};
+  // short msgLen = 4;
 
   protected static final byte CLA_APP = (byte) 0xA0; // CLASS byte for regular APDUs
   protected static final byte INS_READ = (byte) 0xB0; // INS byte to read arbitrary reference
@@ -59,14 +59,14 @@ public class IllegalCastOfShortToRef extends Applet {
         // Util.arrayCopyNonAtomic(failure, (short) 0, buffer, (short) 0, msgLen);
         // apdu.setOutgoingAndSend((short) 0, (short) 4);
         break;
-      case INS_SUCCESS:
-        Util.arrayCopyNonAtomic(success, (short) 0, buffer, (short) 0, msgLen);
-        apdu.setOutgoingAndSend((short) 0, (short) 4);
-        break;
-      case INS_FAILURE:
-        Util.arrayCopyNonAtomic(failure, (short) 0, buffer, (short) 0, msgLen);
-        apdu.setOutgoingAndSend((short) 0, (short) 4);
-        break;
+      // case INS_SUCCESS:
+      //   Util.arrayCopyNonAtomic(success, (short) 0, buffer, (short) 0, msgLen);
+      //   apdu.setOutgoingAndSend((short) 0, (short) 4);
+      //   break;
+      // case INS_FAILURE:
+      //   Util.arrayCopyNonAtomic(failure, (short) 0, buffer, (short) 0, msgLen);
+      //   apdu.setOutgoingAndSend((short) 0, (short) 4);
+      //   break;
 
       default:
         ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
