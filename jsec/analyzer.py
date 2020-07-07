@@ -38,6 +38,7 @@ from jsec.utils import (
     SDKVersion,
     cd,
     load_versions,
+    get_user_consent,
 )
 from jsec.viewer import app
 
@@ -150,12 +151,12 @@ class PreAnalysisManager:
 # FIXME give disclaimer and ask about consent
 class App(CommandLineApp):
     APP_DESCRIPTION = """
-    [DISCLAIMER] Running this analysis can potentially dammage (brick/lock) your card!
-    By using this tool you acknowledge this fact and use the tool on your on risk.
-    This tool is meant to be used for analysis and research on spare JavaCards in order
-    to infer something about the level of the security of the JavaCard Virtual Machine
-    implementation it is running.
-    """
+[DISCLAIMER] Running the analysis can potentially dammage (brick/lock) your card!
+By using this tool you acknowledge this fact and use the tool at your on risk.
+This tool is meant to be used for analysis and research on spare JavaCards in order
+to infer something about the level of the security of the JavaCard Virtual Machine
+implementation it is running.
+    """.strip()
 
     def __init__(self):
         # FIXME sort self arguments and parameters
@@ -174,8 +175,8 @@ class App(CommandLineApp):
         self.subparsers = self.parser.add_subparsers(
             title="Available commands",
             description=(
-                "Here follows the list of sub-commands, that you can execute."
-                "Use: %s <sub-command> -h/--help"
+                "Here follows the list of sub-commands, that you can execute. "
+                "Use: %s <sub-command> -h/--help "
                 "to get help about the subcommands"
             ),
             dest="sub_command",
@@ -201,7 +202,9 @@ class App(CommandLineApp):
     def add_run_parser(self):
         # TODO improve the analysis
         run_parser = self.subparsers.add_parser(
-            "run", help="Execute the attacks on a real JavaCard",
+            "run",
+            help="Execute the attacks on a real JavaCard. ",
+            description=self.APP_DESCRIPTION,
         )
         # pass
 
@@ -211,23 +214,23 @@ class App(CommandLineApp):
         run_parser.add_argument(
             "-c", "--config-file", type=self.validate_config,
         )
-        run_parser.add_argument(
-            "-r",
-            "--rebuild",
-            default=False,
-            action="store_true",
-            help=(
-                "When set, each used applet will be rebuild before installing and "
-                "running. If no card is present this effectively rebuilds all attacks."
-            ),
-        )
-        run_parser.add_argument(
-            "-l",
-            "--long-description",
-            default=False,
-            action="store_true",
-            help="Will display long description of the tool and end.",
-        )
+        # run_parser.add_argument(
+        #     "-r",
+        #     "--rebuild",
+        #     default=False,
+        #     action="store_true",
+        #     help=(
+        #         "When set, each used applet will be rebuild before installing and "
+        #         "running. If no card is present this effectively rebuilds all attacks."
+        #     ),
+        # )
+        # run_parser.add_argument(
+        #     "-l",
+        #     "--long-description",
+        #     default=False,
+        #     action="store_true",
+        #     help="Will display long description of the tool and end.",
+        # )
 
         run_parser.add_argument(
             "-n",
@@ -251,13 +254,13 @@ class App(CommandLineApp):
             default="",
             help="A message/comment, that will be saved together with this analysis run.",
         )
-        run_parser.add_argument(
-            "-j",
-            "--json",
-            type=self.validate_json_flag,
-            default=Path("javacard-analysis.json"),
-            help="Save the results as JSON into the specified file.",
-        )
+        # run_parser.add_argument(
+        #     "-j",
+        #     "--json",
+        #     type=self.validate_json_flag,
+        #     default=Path("javacard-analysis.json"),
+        #     help="Save the results as JSON into the specified file.",
+        # )
         # FIXME probably go with subcommands
         run_parser.add_argument(
             "-w", "--web", action="store_true", help="Start the web application"
@@ -271,6 +274,16 @@ class App(CommandLineApp):
         )
         run_parser.add_argument(
             "--web-port", type=str, default="5000", help="Port for the web application",
+        )
+        run_parser.add_argument(
+            "-r",
+            "--riskit",
+            help=(
+                "By setting this flag the user of the tool agrees to use "
+                "this tool at his/her own risk and he/she understands the risks "
+                "mentioned in the [DISCLAIMER]."
+            ),
+            action="store_true",
         )
 
         # TODO implement execution of a single attack
@@ -292,9 +305,9 @@ class App(CommandLineApp):
         # )
         # FIXME
 
-    def validate_json_flag(self, value):
-        # FIXME finish
-        return value
+    # def validate_json_flag(self, value):
+    #     # FIXME finish
+    #     return value
 
     def validate_attack_name(self, value):
         raise NotImplementedError(
@@ -348,13 +361,14 @@ class App(CommandLineApp):
                     "and no report is created."
                 )
             self.message = self.args.message
-            self.json = self.args.json
+            # self.json = self.args.json
             # self.list = self.args.list
             # options for the web application
             self.start_web = self.args.web
             self.web_host = self.args.web_host
             self.web_port = self.args.web_port
             self.attack_name = self.args.attack
+            self.riskit = self.args.riskit
 
     def validate_config(self, value: str) -> Path:
         # FIXME with GlobalPlatformPro as a submodule we don't have to
@@ -448,11 +462,26 @@ class App(CommandLineApp):
     def start_webserver(self):
         app.run(host=self.web_host, port=self.web_port)
 
+    def handle_user_consent(self):
+        if not self.riskit:
+            if not get_user_consent(
+                self.APP_DESCRIPTION,
+                "Do you agree, that you continue at your own risk?",
+            ):
+                print(
+                    "For future runs you can agree with the disclaimer by using "
+                    "the '--riskit' flag."
+                )
+                print("No attacks were executed.")
+                sys.exit(0)
+
     def run(self):
         if self.web_subcommand:
             self.start_webserver()
 
         elif self.run_subcommand:
+            self.handle_user_consent()
+
             # FIXME add interactive disclaimer!!!
             if self.list:
                 self.print_attack_list()

@@ -489,6 +489,16 @@ class SDKVersionTypeCodec(TypeCodec):
         return SDKVersion.from_str(value)
 
 
+def get_user_consent(message, question):
+    print(message)
+    while True:
+        answer = input(question + " [Y/n] ").lower().strip()
+        if answer.startswith("y"):
+            return True
+        elif answer.startswith("n"):
+            return False
+
+
 if __name__ == "__main__":
     app = CommandLineApp()
     app.run()
