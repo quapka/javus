@@ -206,32 +206,9 @@ implementation it is running.
             help="Execute the attacks on a real JavaCard. ",
             description=self.APP_DESCRIPTION,
         )
-        # pass
-
-        # def add_options(self):
-        #     # TODO add option for making copy of the attack CAP files for later investigation
-        #     super().add_options()
         run_parser.add_argument(
             "-c", "--config-file", type=self.validate_config,
         )
-        # run_parser.add_argument(
-        #     "-r",
-        #     "--rebuild",
-        #     default=False,
-        #     action="store_true",
-        #     help=(
-        #         "When set, each used applet will be rebuild before installing and "
-        #         "running. If no card is present this effectively rebuilds all attacks."
-        #     ),
-        # )
-        # run_parser.add_argument(
-        #     "-l",
-        #     "--long-description",
-        #     default=False,
-        #     action="store_true",
-        #     help="Will display long description of the tool and end.",
-        # )
-
         run_parser.add_argument(
             "-n",
             "--dry-run",
@@ -254,14 +231,6 @@ implementation it is running.
             default="",
             help="A message/comment, that will be saved together with this analysis run.",
         )
-        # run_parser.add_argument(
-        #     "-j",
-        #     "--json",
-        #     type=self.validate_json_flag,
-        #     default=Path("javacard-analysis.json"),
-        #     help="Save the results as JSON into the specified file.",
-        # )
-        # FIXME probably go with subcommands
         run_parser.add_argument(
             "-w", "--web", action="store_true", help="Start the web application"
         )
@@ -296,18 +265,6 @@ implementation it is running.
         # TODO add -t/--tag for tagging analysis runs?
         # TODO def add options attempting to uninstall all applets, that were installed
         # TODO add argument to dump to json file intead of MongoDB
-        # but this should be the implicit behaviour
-        # run_parser.add_argument(
-        #     "-t",
-        #     "--list",
-        #     help="List the registered attacks and exit",
-        #     action="store_true",
-        # )
-        # FIXME
-
-    # def validate_json_flag(self, value):
-    #     # FIXME finish
-    #     return value
 
     def validate_attack_name(self, value):
         raise NotImplementedError(
@@ -361,8 +318,6 @@ implementation it is running.
                     "and no report is created."
                 )
             self.message = self.args.message
-            # self.json = self.args.json
-            # self.list = self.args.list
             # options for the web application
             self.start_web = self.args.web
             self.web_host = self.args.web_host
@@ -371,8 +326,6 @@ implementation it is running.
             self.riskit = self.args.riskit
 
     def validate_config(self, value: str) -> Path:
-        # FIXME with GlobalPlatformPro as a submodule we don't have to
-        # setup up anything in the configuration, it does not need to be required!!
         if not os.path.exists(value):
             raise argparse.ArgumentTypeError(
                 "\nError: Can't open the configuration file '{}'. "
