@@ -1,42 +1,91 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="StackUnderflow" default="default" basedir=".">
-        <description>Builds, tests, and runs the project StackUnderflow.</description>
-    <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ext/ant-javacard.jar"/>
+<project name="StackUnderflow">
+    <property environment="env" />
+    <!-- the relative path is from the attack 'build.xml' file -->
+    <property name="project.root"
+        value="${basedir}/../../../../" />
+    <property file="${project.root}/lib/sdkversions.properties" />
+    <!-- Define Ant JavaCard task -->
+    <taskdef name="javacard"
+             classname="pro.javacard.ant.JavaCard"
+        classpath="${project.root}/submodules/ant-javacard/target/ant-javacard.jar" />
+    <!-- Import Ant contribution definitions -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <!-- FIXME load this location dynamically -->
+            <pathelement location="/usr/share/java/lib/ant-contrib-0.3.jar" />
+        </classpath>
+    </taskdef>
+    <!-- Define properties common for all attacks -->
+    <property file="config.ini" />
+    <property file="aids.ini" />
+    <property name="src.dir"
+              value="src" />
+    <property name="build.dir"
+              value="build" />
+    <property name="classes.dir"
+              value="${build.dir}/classes" />
+    <!-- Target for building all supported versions for particular an attack -->
+    <target name="build-all-versions">
+        <foreach param="version"
+                 list="${versions}"
+                 target="build-version" />
+    </target>
+    <target name="clean-all-versions">
+        <foreach param="version"
+                 list="${versions}"
+                 target="clean-version" />
+    </target>
+    <!-- Target for doing all build steps for one specific version for a specific attack -->
+    <target name="build-version"
+            depends="clean-version,bootstrap,build">
+        <!-- <mkdir dir="${classes.dir}" /> -->
+        <echo message="building version: ${version}" />
+    </target>
+    <target name="clean-version">
+        <echo message="cleaning version: ${version}" />
+        <delete dir="${build.dir}/${version}" />
+    </target>
+    <target name="bootstrap">
+        <echo message="boostrap version: ${version}" />
+        <mkdir dir="${build.dir}/${version}/com/se/vulns/javacard" />
+        <mkdir dir="${build.dir}/${version}/com/se/applets/javacard" />
+    </target>
+    <target name="build">
+        <echo message="${project.root}/submodules/oracle_javacard_sdks/${version}_kit" />
+        <javacard jckit="${project.root}/submodules/oracle_javacard_sdks/${version}_kit">
+            <!-- Verification is not supported JavaCard version 212 -->
+            <!-- Build the vulnerable part -->
+            <!-- <cap output="com.illegalcast-jc212.cap" --> 
+            <cap output="${build.dir}/${version}/stack_underflow-${version}.cap"
+                sources="${src.dir}"
+                aid="${pkg.rid}"
+                verify="false"
+                jca="test.jca">
+            <applet class="com.stackunderflow.StackUnderflow" aid="${pkg.rid}${applet.pix}"/>
+            </cap>
+            <!-- <cap output="${build.dir}/${version}/com/se/vulns/javacard/vulns.cap" -->
+            <!--      package="com.se.vulns" -->
+            <!--      sources="${src.dir}" -->
+            <!--      aid="${pkg.rid}${vulns.pix}" -->
+            <!--      verify="false" -->
+            <!--      ints="true" -->
+            <!--      export="${build.dir}/${version}" -->
+            <!--      jca="${build.dir}/${version}/com/se/vulns/javacard/vulns.jca"> -->
+            <!-- </cap> -->
+            <!-- <!-1- Build the actual applet that is going to be run -1-> -->
+            <!-- <cap output="${build.dir}/${version}/com/se/applets/javacard/applets.cap" -->
+            <!--      package="com.se.applets" -->
+            <!--      sources="${src.dir}" -->
+            <!--      aid="${pkg.rid}${pkg.pix}" -->
+            <!--      verify="false" -->
+            <!--      ints="true" -->
+            <!--      export="${build.dir}/${version}" -->
+            <!--      jca="${build.dir}/${version}/com/se/applets/javacard/applets.jca"> -->
 
-    <!-- <property name="JC222" value="ext/java_card_kit-2_2_2"/> -->
-    <property name="JC212" value="ext/jc212_kit"/>
-    <property name="JC221" value="ext/jc221_kit"/>
-    <property name="JC222" value="ext/jc222_kit"/>
-    <property name="JC305u3" value="ext/jc305u3_kit"/>
-
-    <target name="com.stackunderflow.jc212">
-            <javacard jckit="${JC212}">
-            <cap output="com.stackunderflow-jc212.cap" sources="src/com" aid="AD00000000"
-                jca="com.stackunderflow-jc212.jca"
-                verify="false">
-                <applet class="com.stackunderflow.StackUnderflow" aid="AD000000000701"/>
-            </cap>
-        </javacard>
-    </target>
-    <target name="com.stackunderflow.jc221">
-            <javacard jckit="${JC221}">
-            <cap output="com.stackunderflow-jc221.cap" sources="src/com" aid="A000000000">
-                <applet class="com.stackunderflow.StackUnderflow" aid="A0000000000701"/>
-            </cap>
-        </javacard>
-    </target>
-    <target name="com.stackunderflow.jc222">
-            <javacard jckit="${JC222}">
-            <cap output="com.stackunderflow-jc222.cap" sources="src/com" aid="A000000000">
-                <applet class="com.stackunderflow.StackUnderflow" aid="A0000000000701"/>
-            </cap>
-        </javacard>
-    </target>
-    <target name="com.stackunderflow.jc305u3">
-            <javacard jckit="${JC305u3}">
-            <cap output="com.stackunderflow-jc305u3.cap" sources="src/com" aid="A000000000">
-                <applet class="com.stackunderflow.StackUnderflow" aid="A0000000000701"/>
-            </cap>
+            <!--     <applet class="com.se.applets.SEApplet" -->
+            <!--             aid="${pkg.rid}${applet.pix}" /> -->
+            <!--     <import exps="${build.dir}/${version}" /> -->
+            <!-- </cap> -->
         </javacard>
     </target>
 </project>
