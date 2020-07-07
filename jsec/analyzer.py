@@ -357,23 +357,51 @@ implementation it is running.
         else:
             pass
 
-    def save_record(self) -> None:
-        if self.dry_run:
-            return
+    def load_db_configuration(self):
         try:
-            database = self.config["DATABASE"]["name"]
-            host = self.config["DATABASE"]["host"]
-            port = self.config["DATABASE"]["port"]
+            self.database = self.config["DATABASE"]["name"]
         except KeyError:
-            database = "javacard-analysis"
-            host = "localhost"
-            port = "27017"
+            self.database = "javacard-analysis"
 
-        with MongoConnection(database=database, host=host, port=port) as con:
-            con.col.insert_one(self.report)
+        try:
+            self.db_host = self.config["DATABASE"]["host"]
+        except KeyError:
+            self.db_host = "localhost"
+
+        try:
+            self.db_port = self.config["DATABASE"]["port"]
+        except KeyError:
+            self.db_port = "27017"
+
+    def add_attack_to_db(self, attack_name, attack_results):
+        """
+        Adds the attack results to the database
+        """
+        key = "analysis-results.%s" % attack_name
+        value = attack_results
+        with MongoConnection(
+            database=self.database, host=self.db_host, port=self.db_port
+        ) as con:
+            con.col.update_one({"_id": self.report_id}, {"$set": {key: value}})
+
+    # def save_record(self) -> None:
+    #     if self.dry_run:
+    #         return
+    #     try:
+    #         database = self.config["DATABASE"]["name"]
+    #         db_host = self.config["DATABASE"]["host"]
+    #         db_port = self.config["DATABASE"]["port"]
+    #     except KeyError:
+    #         database = "javacard-analysis"
+    #         db_host = "localhost"
+    #         db_port = "27017"
+
+    #     with MongoConnection(database=database, host=db_host, port=db_port) as con:
+    #         report_id = con.col.insert_one(self.report)
 
     def prepare(self):
         self.load_configuration()
+        self.load_db_configuration()
 
         self.gp = GlobalPlatformProWrapper(
             config=self.config, dry_run=self.dry_run, log_verbosity=self.verbosity,
@@ -429,6 +457,7 @@ implementation it is running.
                 sys.exit(0)
 
     def run(self):
+        # FIXME --dry-run
         if self.web_subcommand:
             self.start_webserver()
 
@@ -442,8 +471,23 @@ implementation it is running.
             prem = PreAnalysisManager(self.card, self.gp)
             prem_results = prem.run()
 
+            self.report.update(
+                {
+                    "start-time": start_time,
+                    "message": self.message,
+                    "card": self.card.get_report(),
+                    "pre-analysis-results": prem_results,
+                }
+            )
+            with MongoConnection(
+                database=self.database, host=self.db_host, port=self.db_port
+            ) as con:
+                self.report_id = con.col.insert_one(self.report).inserted_id
+
             print("Running the analysis..")
-            anam = AnalysisManager(self.card, self.gp, self.config)
+            anam = AnalysisManager(
+                self.card, self.gp, self.config, update_attack=self.add_attack_to_db
+            )
             anam_results = anam.run()
 
             print("Running the post-analysis..")
@@ -451,16 +495,30 @@ implementation it is running.
 
             self.report.update(
                 {
-                    "start-time": start_time,
+                    # "start-time": start_time,
                     "end-time": end_time,
                     "duration": end_time - start_time,
-                    "message": self.message,
-                    "card": self.card.get_report(),
-                    "pre-analysis-results": prem_results,
-                    "analysis-results": anam_results,
+                    # "message": self.message,
+                    # "card": self.card.get_report(),
+                    # "pre-analysis-results": prem_results,
+                    # "analysis-results": anam_results,
                 }
             )
-            self.save_record()
+            end_report = {
+                # "start-time": start_time,
+                "end-time": end_time,
+                "duration": end_time - start_time,
+                # "message": self.message,
+                # "card": self.card.get_report(),
+                # "pre-analysis-results": prem_results,
+                # "analysis-results": anam_results,
+            }
+            with MongoConnection(
+                database=self.database, host=self.db_host, port=self.db_port
+            ) as con:
+                con.col.update_one({"_id": self.report_id}, {"$set": end_report})
+
+            # self.save_record()
             if not self.start_web:
                 self.start_webserver()
 
@@ -501,11 +559,13 @@ class AnalysisManager:
         card: Card,
         gp: GlobalPlatformProWrapper,
         config: configparser.ConfigParser,
+        update_attack,
     ):
         self.card = card
         self.gp = gp
         self.config = config
         self.attacks: Optional[configparser.ConfigParser] = None
+        self.updater = update_attack
 
     def load_attacks(self) -> configparser.ConfigParser:
         registry = configparser.ConfigParser()
@@ -579,10 +639,15 @@ class AnalysisManager:
                             # rebuild the applet
                             # TODO or call build directly? much nicer..
                             builder.execute(BaseBuilder.COMMANDS.build)
-                        report[attack + "-" + version.raw] = {
-                            "results": executor.execute(sdk_version=version),
+                        result = executor.execute(sdk_version=version)
+                        key_name = attack + "-" + version.raw
+                        x = {
+                            "results": result,
                             "sdk_version": version.raw,
                         }
+                        # save the result of this attack into the database immediately
+                        self.update_report(key_name, report=x)
+                        # the attack can lock/block
                         if self.card_not_working(result=result):
                             print(
                                 "It seems, that the card stopped working during the execution of"
@@ -597,34 +662,37 @@ class AnalysisManager:
                     # report[attack]["sdk-version"] = version
         return report
 
+    def update_report(self, attack_name, report):
+        self.updater(attack_name, report)
+
     def card_not_working(self, result):
         """
         """
-        try:
-            out = result["stdout"]
-        except KeyError:
-            out = ""
+        for stage in result:
+            try:
+                out = stage["stdout"]
+            except KeyError:
+                out = ""
 
-        try:
-            err = result["stderr"]
-        except KeyError:
-            err = ""
+            try:
+                err = stage["stderr"]
+            except KeyError:
+                err = ""
 
-        error_constansts = ["SCARD_E_NOT_TRANSACTED", "SCARD_W_UNPOWERED_CARD"]
+            error_constansts = ["SCARD_E_NOT_TRANSACTED", "SCARD_W_UNPOWERED_CARD"]
+            works = True
+            for err_const in error_constansts:
+                if err_const in out or err_const in err:
+                    works = False
+                    if not works:
+                        break
 
-        works = True
-        for err_const in error_constansts:
-            if err_const in out or err_const in stderr:
-                works = False
-                if not works:
-                    break
-
-        if not works:
-            cards = self.detect_cards()
-            if not cards:
-                return True
-            # TODO it is of question, whether to return True on else or not
-            # but for now we won't do it
+            if not works:
+                cards = self.detect_cards()
+                if not cards:
+                    return True
+                # TODO it is of question, whether to return True on else or not
+                # but for now we won't do it
 
         return False
 
