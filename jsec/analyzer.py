@@ -42,13 +42,9 @@ from jsec.utils import (
 )
 from jsec.viewer import app
 
-# from jsec.data.jcversion import
 
-# FIXME use flake8 as --dev dependency and remove some pylints
 # FIXME handle error on gp --list
 # flake8: noqa [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)
-
-# TODO determine the level of defensive approach? E.g. when guessing emv
 
 # FIXME think through the hierarchy of the different loggers
 # TODO put into separate file config
@@ -71,8 +67,6 @@ if int(PY_VERSION[0]) < 3:
 
 
 class PreAnalysisManager:
-    # make sure, that all the attacks are build
-    # and have the scenario.py or whatever to run them
     # TODO handle pcscd not running exception smartcard.pcsc.PCSCExceptions.EstablishContextException
     def __init__(self, card: "Card", gp: "GlobalPlatformProWrapper"):
         self.card = card
@@ -148,7 +142,6 @@ class PreAnalysisManager:
         return version
 
 
-# FIXME give disclaimer and ask about consent
 class App(CommandLineApp):
     APP_DESCRIPTION = """
 [DISCLAIMER] Running the analysis can potentially dammage (brick/lock) your card!
@@ -164,12 +157,10 @@ implementation it is running.
         self.config_file = None
         self.gp: Optional[GlobalPlatformProWrapper] = None
         self.card: Optional[Card] = None
-        self.report: dict = {}
         self.list = False
         super().__init__()
         self.setup_logging(log)
         self._system = platform.system()
-        # self.registry = None
 
     def add_subparsers(self):
         self.subparsers = self.parser.add_subparsers(
@@ -200,7 +191,6 @@ implementation it is running.
         )
 
     def add_run_parser(self):
-        # TODO improve the analysis
         run_parser = self.subparsers.add_parser(
             "run",
             help="Execute the attacks on a real JavaCard. ",
@@ -216,7 +206,6 @@ implementation it is running.
             action="store_true",
             help="No external programs are called, useful when developing the analyzer",
         )
-        # TODO test if argparse defaults are validated
         run_parser.add_argument(
             "-o",
             "--output-dir",
@@ -350,7 +339,6 @@ implementation it is running.
 
     # TODO unify load_configuration and load_config
     def load_configuration(self):
-        # FIXME load configuration
         self.config = configparser.ConfigParser()
         if self.config_file:
             self.config.read(self.config_file)
@@ -384,21 +372,6 @@ implementation it is running.
         ) as con:
             con.col.update_one({"_id": self.report_id}, {"$set": {key: value}})
 
-    # def save_record(self) -> None:
-    #     if self.dry_run:
-    #         return
-    #     try:
-    #         database = self.config["DATABASE"]["name"]
-    #         db_host = self.config["DATABASE"]["host"]
-    #         db_port = self.config["DATABASE"]["port"]
-    #     except KeyError:
-    #         database = "javacard-analysis"
-    #         db_host = "localhost"
-    #         db_port = "27017"
-
-    #     with MongoConnection(database=database, host=db_host, port=db_port) as con:
-    #         report_id = con.col.insert_one(self.report)
-
     def prepare(self):
         self.load_configuration()
         self.load_db_configuration()
@@ -409,7 +382,6 @@ implementation it is running.
         self.card = Card(gp=self.gp)
         self.gp.card = self.card
 
-    # TODO currently copied from AnalysisManager...
     def load_attacks(self) -> configparser.ConfigParser:
         registry = configparser.ConfigParser()
         registry_file = Path(DATA / "registry.ini")
@@ -471,18 +443,19 @@ implementation it is running.
             prem = PreAnalysisManager(self.card, self.gp)
             prem_results = prem.run()
 
-            self.report.update(
-                {
-                    "start-time": start_time,
-                    "message": self.message,
-                    "card": self.card.get_report(),
-                    "pre-analysis-results": prem_results,
-                }
-            )
+            start_report = {
+                "start-time": start_time,
+                # set end-time and duration, so that the analysis can be viewed mid run
+                "end-time": "",
+                "duration": "",
+                "message": self.message,
+                "card": self.card.get_report(),
+                "pre-analysis-results": prem_results,
+            }
             with MongoConnection(
                 database=self.database, host=self.db_host, port=self.db_port
             ) as con:
-                self.report_id = con.col.insert_one(self.report).inserted_id
+                self.report_id = con.col.insert_one(start_report).inserted_id
 
             print("Running the analysis..")
             anam = AnalysisManager(
@@ -493,25 +466,9 @@ implementation it is running.
             print("Running the post-analysis..")
             end_time = time.time()
 
-            self.report.update(
-                {
-                    # "start-time": start_time,
-                    "end-time": end_time,
-                    "duration": end_time - start_time,
-                    # "message": self.message,
-                    # "card": self.card.get_report(),
-                    # "pre-analysis-results": prem_results,
-                    # "analysis-results": anam_results,
-                }
-            )
             end_report = {
-                # "start-time": start_time,
                 "end-time": end_time,
                 "duration": end_time - start_time,
-                # "message": self.message,
-                # "card": self.card.get_report(),
-                # "pre-analysis-results": prem_results,
-                # "analysis-results": anam_results,
             }
             with MongoConnection(
                 database=self.database, host=self.db_host, port=self.db_port
@@ -647,7 +604,7 @@ class AnalysisManager:
                         }
                         # save the result of this attack into the database immediately
                         self.update_report(key_name, report=x)
-                        # the attack can lock/block
+                        # the attack can lock/block, continueing attacks makes no sense
                         if self.card_not_working(result=result):
                             print(
                                 "It seems, that the card stopped working during the execution of"
@@ -659,10 +616,11 @@ class AnalysisManager:
                             sys.exit(0)
                 else:
                     print("%s: skip" % attack)
-                    # report[attack]["sdk-version"] = version
         return report
 
     def update_report(self, attack_name, report):
+        """
+        """
         self.updater(attack_name, report)
 
     def card_not_working(self, result):
