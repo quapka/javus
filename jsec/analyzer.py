@@ -66,32 +66,37 @@ if int(PY_VERSION[0]) < 3:
     sys.exit(Error.UNSUPPORTED_PYTHON_VERSION)
 
 
+def detect_cards() -> List[CardConnectionDecorator]:
+    """
+    Detect all the JavaCards, that are currently inserted
+    in the readers.
+    """
+    cards = []
+    for reader in readers():
+        con = reader.createConnection()
+        try:
+            con.connect()
+            cards.append(con)
+        except (
+            smartcard.Exceptions.NoCardException,
+            smartcard.Exceptions.CardConnectionException,
+        ):
+            pass
+
+    return cards
+
+
 class PreAnalysisManager:
     # TODO handle pcscd not running exception smartcard.pcsc.PCSCExceptions.EstablishContextException
     def __init__(self, card: "Card", gp: "GlobalPlatformProWrapper"):
         self.card = card
         self.gp = gp
 
-    def detect_cards(self,) -> List[CardConnectionDecorator]:
-        r"""Detect all the JavaCards, that are currently inserted
-        in the readers.
-        """
-        cards = []
-        for reader in readers():
-            con = reader.createConnection()
-            try:
-                con.connect()
-                cards.append(con)
-            except smartcard.Exceptions.NoCardException:
-                pass
-
-        return cards
-
     def single_card_inserted(self) -> bool:
         r"""We need to ensure, that one and only one card is inserted in all of the readers
         when doing the analysis.
         """
-        self.cards = self.detect_cards()
+        self.cards = detect_cards()
         single_card = True
         number_of_cards = len(self.cards)
         if number_of_cards < 1:
@@ -112,7 +117,6 @@ class PreAnalysisManager:
     def run(self):
         report = {}
         if not self.single_card_inserted():
-            # TODO is it worth having custom errors?
             sys.exit(1)
         else:
             # now we know, that there is exactly one card connected and we can record its' ATR
@@ -646,7 +650,7 @@ class AnalysisManager:
                         break
 
             if not works:
-                cards = self.detect_cards()
+                cards = detect_cards()
                 if not cards:
                     return True
                 # TODO it is of question, whether to return True on else or not
