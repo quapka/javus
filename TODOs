@@ -61,5 +61,29 @@ Test if the applet AID has to be a0000000000062 or not. - javacard package
 
 TODO!!!
 Grammarly
-SCARD_NO_TRANSACT
-UPDATE results on the fly
+FIX::
+swap_x (SDK: jc221)
+    [ 1/ 5] install
+    [ 2/ 5] install
+    [ 3/ 5] send
+    [ 4/ 5] uninstall
+    [ 5/ 5] uninstall
+Traceback (most recent call last):
+  File "/home/qup/.local/share/virtualenvs/thesis-79WLnG5A/bin/jsec", line 7, in <module>
+    exec(compile(f.read(), __file__, 'exec'))
+  File "/home/qup/projects/fi/thesis/scripts/jsec", line 7, in <module>
+    app.run()
+  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 465, in run
+    anam_results = anam.run()
+  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 609, in run
+    if self.card_not_working(result=result):
+  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 650, in card_not_working
+    cards = detect_cards()
+  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 78, in detect_cards
+    con.connect()
+  File "/home/qup/.local/share/virtualenvs/thesis-79WLnG5A/lib/python3.6/site-packages/smartcard/CardConnectionDecorator.py", line 54, in connect
+    self.component.connect(protocol, mode, disposition)
+  File "/home/qup/.local/share/virtualenvs/thesis-79WLnG5A/lib/python3.6/site-packages/smartcard/pcsc/PCSCCardConnection.py", line 126, in connect
+    SCardGetErrorMessage(hresult))
+smartcard.Exceptions.CardConnectionException: Unable to connect with protocol: T0 or T1. Card is unpowered.
+:::
