@@ -1,13 +1,13 @@
 <project name="<ProjectName>">
     <property environment="env" />
     <property name="project.root"
-              value="${env.JCVM_ANALYSIS_HOME}" />
+        value="${basedir}/../../../../" />
     <property file="${project.root}/jsec/lib/jsec.properties" />
     <!-- Define Ant JavaCard task -->
     <!-- TODO make sure the relative paths are ok -->
     <taskdef name="javacard"
              classname="pro.javacard.ant.JavaCard"
-             classpath="${project.root}/jsec/lib/ant-javacard.jar" />
+             classpath="${project.root}/submodules/ant-javacard/target/ant-javacard.jar" />
     <!-- Import Ant contribution definitions -->
     <taskdef resource="net/sf/antcontrib/antcontrib.properties">
         <classpath>
@@ -47,7 +47,7 @@
         <mkdir dir="${build.dir}/${version}" />
     </target>
     <target name="build">
-        <javacard jckit="${project.root}/oracle_javacard_sdks/${version}_kit">
+        <javacard jckit="${project.root}/submodules/oracle_javacard_sdks/${version}_kit">
             <!-- Verification is not supported JavaCard version 212 -->
             <!-- FIXME should we support verification for others? -->
             <cap output="${build.dir}/${version}/${cap_prefix}-${version}.cap"
