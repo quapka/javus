@@ -480,7 +480,7 @@ implementation it is running.
                 con.col.update_one({"_id": self.report_id}, {"$set": end_report})
 
             # self.save_record()
-            if not self.start_web:
+            if self.start_web:
                 self.start_webserver()
 
         elif self.list_subcommand:
