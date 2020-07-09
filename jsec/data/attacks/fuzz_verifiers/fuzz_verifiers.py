@@ -9,7 +9,7 @@ from jsec.settings import SUBMODULES_DIR
 
 import os
 
-from pathlib import Path
+import pathlib
 
 
 class Stages:
@@ -51,18 +51,20 @@ class AttackBuilder(BaseBuilder):
     def fuzz_version(self, version):
         with cd(self.workdir):
             # open the original non-malicious CAP file and fuzz it
-            orig_file = Path(self.workdir / "build" / version.raw / "orig.cap")
+            orig_file = pathlib.Path(self.workdir / "build" / version.raw / "orig.cap")
             with open(orig_file, "rb") as f:
                 fuzzed = self.rad.fuzz(f.read(), seed=self.seed)
 
             # save the fuzzed CAP to a new file
-            fuzzed_file = Path(self.workdir / "build" / version.raw / "fuzzed.cap")
+            fuzzed_file = pathlib.Path(
+                self.workdir / "build" / version.raw / "fuzzed.cap"
+            )
             with open(fuzzed_file, "wb") as f:
                 f.write(fuzzed)
 
 
 class AttackExecutor(BaseAttackExecutor):
-    def _pre_custom_stage(self, *args, **kwargs):
+    def _prepare_custom_stage(self, *args, **kwargs):
         """
         The `_pre_<stage-name>` is the place, where you can perform some additional setup
         in case you need to do so. The difference from the other stage methods is, that in
@@ -90,8 +92,9 @@ class AttackExecutor(BaseAttackExecutor):
         )
         # find all the *.exp files for the SDK
         exp_files = []
-        for _, _, files in os.walk(api_export_root):
-            exp_files.extend([f for f in files if f.endswith(".exp")])
+        for path, _, files in os.walk(api_export_root):
+            path = pathlib.Path(path)
+            exp_files.extend([path / f for f in files if f.endswith(".exp")])
 
         fuzzed_file = self.workdir / "build" / sdk_version.raw / "fuzzed.cap"
 
