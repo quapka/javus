@@ -69,7 +69,6 @@ class MongoConnection(object):
 
 
 class Timer(object):
-    # naive timer, but to get at least an idea
     def __init__(self):
         self.start = None
         self.end = None

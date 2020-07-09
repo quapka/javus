@@ -144,8 +144,11 @@ def index():
     form.card.atr.choices = get_card_atr_choices()
 
     now = time.time()
-    analysis["start-time-ago"] = now - analysis["start-time"]
-    analysis["end-time-ago"] = now - analysis["end-time"]
+    # analysis["start-time-ago"] = now - analysis["start-time"]
+    # try:
+    #     analysis["end-time-ago"] = now - analysis["end-time"]
+    # except KeyError:
+    #     analysis
 
     return render_template("index.html", analysis=analysis, form=form, marks=Marks())
 
