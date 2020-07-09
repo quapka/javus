@@ -2,7 +2,11 @@ from typing import Optional
 
 import pytest
 
-from jsec.utils import AID, JCVersion, SDKVersion, load_versions
+from jsec.utils import AID, JCVersion, SDKVersion, load_versions, codec_options
+from pymongo_inmemory import MongoClient as InMemoryMongoClient
+
+import pathlib
+
 
 # from pytest_mock import mocker
 
@@ -163,3 +167,25 @@ class TestCommandAPDU:
     )
     def test_case1(self, raw_apdu, cla, ins, p1, p2, le, data, lc):
         CommandAPDU(raw_apdu)
+
+
+@pytest.mark.database
+class TestCustomCodecOptions:
+    @classmethod
+    def setup_class(cls):
+        cls.client = InMemoryMongoClient()  # No need to provide host
+        cls.db = cls.client["testdb"]
+        cls.collection = cls.db.get_collection(
+            "test-collection", codec_options=codec_options
+        )
+
+    def test_path_codec(self):
+        path = pathlib.Path("/".join("abcde"))
+        self.collection.insert_one({"path": path})
+
+    @classmethod
+    def teardown_class(cls):
+        """ teardown any state that was previously setup with a call to
+        setup_class.
+        """
+        cls.client.close()

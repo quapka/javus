@@ -9,8 +9,9 @@ import subprocess
 import sys
 import time
 from contextlib import contextmanager
+import pathlib
 
-from bson.codec_options import TypeCodec
+import bson
 
 # from collections import namedtuple
 from typing import List, NamedTuple, Optional
@@ -37,35 +38,6 @@ LOG_LEVELS = [
 
 class Error(enum.Enum):
     UNSUPPORTED_PYTHON_VERSION = -1
-
-
-# kudos to: https://medium.com/@ramojol/python-context-managers-and-the-with-statement-8f53d4d9f87
-class MongoConnection(object):
-    def __init__(
-        self,
-        host="localhost",
-        port="27017",
-        database="javacard-analysis",
-        collation="commands",
-    ):
-        self.host = host
-        self.port = port
-        self.connection = None
-        self.db_name = database
-        self.collation_name = collation
-
-    def __enter__(self, *args, **kwargs):
-        conn_str = f"mongodb://{self.host}:{self.port}"
-        log.debug("Starting the connection with %s", conn_str)
-
-        self.connection = pymongo.MongoClient(conn_str)
-        self.db = self.connection[self.db_name]
-        self.col = self.db[self.collation_name]
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        log.debug("Closing the connection to the database")
-        self.connection.close()
 
 
 class Timer(object):
@@ -477,15 +449,64 @@ class AttackConfigParser(configparser.ConfigParser):
         return sdks
 
 
-class SDKVersionTypeCodec(TypeCodec):
-    python_type = SDKVersion
+# class SDKVersionTypeCodec(bson.codec_options.TypeCodec):
+#     python_type = SDKVersion
+#     bson_type = str
+
+#     def transform_python(self, value: "SDKVersion") -> str:
+#         return str(value)
+
+#     def transform_bson(self, value: str) -> "SDKVersion":
+#         return SDKVersion.from_str(value)
+
+
+class PathTypeCodec(bson.codec_options.TypeCodec):
+    python_type = pathlib.PosixPath
     bson_type = str
 
-    def transform_python(self, value: "SDKVersion") -> str:
+    def transform_python(self, value: pathlib.PosixPath) -> str:
         return str(value)
 
-    def transform_bson(self, value: str) -> "SDKVersion":
-        return SDKVersion.from_str(value)
+    def transform_bson(self, value: str) -> pathlib.PosixPath:
+        return pathlib.PosixPath(value)
+
+
+# sdkversion_codec = SDKVersionTypeCodec()
+path_codec = PathTypeCodec()
+custom_codecs = [path_codec]
+type_registry = bson.codec_options.TypeRegistry(custom_codecs)
+codec_options = bson.codec_options.CodecOptions(type_registry=type_registry)
+
+
+# kudos to: https://medium.com/@ramojol/python-context-managers-and-the-with-statement-8f53d4d9f87
+class MongoConnection(object):
+    def __init__(
+        self,
+        host="localhost",
+        port="27017",
+        database="javacard-analysis",
+        collation="commands",
+    ):
+        self.host = host
+        self.port = port
+        self.connection = None
+        self.db_name = database
+        self.collation_name = collation
+
+    def __enter__(self, *args, **kwargs):
+        conn_str = f"mongodb://{self.host}:{self.port}"
+        log.debug("Starting the connection with %s", conn_str)
+
+        self.connection = pymongo.MongoClient(conn_str)
+        self.db = self.connection[self.db_name]
+        self.col = self.db.get_collection(
+            self.collation_name, codec_options=codec_options
+        )
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        log.debug("Closing the connection to the database")
+        self.connection.close()
 
 
 def get_user_consent(message, question):

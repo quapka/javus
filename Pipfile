@@ -15,6 +15,7 @@ jsecdev = {editable = true, path = "./pkgs/jsecdev"}
 jsec = {editable = true, path = "."}
 pydoc-markdown = "*"
 sphinx = "*"
+pymongo-inmemory = "*"
 
 [packages]
 pymongo = "*"
