@@ -238,7 +238,10 @@ class GlobalPlatformProWrapper(object):
 
         if save_state:
             # TODO setting state to _items, because of final saving to Mongo
-            state = self._save_state()._items
+            try:
+                state = self._save_state()._items
+            except AttributeError:
+                state = None
         else:
             state = None
 

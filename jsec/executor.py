@@ -123,7 +123,6 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         with cd(self.workdir):
             result = self.gp.install(path)
             if result["returncode"] == 0:
-                # prepare uninstall stages in reversed order, than installed
                 uninstall_stage = {"name": "uninstall", "path": path, "installed": True}
             else:
                 # when the installation is not successful we still want to add uninstall stage
@@ -364,6 +363,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             #         result["state"] = None
             self.report.append(result)
 
+        # FIXME add also the short description of the attacks
         return self.report
 
     @staticmethod
