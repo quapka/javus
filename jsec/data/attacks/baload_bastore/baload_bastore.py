@@ -19,24 +19,24 @@ class Stages:
             "name": "send",
             "comment": "STATUS APDU",
             "payload": "0x80 0x11 0x01 0x02	0x02	0x00 0x00		0x7F",
-            "optional": False,
+            "optional": True,
         },
         {
             "name": "send",
             "comment": "SETUP APDU",
             "payload": "0x80 0x12 0x01 0x02	0x02	0x00 0x00		0x7F",
-            "optional": False,
+            "optional": True,
         },
         {
             "name": "send",
             "comment": "READMEM APDU",
             "payload": "0x80 0x13 0x01 0x02	0x03	0x00 0x00 0xc0		0x7F",
-            "optional": False,
+            "optional": True,
         },
         {
             "name": "send",
             "comment": "CLEANUP APDU",
             "payload": "0x80 0x15 0x01 0x02	0x02	0x00 0x00		0x7F",
-            "optional": False,
+            "optional": True,
         },
     ]
