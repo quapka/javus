@@ -5,7 +5,7 @@ import enum
 import logging
 import os
 import re
-import subprocess as sp
+import subprocess
 import sys
 import time
 from contextlib import contextmanager
@@ -496,6 +496,22 @@ def get_user_consent(message, question):
             return True
         elif answer.startswith("n"):
             return False
+
+
+def proc_to_dict(proc: subprocess.CompletedProcess) -> dict:
+    """
+    Turns `subprocess.CompletedProcess` into a dictionary.
+    """
+    result = {}
+    attributes = ["args", "stdout", "stderr", "returncode"]
+    for attr in attributes:
+        # all those attributes should be present, but lets be cautious
+        try:
+            result[attr] = getattr(proc, attr)
+        except AttributeError:
+            pass
+
+    return result
 
 
 if __name__ == "__main__":
