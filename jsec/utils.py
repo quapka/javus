@@ -524,11 +524,19 @@ def proc_to_dict(proc: subprocess.CompletedProcess) -> dict:
     Turns `subprocess.CompletedProcess` into a dictionary.
     """
     result = {}
-    attributes = ["args", "stdout", "stderr", "returncode"]
+    attributes = ["args", "returncode"]
     for attr in attributes:
         # all those attributes should be present, but lets be cautious
         try:
             result[attr] = getattr(proc, attr)
+        except AttributeError:
+            pass
+
+    attributes = ["stdout", "stderr"]
+    for attr in attributes:
+        # all those attributes should be present, but lets be cautious
+        try:
+            result[attr] = getattr(proc, attr).decode("utf8")
         except AttributeError:
             pass
 
