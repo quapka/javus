@@ -75,11 +75,11 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         stages = self.import_stages()
         if stages is not None:
             return copy.deepcopy(stages)
-        stages = self.parse_config_stages()
-        if stages is not None:
-            return copy.deepcopy(stages)
 
-        raise ValueError("Cannot load attack stages")
+        module_file = self.workdir / (self.attack_name + ".py")
+        raise ValueError(
+            "Cannot load Stages.STAGES from %s. Does it exist?" % module_file
+        )
 
     def import_stages(self) -> Optional[List[dict]]:
         # the module name can be inferred from the paths
@@ -98,14 +98,6 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             pass
 
         return None
-
-    def parse_config_stages(self) -> List[dict]:
-        stages = []
-        for key, values in self.config["STAGES"].items():
-            for value in [x.strip() for x in values.splitlines() if x]:
-                stages.append({key: value})
-
-        return stages
 
     def _prepare_install(self, *args, **kwargs):
         pass
