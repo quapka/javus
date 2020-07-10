@@ -1,4 +1,5 @@
 from jsec.executor import BaseAttackExecutor
+from jsec.builder import BaseAttackBuilder
 
 
 class Stages:
