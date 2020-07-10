@@ -124,7 +124,7 @@ def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
     sdk_version = analysis["analysis-results"][attack_name]["sdk_version"]
     # return jsonify(stage)
     return render_template(
-        "stage.html", stage=stage, attack_name=attack_name, sdk_version=sdk_version
+        "stage.j2", stage=stage, attack_name=attack_name, sdk_version=sdk_version
     )
 
 
@@ -151,7 +151,7 @@ def index():
     # except KeyError:
     #     analysis
 
-    return render_template("index.html", analysis=analysis, form=form, marks=Marks())
+    return render_template("index.j2", analysis=analysis, form=form, marks=Marks())
 
 
 class AnalysisResultForm(flask_wtf.FlaskForm):

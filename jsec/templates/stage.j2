@@ -31,7 +31,7 @@
                     </div>
                 {% elif key == "communication" %}
                     {% with communication = value %}
-                        {% include "communication.html" %}
+                        {% include "communication.j2" %}
                     {% endwith %}
                 {% else %}
                     {{ value }}

@@ -2,17 +2,17 @@
 <html>
     <head>
         {% block head %}
-            {% include "head.html" %}
+            {% include "head.j2" %}
         {% endblock head %}
     </head>
     <body>
         {% block body %}
-            {% include "body.html" %}
+            {% include "body.j2" %}
         {% endblock body %}
     </body>
     <footer>
     {% block footer %}
-        {% include "footer.html" %}
+        {% include "footer.j2" %}
     {% endblock footer %}
     </footer>
 </html>

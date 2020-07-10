@@ -15,11 +15,11 @@
     </div>
     <div class="row">
         <div class="col-lg-5">
-            {% include "analysis-details.html" %}
+            {% include "analysis-details.j2" %}
         </div>
         <div class="col-lg-7">
             {% with card = analysis['card'] %}
-                {% include "card.html" %}
+                {% include "card.j2" %}
             {% endwith %}
         </div>
     </div>
@@ -28,7 +28,7 @@
     </div>
     <div class="row">
         <div class="col-lg-5">
-            {% include "legend.html" %}
+            {% include "legend.j2" %}
         </div>
     </div>
     <div class="row">
@@ -37,7 +37,7 @@
             {% for attack_name, attack_data in attacks.items() %}
               {% set stages = attack_data["results"] %}
               {% with analysis_id = analysis['_id'] %}
-                {% include "attack.html" %}
+                {% include "attack.j2" %}
               {% endwith %}
             {% endfor %}
         </div>
