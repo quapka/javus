@@ -6,13 +6,13 @@ import os
 import subprocess
 from pathlib import Path
 
-from jsec.builder import BaseBuilder
+from jsec.builder import BaseAttackBuilder
 from jsec.executor import BaseAttackExecutor
 from jsec.settings import ATTACKS
 from jsec.utils import cd
 
 
-class AttackBuilder(BaseBuilder):
+class AttackBuilder(BaseAttackBuilder):
     r"""Attacks from SecurityExploration have similar pattern, therefore they can
     share the AttackBuilder
     """
@@ -152,9 +152,9 @@ if __name__ == "__main__":
         version = None
 
     if args.cmd is not None:
-        cmd = BaseBuilder.COMMANDS[args.cmd]
+        cmd = BaseAttackBuilder.COMMANDS[args.cmd]
     else:
-        cmd = BaseBuilder.COMMANDS.build
+        cmd = BaseAttackBuilder.COMMANDS.build
 
     se = AttackBuilder(workdir=attack_name, version=version)
     se.execute(cmd=cmd)

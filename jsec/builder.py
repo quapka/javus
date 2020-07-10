@@ -74,7 +74,7 @@ class CommandLineBuilder(CommandLineApp):
         value = value.lower()
 
         try:
-            value = BaseBuilder.COMMANDS[value]
+            value = BaseAttackBuilder.COMMANDS[value]
         except KeyError:
             raise argparse.ArgumentTypeError(
                 "Unknown command '{cmd}'".format(cmd=value)
@@ -83,11 +83,11 @@ class CommandLineBuilder(CommandLineApp):
         return value
 
     def run(self):
-        builder = BaseBuilder(workdir=self.workdir, dry_run=False, version=self.version)
+        builder = BaseAttackBuilder(workdir=self.workdir, dry_run=False, version=self.version)
         builder.execute(self.cmd)
 
 
-class BaseBuilder(AbstractAttackBuilder):
+class BaseAttackBuilder(AbstractAttackBuilder):
     class COMMANDS(enum.Enum):
         clean = enum.auto()
         boostrap = enum.auto()

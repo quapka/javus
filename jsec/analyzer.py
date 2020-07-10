@@ -24,7 +24,7 @@ from smartcard.CardConnection import CardConnection
 from smartcard.CardConnectionDecorator import CardConnectionDecorator
 from smartcard.System import readers
 
-from jsec.builder import BaseBuilder
+from jsec.builder import BaseAttackBuilder
 from jsec.card import Card
 from jsec.data.jcversion.jcversion import JCVersionExecutor
 from jsec.executor import AbstractAttackExecutor, BaseAttackExecutor
@@ -122,12 +122,12 @@ class PreAnalysisManager:
             # now we know, that there is exactly one card connected and we can record its' ATR
             self.card.atr = ATR(self.cards[0].getATR())
             self.card.reader = self.cards[0].getReader()
-        builder = BaseBuilder(gp=self.gp, workdir=DATA / "jcversion")
-        builder.execute(BaseBuilder.COMMANDS.build)
+        builder = BaseAttackBuilder(gp=self.gp, workdir=DATA / "jcversion")
+        builder.execute(BaseAttackBuilder.COMMANDS.build)
         used_aids = self.card.get_current_aids()
         if not builder.uniq_aids(used_aids):
             builder.uniqfy(used_aids)
-            builder.execute(BaseBuilder.COMMANDS.build)
+            builder.execute(BaseAttackBuilder.COMMANDS.build)
         print("WARNING: Manually setting JCVersion for Card A!!!")
         self.card.jcversion = JCVersion.from_str("0300")
         # FIXME don't hardcode it for a card!  put JCVersion into a used-config.ini
@@ -552,12 +552,12 @@ class AnalysisManager:
     #                 gp=self.gp, workdir=ATTACKS / attack, version=version
     #             )
     #             # FIXME when to build the attacks?
-    #             builder.execute(BaseBuilder.COMMANDS.build)
+    #             builder.execute(BaseAttackBuilder.COMMANDS.build)
     #             if not builder.uniq_aids(self.card.get_current_aids()):
     #                 builder.uniqfy(used=self.card.get_current_aids())
     #                 # rebuild the applet
     #                 # TODO or call build directly? much nicer..
-    #                 builder.execute(BaseBuilder.COMMANDS.build)
+    #                 builder.execute(BaseAttackBuilder.COMMANDS.build)
     #             self.report[attack + "-" + version.raw] = {
     #                 "results": executor.execute(sdk_version=version),
     #                 "sdk_version": version.raw,
@@ -592,12 +592,12 @@ class AnalysisManager:
                             gp=self.gp, workdir=ATTACKS / attack, version=version
                         )
                         # FIXME when to build the attacks?
-                        builder.execute(BaseBuilder.COMMANDS.build)
+                        builder.execute(BaseAttackBuilder.COMMANDS.build)
                         if not builder.uniq_aids(self.card.get_current_aids()):
                             builder.uniqfy(used=self.card.get_current_aids())
                             # rebuild the applet
                             # TODO or call build directly? much nicer..
-                            builder.execute(BaseBuilder.COMMANDS.build)
+                            builder.execute(BaseAttackBuilder.COMMANDS.build)
                         result = executor.execute(sdk_version=version)
                         key_name = attack + "-" + version.raw
                         x = {
@@ -681,7 +681,7 @@ class AnalysisManager:
             # FIXME handle this
             pass
 
-        return BaseBuilder
+        return BaseAttackBuilder
 
     def get_executor(self, attack_name: str, module: str) -> AbstractAttackExecutor:
         # first load the executor from the directory of the attack

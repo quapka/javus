@@ -1,5 +1,5 @@
 from jsec.executor import BaseAttackExecutor
-from jsec.builder import BaseBuilder
+from jsec.builder import BaseAttackBuilder
 import random
 import subprocess
 import random
@@ -28,7 +28,7 @@ class Stages:
     ]
 
 
-class AttackBuilder(BaseBuilder):
+class AttackBuilder(BaseAttackBuilder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # fix seed for every build
