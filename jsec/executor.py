@@ -284,11 +284,15 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         # FIXME stop on SCARD_NO_TRANSANCT in STDOUT/STDERR
         for i, stage_data in enumerate(stages):
             stage = stage_data.pop("name")
-            print("    [%2d/%2d] %s" % (x, n_stages, stage))
-            x += 1
             result = self._run_stage(
                 stage, **stage_data, sdk_version=sdk_version, **kwargs
             )
+            try:
+                success = "pass" if result["success"] else "fail"
+            except KeyError:
+                success = ""
+            print("    [%2d/%2d] %s: %s" % (x, n_stages, stage, success))
+            x += 1
 
             result["name"] = stage
             result["skipped"] = False
@@ -335,7 +339,10 @@ class BaseAttackExecutor(AbstractAttackExecutor):
                     stage, **stage_data, sdk_version=sdk_version, **kwargs
                 )
                 result["skipped"] = False
-                print()
+                if result["success"]:
+                    print(" pass")
+                else:
+                    print(" fail")
             else:
                 result = copy.deepcopy(stage_data)
                 result["skipped"] = True
