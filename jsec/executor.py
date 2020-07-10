@@ -387,7 +387,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         try:
             prepare_method = getattr(self, prepare_stage)
         except AttributeError:
-            log.warning("Cannot find stage method '%s'", prepare_stage)
+            log.info("Cannot find stage method '%s'", prepare_stage)
 
             # prepare_method is optional and lambda cannot use *args, **kwargs
             def prepare_method(*args, **kwargs):
