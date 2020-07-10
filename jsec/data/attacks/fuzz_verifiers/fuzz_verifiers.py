@@ -100,7 +100,12 @@ class AttackExecutor(BaseAttackExecutor):
 
         cmd = [verifycap_file, *exp_files, fuzzed_file]
         proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return proc_to_dict(proc=proc)
+        result = proc_to_dict(proc=proc)
+
+        with open(fuzzed_file, "rb") as f:
+            result["fuzzed.cap"] = f.read()
+
+        return result
 
     def _assess_verify_off_card(self, result, *args, **kwargs):
         """
