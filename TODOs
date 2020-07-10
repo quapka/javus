@@ -87,3 +87,5 @@ Traceback (most recent call last):
     SCardGetErrorMessage(hresult))
 smartcard.Exceptions.CardConnectionException: Unable to connect with protocol: T0 or T1. Card is unpowered.
 :::
+
+TODO: rename BaseBuilder to BaseAttackBuilder

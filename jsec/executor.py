@@ -333,6 +333,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             self.report.append(result)
 
         while self.uninstall_stages:
+            # FIXME add 'pass' 'fail' to the print
             stage_data = self.uninstall_stages.pop()
             stage = stage_data.pop("name")
             print("    [%2d/%2d] %s" % (x, n_stages, stage), end="")

@@ -144,6 +144,7 @@ def index():
     form.card.atr.choices = get_card_atr_choices()
 
     now = time.time()
+    # TODO add an option to delete an analysis
     # analysis["start-time-ago"] = now - analysis["start-time"]
     # try:
     #     analysis["end-time-ago"] = now - analysis["end-time"]

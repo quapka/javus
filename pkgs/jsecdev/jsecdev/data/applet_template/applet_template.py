@@ -7,7 +7,8 @@ class Stages:
             # 'install' is one of the predefined stages
             "name": "install",
             # {version} is dynamically populated with the SDK version
-            "path": "build/{version}/javacardversion-{version}.cap",
+            # TODO should we maybe use the cap-prefix here?, load it from config?
+            "path": "build/{version}/applet-{version}.cap",
             # 'optional' determines, whether we want to continue performing
             # the following stages is this stage fails
             "optional": False,
