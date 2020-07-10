@@ -584,12 +584,10 @@ class AnalysisManager:
                 executor = AttackExecutor(
                     card=self.card, gp=self.gp, workdir=ATTACKS / attack
                 )
+                AttackBuilder = self.get_builder(attack_name=attack, module=module)
                 if self.attacks.getboolean(section, attack):
                     for version in executor.sdks:
                         print("%s (SDK: %s)" % (attack, version.raw))
-                        AttackBuilder = self.get_builder(
-                            attack_name=attack, module=module
-                        )
                         builder = AttackBuilder(
                             gp=self.gp, workdir=ATTACKS / attack, version=version
                         )
