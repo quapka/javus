@@ -609,7 +609,7 @@ class AnalysisManager:
                         # the attack can lock/block, continueing attacks makes no sense
                         if self.card_not_working(result=result):
                             print(
-                                "It seems, that the card stopped working during the execution of"
+                                "It seems, that the card stopped working during the execution of "
                                 "the attack %s\nYou can try replugging the card/reader (and "
                                 "wait a few minutes, before the card starts working again) and "
                                 "start the analysis again or maybe skip this attack."
