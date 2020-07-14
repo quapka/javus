@@ -14,32 +14,32 @@ class Stages:
         },
         {
             "name": "send",
-            "comment": "GETFIELD_A APDU",
+            "comment": "GETFIELD_A",
             "payload": "0x80 0x10 0x01 0x02	0x01	0x00		0x7F",
         },
         {
             "name": "send",
-            "comment": "PUTFIELD_A APDU",
+            "comment": "PUTFIELD_A",
             "payload": "0x80 0x11 0x01 0x02	0x02	0x7f 0xff	0x7F",
         },
         {
             "name": "send",
-            "comment": "GETFIELD_B APDU",
+            "comment": "GETFIELD_B",
             "payload": "0x80 0x12 0x01 0x02	0x01	0x00		0x7F",
         },
         {
             "name": "send",
-            "comment": "PUTFIELD_B APDU",
+            "comment": "PUTFIELD_B",
             "payload": "0x80 0x13 0x01 0x02	0x02	0x7f 0xff	0x7F",
         },
         {
             "name": "send",
-            "comment": "GETFIELD_S APDU",
+            "comment": "GETFIELD_S",
             "payload": "0x80 0x14 0x01 0x02	0x01	0x00		0x7F",
         },
         {
             "name": "send",
-            "comment": "PUTFIELD_S APDU",
+            "comment": "PUTFIELD_S",
             "payload": "0x80 0x15 0x01 0x02	0x02	0x7f 0xff	0x7F",
         },
     ]
