@@ -62,29 +62,6 @@
                 jca="test.jca">
             <applet class="com.dumpmemapplet.DumpMemApplet" aid="${pkg.rid}${applet.pix}"/>
             </cap>
-            <!-- <cap output="${build.dir}/${version}/com/se/vulns/javacard/vulns.cap" -->
-            <!--      package="com.se.vulns" -->
-            <!--      sources="${src.dir}" -->
-            <!--      aid="${pkg.rid}${vulns.pix}" -->
-            <!--      verify="false" -->
-            <!--      ints="true" -->
-            <!--      export="${build.dir}/${version}" -->
-            <!--      jca="${build.dir}/${version}/com/se/vulns/javacard/vulns.jca"> -->
-            <!-- </cap> -->
-            <!-- <!-1- Build the actual applet that is going to be run -1-> -->
-            <!-- <cap output="${build.dir}/${version}/com/se/applets/javacard/applets.cap" -->
-            <!--      package="com.se.applets" -->
-            <!--      sources="${src.dir}" -->
-            <!--      aid="${pkg.rid}${pkg.pix}" -->
-            <!--      verify="false" -->
-            <!--      ints="true" -->
-            <!--      export="${build.dir}/${version}" -->
-            <!--      jca="${build.dir}/${version}/com/se/applets/javacard/applets.jca"> -->
-
-            <!--     <applet class="com.se.applets.SEApplet" -->
-            <!--             aid="${pkg.rid}${applet.pix}" /> -->
-            <!--     <import exps="${build.dir}/${version}" /> -->
-            <!-- </cap> -->
         </javacard>
     </target>
 </project>
