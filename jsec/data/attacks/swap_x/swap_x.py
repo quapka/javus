@@ -14,7 +14,7 @@ class Stages:
         },
         {
             "name": "send",
-            "comment": "GET_STATIC APDU",
+            "comment": "TRIGGER_SWAPX",
             "payload": "0x80 0x10 0x01 0x02	0x01	0x00	0x7F",
         },
     ]

@@ -11,13 +11,13 @@ class Stages:
         },
         {
             "name": "send",
-            "comment": "NREAD_SHORT APDU",
+            "comment": "NREAD_SHORT",
             "payload": "0x80 0x10 0x01 0x02	0x06	0x00 0x00 0x00 0x00 0x00 0x00			0x7F",
             "optional": False,
         },
         {
             "name": "send",
-            "comment": "NWRITE_SHORT APDU",
+            "comment": "NWRITE_SHORT",
             "payload": "0x80 0x11 0x01 0x02	0x08	0x00 0x00 0x00 0x00 0x00 0x00 0x11 0x22		0x7F",
             "optional": False,
         },

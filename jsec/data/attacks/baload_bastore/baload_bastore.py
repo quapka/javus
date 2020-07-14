@@ -11,31 +11,39 @@ class Stages:
         },
         {
             "name": "send",
-            "comment": "PING APDU",
+            "comment": "PING",
             "payload": "0x80 0x10 0x01 0x02	0x02	0x00 0x00		0x7F",
             "optional": False,
         },
         {
             "name": "send",
-            "comment": "STATUS APDU",
+            "comment": "STATUS",
             "payload": "0x80 0x11 0x01 0x02	0x02	0x00 0x00		0x7F",
             "optional": True,
         },
         {
             "name": "send",
-            "comment": "SETUP APDU",
+            "comment": "SETUP",
             "payload": "0x80 0x12 0x01 0x02	0x02	0x00 0x00		0x7F",
             "optional": True,
         },
         {
             "name": "send",
-            "comment": "READMEM APDU",
+            "comment": "READ MEM",
             "payload": "0x80 0x13 0x01 0x02	0x03	0x00 0x00 0xc0		0x7F",
             "optional": True,
         },
+        # The following instruction is mentioned in the original report, but not
+        # used in the POC.
+        # {
+        #     "name": "send",
+        #     "comment": "WRITE_MEM APDU",
+        #     "payload": "0x80 0x14 0x01 0x02	0x03	0x00 0x00 0xc0		0x7F",
+        #     "optional": True,
+        # },
         {
             "name": "send",
-            "comment": "CLEANUP APDU",
+            "comment": "CLEANUP",
             "payload": "0x80 0x15 0x01 0x02	0x02	0x00 0x00		0x7F",
             "optional": True,
         },
