@@ -55,7 +55,7 @@
             <!-- Verification is not supported JavaCard version 212 -->
             <!-- Build the vulnerable part -->
             <!-- <cap output="com.illegalcast-jc212.cap" --> 
-            <cap output="${build.dir}/${version}/transaction_confusion-${version}.cap"
+            <cap output="${build.dir}/${version}/transaction_confusion.cap"
                 sources="${src.dir}"
                 aid="${pkg.rid}"
                 verify="false"
