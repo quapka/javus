@@ -12,6 +12,7 @@
 .container {
     width: 1200px;
 }
+
 * {
     font-family: titillium;
 }
@@ -39,17 +40,17 @@ div.scrollable {
 
 td.analysis-details-id-value {
     font-family: Courier New;
-    font-size: 13px;
+    size: 12px;
 }
 
 div.filter-option-inner-inner {
     font-family: Courier New;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 ul.dropdown-menu.inner > li > a > span.text {
     font-family: Courier New;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 table.card-details {
@@ -118,41 +119,18 @@ table.communication th:nth-child(2) {
     text-align:right;
 }
 
+.table.form {
+    width: 100%;
+    border: None;
+}
 
-/* table.communication tr th:nth-child(2) { */
-/*     width: 20%; */
-/* } */
+.table.form tr:nth-child(2) {
+    text-align: right;
+}
 
-/* table.communication tr th:nth-child(3) { */
-/*     width: 60%; */
-/*     /1* text-align: right; *1/ */
-/* } */
-/* table.communication td { */
-/*     word-wrap: break-word; */
-/* } */
-
-/* table.communication tr td:nth-child(3) { */
-/*     /1* text-align: right; *1/ */
-/* } */
-
-/* td, th { */
-/*     border: 1px solid #dddddd; */
-/*     text-align: center; */
-/*     padding: 8px; */
-/* } */
-
-/* td { */
-/* } */
-
-/* tr:nth-child(even) { */
-/*     background-color: #dddddd; */
-/* } */
-/* .stage-td { */
-/*     max-width:600px; */
-/*     max-height: 200px; */
-/*     overflow: scroll; */
-/*     text-align: left; */
-/* } */
+.table.form thead,tbody {
+    border: None;
+}
 
 caption {
   display: table-caption;
