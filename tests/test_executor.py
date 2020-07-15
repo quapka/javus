@@ -48,9 +48,6 @@ class TestBaseAttackExecutor:
         with mock.patch.object(
             BaseAttackExecutor, "_load_config", new=self._load_test_config
         ):
-            import pudb
-
-            pudb.set_trace()
             bae = BaseAttackExecutor(card=self.card, gp=self.gp, workdir=self.path)
             assert bae._parse_payload(raw_payload) == parsed_payload
 
