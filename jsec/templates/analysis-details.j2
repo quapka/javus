@@ -1,12 +1,12 @@
-<form action="" method="post" novalidate>
-{{ form.run.csrf_token }}
 <table class="table">
     <caption>Analysis Details</caption>
     <tbody>
         <tr>
             <td>ID</td>
             <td class="analysis-details-id-value">{{ analysis["_id"]|add_whitespace_id }}</td>
-            <td><i class="glyphicon glyphicon-copy" onclick="copyAnalysisID({{ analysis['_id'] }})"></i></td>
+            <td>
+                {# <i class="glyphicon glyphicon-copy" onclick="copyAnalysisID({{ analysis['_id'] }})"></i> #}
+            </td>
         </tr>
         <tr>
             <td>Started at</td>
@@ -23,11 +23,11 @@
             <td>{{ analysis["duration"]|format_duration }}</td>
             <td></td>
         </tr>
-        <tr>
-            <td>{{ form.run.analysis.label }}</td>
-            <td>{{ form.run.analysis(class="form-control selectpicker") }}</td>
-            <td>{{ form.run.submit(class="btn btn-primary") }}</td>
-        </tr>
+        {# <tr> #}
+        {#     <td>{{ form.run.analysis.label }}</td> #}
+        {#     <td>{{ form.run.analysis(class="form-control selectpicker") }}</td> #}
+        {#     <td>{{ form.run.submit(class="btn btn-primary") }}</td> #}
+        {# </tr> #}
     </tbody>
 </table>
-</form>
+{# </form> #}

@@ -1,0 +1,12 @@
+<div class="row">
+    <div class="col-lg-6">
+        {% for attack_name, attack_data in attacks.items() %}
+          {% set stages = attack_data["results"] %}
+          {% with analysis_id = analysis['_id'] %}
+            {% include "attack.j2" %}
+          {% endwith %}
+        {% endfor %}
+    </div>
+    <!-- The following div is populated with AJAX calls -->
+    <div class="col-lg-6" id="stage-details"></div>
+</div>

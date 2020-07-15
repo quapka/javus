@@ -1,3 +1,6 @@
+{# {% extends "base.j2" %} #}
+{# <form action="" method="post" novalidate> #}
+{#     {{ form.card.csrf_token }} #}
 <table class="table card-details">
     <caption>Card details</caption>
     <thead>
@@ -21,10 +24,11 @@
         <tr>
             <td colspan="3">For further details about the card visit <a href="{{ card["smartcard-atr-link"] }}">smartcard-atr.apdu.fr</a>.</td>
         </tr>
-        <tr>
-            <td>{{ form.card.atr.label }}</td>
-            <td>{{ form.card.atr(class="form-control selectpicker") }}</td>
-            <td>{{ form.card.submit(class="btn btn-primary") }}</td>
-        <tr>
+        {# <tr> #}
+        {#     <td>{{ form.card.atr.label }}</td> #}
+        {#     <td>{{ form.card.atr(class="form-control selectpicker") }}</td> #}
+        {#     <td>{{ form.card.submit(class="btn btn-primary") }}</td> #}
+        {# </tr> #}
     </tbody>
 </table>
+{# </form> #}

@@ -1,0 +1,56 @@
+<form action="" method="post" novalidate>
+{{ form.run.csrf_token }}
+    <div class="row">
+        <div class="col-lg-3">
+            <table class="table table-responsive form">
+                <thead>
+                    <tr>
+                        <th>{{ form.run.analysis.label }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ form.run.analysis(class="form-control selectpicker") }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.run.submit(class="btn btn-primary") }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-3">
+            <table class="table table-responsive form">
+                <thead>
+                    <tr>
+                        <th>{{ form.attack.attack_name.label }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ form.attack.attack_name(class="form-control selectpicker") }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.attack.submit(class="btn btn-primary") }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-6">
+            <table class="table table-responsive form">
+                <thead>
+                    <tr>
+                        <th>{{ form.card.atr.label }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ form.card.atr(class="form-control selectpicker") }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.card.submit(class="btn btn-primary") }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>

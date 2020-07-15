@@ -1,0 +1,21 @@
+{% extends "base.j2" %}
+{% block body %}
+    <div class="row">
+        <div class="col-lg-6">
+        {% for run in runs %}
+            {% set analysis = run %}
+            {% set attacks = run["analysis-results"] %}
+            {{ run["card"]["atr"] }}
+            {# {% include "run-attacks.js2" %} #}
+                    {% for attack_name, attack_data in attacks.items() %}
+                      {% set stages = attack_data["results"] %}
+                      {% with analysis_id = analysis['_id'] %}
+                        {% include "attack.j2" %}
+                      {% endwith %}
+                    {% endfor %}
+                <!-- The following div is populated with AJAX calls -->
+        {% endfor %}
+        </div>
+        <div class="col-lg-6" id="stage-details"></div>
+    </div>
+{% endblock body %}

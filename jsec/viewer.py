@@ -23,9 +23,29 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-very-secret-and-should-be-fixed"
 
 # FIXME load from config file
-name = "javacard-analysis"
-host = "localhost"
-port = "27017"
+db_config = {
+    "database": "javacard-analysis",
+    "host": "localhost",
+    "port": "27017",
+}
+
+
+# TODO only for the purpose of finishing the thesis
+atr2name = {
+    "3BFC180000813180459067464A01002005000000004E": "A",
+    "3BFC180000813180459067464A01002005000000004E": "Anew",
+    "3BFE1800008031FE4553434536302D43443038312D6E46A9": "B",
+    "3B7B1800000031C06477E30300839000": "C",
+    "3B7B1800000031C06477E30300829000": "Cnew",
+    "3BF81800008031FE450073C8401300900092": "D",
+    "3B9F95803FC7A08031E073FA21106300000083F09000BB": "E",
+    "3BF81300008131FE454A434F5076323431B7": "F",
+    "3B6D000080318065409086015183079000": "G",
+    "3BF81800FF8131FE454A434F507632343143": "H",
+    "3B7B1800000031C06477E910007F9000": "I",
+    "3B7B1800000031C06477E91000019000": "Inew",
+    "3B9495810146545601C4": "J",
+}
 
 
 class Marks:
@@ -61,6 +81,9 @@ class Marks:
         return items
 
 
+marks = Marks()
+
+
 def load_config():
     config = configparser.ConfigParser()
     config.read()
@@ -75,10 +98,7 @@ def get_stylesheet_content():
 
 
 def get_analysis_choices() -> List[Tuple[str, str]]:
-    name = "javacard-analysis"
-    host = "localhost"
-    port = "27017"
-    with MongoConnection(database=name, host=host, port=port) as con:
+    with MongoConnection(**db_config) as con:
         all_attack_ids = con.col.find(
             projection=["_id"], sort=[("start-time", pymongo.ASCENDING)]
         )
@@ -95,7 +115,7 @@ def get_analysis_choices() -> List[Tuple[str, str]]:
 
 
 def get_card_atr_choices() -> List[Tuple[str, str]]:
-    with MongoConnection(database=name, host=host, port=port) as con:
+    with MongoConnection(**db_config) as con:
         records = con.col.find(projection=["card"])
 
     choices = []
@@ -109,15 +129,38 @@ def get_card_atr_choices() -> List[Tuple[str, str]]:
             # FIXME remove on fresh database, where 'atr's are string
             atr = " ".join(["{:02X}".format(byte) for byte in atr])
 
-        choices.append((atr, atr))
+        label = convert_atr(atr)
+        choices.append((atr, label))
     choices = list(set(choices))
+    choices.sort(key=lambda x: x[1])
+
+    return choices
+
+
+def get_attack_choices() -> List[Tuple[str, str]]:
+    """
+    Probably quite slow and ineffient method of getting all the attacks.
+    """
+    with MongoConnection(**db_config) as con:
+        runs = con.col.find(projection=["analysis-results"])
+
+    attacks = []
+    for run in runs:
+        try:
+            attacks.extend(list(run["analysis-results"].keys()))
+        except (AttributeError, KeyError):
+            continue
+
+    attacks = sorted(set(attacks))
+    choices = [(a, a) for a in attacks]
+
     return choices
 
 
 # @app.route("/attack/<id>/stage/<stage_index>", methods=["GET"])
 @app.route("/get_stage_data/<analysis_id>/<attack_name>/<stage_index>/<stage_name>")
 def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
-    with MongoConnection(database=name, host=host, port=port) as con:
+    with MongoConnection(**db_config) as con:
         analysis = con.col.find_one({"_id": ObjectId(analysis_id)})
 
     stage = analysis["analysis-results"][attack_name]["results"][int(stage_index)]
@@ -130,28 +173,69 @@ def get_stage_data(analysis_id, attack_name, stage_index, stage_name):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    # FIXME add stage viewer
-    if request.method == "POST":
-        attack_id = request.form["run-analysis"]
-        with MongoConnection(database=name, host=host, port=port) as con:
-            analysis = con.col.find_one({"_id": ObjectId(attack_id)})
-    else:
-        with MongoConnection(database=name, host=host, port=port) as con:
-            analysis = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
-
     form = MainForm()
     form.run.analysis.choices = get_analysis_choices()
     form.card.atr.choices = get_card_atr_choices()
+    form.attack.attack_name.choices = get_attack_choices()
 
-    now = time.time()
-    # TODO add an option to delete an analysis
-    # analysis["start-time-ago"] = now - analysis["start-time"]
-    # try:
-    #     analysis["end-time-ago"] = now - analysis["end-time"]
-    # except KeyError:
-    #     analysis
+    if request.method == "POST":
+        # handle run form
+        return form_handler_template(form=form)
+    else:
+        with MongoConnection(**db_config) as con:
+            analysis = con.col.find_one(sort=[("start-time", pymongo.DESCENDING)])
 
-    return render_template("index.j2", analysis=analysis, form=form, marks=Marks())
+    return render_template("base.j2", analysis=analysis, form=form, marks=marks)
+
+
+def form_handler_template(form):
+    """
+    Return the correct bases on which form was filled in
+    """
+    items = list(request.form.keys())
+    if "run-submit" in items:
+        return run_form_template(form)
+    elif "attack-submit" in items:
+        return attack_form_template(form)
+    elif "card-submit" in items:
+        return card_form_template(form)
+
+
+def run_form_template(form):
+    attack_id = request.form["run-analysis"]
+    with MongoConnection(**db_config) as con:
+        run = con.col.find_one({"_id": ObjectId(attack_id)})
+
+    return render_template("runs.j2", analysis=run, form=form, marks=marks)
+
+
+def attack_form_template(form):
+    name = request.form["attack-attack_name"].strip()
+    with MongoConnection(**db_config) as con:
+        field = "analysis-results.%s" % name
+        sieve = {
+            "analysis-results.%s" % name: {"$exists": True},
+            "card": {"$exists": True},
+        }
+
+        runs = con.col.find(sieve, projection=[field, "card"])
+
+    return render_template("attacks.j2", form=form, runs=runs, marks=marks)
+
+
+def card_form_template(form):
+    """
+    Render all attacks for given ATR, which does not equal given card.
+    This could be potentially misleading in the results.
+    """
+    atr = request.form["card-atr"]
+    with MongoConnection(**db_config) as con:
+        card = con.col.find_one({"card.atr": atr}, projection=["card"])
+
+    with MongoConnection(**db_config) as con:
+        runs = con.col.find({"card.atr": atr})
+
+    return render_template("atr-body.j2", form=form, card=card, runs=runs, marks=marks)
 
 
 class AnalysisResultForm(flask_wtf.FlaskForm):
@@ -164,9 +248,15 @@ class CardSelectForm(flask_wtf.FlaskForm):
     submit = wtforms.SubmitField("Show")
 
 
+class AttackSelectForm(flask_wtf.FlaskForm):
+    attack_name = wtforms.SelectField(u"Attack")
+    submit = wtforms.SubmitField("Show")
+
+
 class MainForm(flask_wtf.FlaskForm):
     run = wtforms.FormField(AnalysisResultForm)
     card = wtforms.FormField(CardSelectForm)
+    attack = wtforms.FormField(AttackSelectForm)
 
 
 @app.template_filter()
@@ -174,6 +264,10 @@ def as_datetime(utc_timestamp: str, dt_format: str = "%H:%M:%S %d/%m/%Y") -> str
     r"""
     `utc_timestamp`: assumed to be UTC timestamp, that will be displayed
     """
+    try:
+        float(utc_timestamp)
+    except:
+        return "-"
     # FIXME this might still not work for daylight saving time, but is good enough for now
     dt = datetime.datetime.fromtimestamp(float(utc_timestamp))
     dt.replace(tzinfo=pytz.utc)
@@ -187,8 +281,8 @@ def format_duration(utc_timestamp: str) -> str:
     """
     try:
         utc_timestamp = float(utc_timestamp)
-    except ValueError:
-        return "Invalid value: %s" % utc_timestamp
+    except:
+        return "-"
 
     microseconds = int(round((utc_timestamp - int(utc_timestamp)) * 1000))
 
@@ -228,6 +322,13 @@ def add_whitespace_id(_id: str) -> str:
 
     chunks = [_id[8 * i : 8 * (i + 1)] for i in range(len(_id) // 8)]
     return " ".join(chunks)
+
+
+@app.template_filter()
+def convert_atr(value: str) -> str:
+    atr = value.replace(" ", "")
+    label = atr2name[atr] + " " + atr
+    return label
 
 
 # @app.route('/dump')
