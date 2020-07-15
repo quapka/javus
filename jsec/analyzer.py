@@ -43,6 +43,7 @@ from jsec.utils import (
     get_builder,
 )
 from jsec.viewer import app
+from jsec.validator import AttackValidator
 
 
 # FIXME handle error on gp --list
@@ -182,6 +183,7 @@ implementation it is running.
         self.add_web_parser()
         self.add_run_parser()
         self.add_list_parser()
+        self.add_attack_validator_parser()
 
     def add_web_parser(self):
 
@@ -261,6 +263,15 @@ implementation it is running.
         # TODO def add options attempting to uninstall all applets, that were installed
         # TODO add argument to dump to json file intead of MongoDB
 
+    def add_attack_validator_parser(self):
+        self.validator_parser = self.subparsers.add_parser(
+            "validate", help="Validate, that the [ATACK] is ready fro execution",
+        )
+
+        self.validator_parser.add_argument(
+            "-a", "--attack", help="The name of the attack to validate",
+        )
+
     def validate_attack_name(self, value):
         raise NotImplementedError(
             "Execution of a single attack is not implemented at the moment."
@@ -296,6 +307,10 @@ implementation it is running.
     def list_subcommand(self):
         return self.args.sub_command == "list"
 
+    @property
+    def attack_validator_subcommand(self):
+        return self.args.sub_command == "validate"
+
     def parse_options(self):
         super().parse_options()
         if self.web_subcommand:
@@ -319,6 +334,12 @@ implementation it is running.
             self.web_port = self.args.web_port
             self.attack_name = self.args.attack
             self.riskit = self.args.riskit
+
+        elif self.attack_validator_subcommand:
+            if self.args.attack is not None:
+                self.attacks = [self.args.attack]
+            else:
+                self.attacks = self.load_attacks_raw()
 
     def validate_config(self, value: str) -> Path:
         if not os.path.exists(value):
@@ -387,6 +408,16 @@ implementation it is running.
         )
         self.card = Card(gp=self.gp)
         self.gp.card = self.card
+
+    def load_attacks_raw(self):
+        registry = self.load_attacks()
+        attacks = []
+        for section in registry.sections():
+            for value in registry[section]:
+                if value != "module":
+                    attacks.append(value)
+
+        return attacks
 
     def load_attacks(self) -> configparser.ConfigParser:
         registry = configparser.ConfigParser()
@@ -488,6 +519,13 @@ implementation it is running.
         elif self.list_subcommand:
             self.print_attack_list()
 
+        elif self.attack_validator_subcommand:
+            self.validate_attacks()
+
+    def validate_attacks(self):
+        attack_validator = AttackValidator()
+        attack_validator.run(attacks=self.attacks)
+
 
 class PostAnalysisManager:
     def __init__(self, output_dir: Path):
@@ -582,11 +620,11 @@ class AnalysisManager:
                 # is share with ant
                 if attack == "module":
                     continue
-                AttackExecutor = self.get_executor(attack_name=attack, module=module)
+                AttackExecutor = get_executor(attack_name=attack, module=module)
                 executor = AttackExecutor(
                     card=self.card, gp=self.gp, workdir=ATTACKS / attack
                 )
-                AttackBuilder = self.get_builder(attack_name=attack, module=module)
+                AttackBuilder = get_builder(attack_name=attack, module=module)
                 if self.attacks.getboolean(section, attack):
                     for version in executor.sdks:
                         print("%s (SDK: %s)" % (attack, version.raw))
