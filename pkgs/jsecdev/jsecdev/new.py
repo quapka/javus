@@ -135,7 +135,7 @@ class App(object):
 
     def process_options(self):
         self.args = self.parser.parse_args()
-        if self.new_skeleton_cmd():
+        if self.new_skeleton_cmd:
             self.project_name = self.args.project_name
             self.package_name = self.args.package_name
             self.rid = self.args.rid
@@ -152,7 +152,6 @@ class App(object):
                     )
             else:
                 self.dest_name = self.args.dest_name
-
             self.dest_path = JSEC_ATTACKS_DIR / self.dest_name
 
     def create_applet_template(self):
@@ -219,6 +218,7 @@ class App(object):
             self.source_path / "applet_template.py", self.dest_path / filename,
         )
 
+    @property
     def new_skeleton_cmd(self):
         return self.args.sub_command in [
             self.NEW_SKELETON_CMD,
@@ -226,7 +226,7 @@ class App(object):
         ]
 
     def run(self):
-        if self.new_skeleton_cmd():
+        if self.new_skeleton_cmd:
             self.create_applet_template()
 
     def validate_rid(self, value):
