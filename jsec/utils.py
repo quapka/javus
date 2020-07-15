@@ -449,30 +449,14 @@ class AttackConfigParser(configparser.ConfigParser):
         return sdks
 
 
-# class SDKVersionTypeCodec(bson.codec_options.TypeCodec):
-#     python_type = SDKVersion
-#     bson_type = str
-
-#     def transform_python(self, value: "SDKVersion") -> str:
-#         return str(value)
-
-#     def transform_bson(self, value: str) -> "SDKVersion":
-#         return SDKVersion.from_str(value)
-
-
-class PathTypeCodec(bson.codec_options.TypeCodec):
+class PathTypeEncoder(bson.codec_options.TypeEncoder):
     python_type = pathlib.PosixPath
-    bson_type = str
 
     def transform_python(self, value: pathlib.PosixPath) -> str:
         return str(value)
 
-    def transform_bson(self, value: str) -> pathlib.PosixPath:
-        return pathlib.PosixPath(value)
 
-
-# sdkversion_codec = SDKVersionTypeCodec()
-path_codec = PathTypeCodec()
+path_codec = PathTypeEncoder()
 custom_codecs = [path_codec]
 type_registry = bson.codec_options.TypeRegistry(custom_codecs)
 codec_options = bson.codec_options.CodecOptions(type_registry=type_registry)
