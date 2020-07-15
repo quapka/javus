@@ -434,5 +434,35 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         return length
 
 
+def get_executor(attack_name: str, module: str) -> AbstractAttackExecutor:
+    # first load the executor from the directory of the attack
+    try:
+        executor = getattr(
+            importlib.import_module(
+                # TODO this way we cannot test this method, since the load path is
+                # hardcoded
+                f"jsec.data.attacks.{attack_name}.{attack_name}"
+            ),
+            "AttackExecutor",
+        )
+        return executor
+    except (ModuleNotFoundError, AttributeError):
+        pass
+
+    try:
+        executor = getattr(
+            importlib.import_module(f"jsec.data.attacks.{module}"), "AttackExecutor",
+        )
+        # TODO maybe add ModuleNotFoundError, but if it is in config.ini it is actually an
+        # error - either missing module or should not be in config
+        return executor
+    except (ModuleNotFoundError, AttributeError):
+        pass
+
+    # then fallback to the type of the attack executor
+    # finally base executor, that can (un)install and send APDUs
+    return BaseAttackExecutor
+
+
 if __name__ == "__main__":
     pass

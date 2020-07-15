@@ -39,6 +39,8 @@ from jsec.utils import (
     cd,
     load_versions,
     get_user_consent,
+    get_executor,
+    get_builder,
 )
 from jsec.viewer import app
 
@@ -655,63 +657,6 @@ class AnalysisManager:
                 # but for now we won't do it
 
         return False
-
-    # FIXME finish loading the builder
-    def get_builder(self, attack_name: str, module: str):
-        # TODO add logging
-        try:
-            builder = getattr(
-                importlib.import_module(
-                    f"jsec.data.attacks.{attack_name}.{attack_name}"
-                ),
-                "AttackBuilder",
-            )
-            return builder
-        except (ModuleNotFoundError, AttributeError):
-            pass
-
-        try:
-            builder = getattr(
-                importlib.import_module(f"jsec.data.attacks.{module}"), "AttackBuilder",
-            )
-            return builder
-        except AttributeError:
-            pass
-        except ModuleNotFoundError:
-            # FIXME handle this
-            pass
-
-        return BaseAttackBuilder
-
-    def get_executor(self, attack_name: str, module: str) -> AbstractAttackExecutor:
-        # first load the executor from the directory of the attack
-        try:
-            executor = getattr(
-                importlib.import_module(
-                    # TODO this way we cannot test this method, since the load path is
-                    # hardcoded
-                    f"jsec.data.attacks.{attack_name}.{attack_name}"
-                ),
-                "AttackExecutor",
-            )
-            return executor
-        except (ModuleNotFoundError, AttributeError):
-            pass
-
-        try:
-            executor = getattr(
-                importlib.import_module(f"jsec.data.attacks.{module}"),
-                "AttackExecutor",
-            )
-            # TODO maybe add ModuleNotFoundError, but if it is in config.ini it is actually an
-            # error - either missing module or should not be in config
-            return executor
-        except (ModuleNotFoundError, AttributeError):
-            pass
-
-        # then fallback to the type of the attack executor
-        # finally base executor, that can (un)install and send APDUs
-        return BaseAttackExecutor
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@
 import abc
 import argparse
 import configparser
+import importlib
 import enum
 import logging
 import os
@@ -83,7 +84,9 @@ class CommandLineBuilder(CommandLineApp):
         return value
 
     def run(self):
-        builder = BaseAttackBuilder(workdir=self.workdir, dry_run=False, version=self.version)
+        builder = BaseAttackBuilder(
+            workdir=self.workdir, dry_run=False, version=self.version
+        )
         builder.execute(self.cmd)
 
 
@@ -249,6 +252,32 @@ class BaseAttackBuilder(AbstractAttackBuilder):
             log.error("Attempt to execute unrecognized command '%s'", cmd)
 
         return result
+
+
+# FIXME finish loading the builder
+def get_builder(attack_name: str, module: str):
+    # TODO add logging
+    try:
+        builder = getattr(
+            importlib.import_module(f"jsec.data.attacks.{attack_name}.{attack_name}"),
+            "AttackBuilder",
+        )
+        return builder
+    except (ModuleNotFoundError, AttributeError):
+        pass
+
+    try:
+        builder = getattr(
+            importlib.import_module(f"jsec.data.attacks.{module}"), "AttackBuilder",
+        )
+        return builder
+    except AttributeError:
+        pass
+    except ModuleNotFoundError:
+        # FIXME handle this
+        pass
+
+    return BaseAttackBuilder
 
 
 if __name__ == "__main__":
