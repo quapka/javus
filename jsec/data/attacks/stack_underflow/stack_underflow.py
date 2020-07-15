@@ -1,5 +1,5 @@
 # FIXME need to figure generation of bytecode
-class Stages:
+class Scenario:
     STAGES = [
         {"name": "install", "path": "build/{version}/cast_to_short-{version}.cap",},
         {

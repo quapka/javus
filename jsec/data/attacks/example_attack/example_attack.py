@@ -1,7 +1,7 @@
 from jsec.executor import BaseAttackExecutor
 
 
-class Stages:
+class Scenario:
     STAGES = [
         {
             # 'install' is one of the predefined stages

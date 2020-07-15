@@ -35,7 +35,7 @@ class JCVersionExecutor(BaseAttackExecutor):
         return JCVersion.from_str("")
 
 
-class Stages:
+class Scenario:
     STAGES = [
         {
             "name": "install",

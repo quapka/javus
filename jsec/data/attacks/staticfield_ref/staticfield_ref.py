@@ -1,4 +1,4 @@
-class Stages:
+class Scenario:
     STAGES = [
         {
             "name": "install",

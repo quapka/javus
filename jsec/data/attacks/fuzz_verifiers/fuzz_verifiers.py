@@ -12,7 +12,7 @@ import os
 import pathlib
 
 
-class Stages:
+class Scenario:
     STAGES = [
         {
             "name": "verify_off_card",

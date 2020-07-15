@@ -30,7 +30,7 @@ class AbstractAttackExecutor(ABC):
         pass
 
 
-class BaseStages:
+class CommonStage:
     install = "install"
     send = "send"
     uninstall = "uninstall"
@@ -78,7 +78,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
 
         module_file = self.workdir / (self.attack_name + ".py")
         raise ValueError(
-            "Cannot load Stages.STAGES from %s. Does it exist?" % module_file
+            "Cannot load Scenario.STAGES from %s. Does it exist?" % module_file
         )
 
     def import_stages(self) -> Optional[List[dict]]:
@@ -92,7 +92,7 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             + module_name
         )
         try:
-            stages = getattr(importlib.import_module(relative_module_path), "Stages",)
+            stages = getattr(importlib.import_module(relative_module_path), "Scenario",)
             return stages.STAGES
         except (ModuleNotFoundError, AttributeError):
             pass
@@ -371,10 +371,10 @@ class BaseAttackExecutor(AbstractAttackExecutor):
         try:
             return stage_data["optional"]
         except KeyError:
-            if stage == BaseStages.install:
+            if stage == CommonStage.install:
                 # install is required by default
                 return False
-            elif stage == BaseStages.uninstall:
+            elif stage == CommonStage.uninstall:
                 # uninstall stage is optional as it makes sense to continue uninstalling
                 # applets even if some cannot be uninstalled
                 return True
