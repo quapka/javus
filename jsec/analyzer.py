@@ -39,12 +39,11 @@ from jsec.utils import (
     cd,
     load_versions,
     get_user_consent,
-    get_executor,
-    get_builder,
 )
 from jsec.viewer import app
 from jsec.validator import AttackValidator
-
+from jsec.executor import get_executor
+from jsec.builder import get_builder
 
 # FIXME handle error on gp --list
 # flake8: noqa [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)
