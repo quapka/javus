@@ -1,6 +1,6 @@
 from javus.builder import get_builder
 from javus.executor import get_executor
-from javus.settings import ATTACKS, DATA
+from javus.settings import ATTACKS, DATA, REGISTRY_FILE
 from javus.utils import AttackConfigParser
 from javus.builder import get_builder
 from javus.executor import get_executor
@@ -20,6 +20,7 @@ class AttackValidator:
             "validate_config_file",
             "validate_builder",
             "validate_executor",
+            "validate_aids",
         ]
 
     def validate_attackdir(self, attack):
@@ -43,17 +44,20 @@ class AttackValidator:
             Path("config.ini"),
             Path("build.xml"),
             Path("%s.py" % attack),
-            Path("aids.ini"),
         ]
 
         for path in filepaths:
             fullpath = self.workdir / path
             if not (self.workdir / path).exists():
                 print(
-                    "Error: the filepath '%s' is missing in the attack directory '%s'. Please, add it."
-                    % (path, self.workdir)
+                    "Error: the filepath '%s' is missing in the attack directory '%s'."
+                    "Please, add it." % (fullpath, self.workdir)
                 )
                 valid = False
+
+        # the file aids.ini is special, because it might get create by the executor
+        # during the analysis
+        self.missing_aids_ini = (self.workdir / Path("aids.ini")).exists()
 
         return valid
 
@@ -79,10 +83,15 @@ class AttackValidator:
 
         if valid:
             print(
-                "Note: the attack '%s' is registered under section '%s' and is '%s'."
-                % (attack, section, enabled)
+                "Note: the attack is registered under section '%s' and is '%s'."
+                % (section, enabled)
             )
             self.section = section
+        else:
+            print(
+                "Error: the attack is not registered! Register it in '%s'"
+                % REGISTRY_FILE
+            )
         return valid
 
     def get_module(self, attack):
@@ -110,7 +119,7 @@ class AttackValidator:
         if valid:
             try:
                 config.get_sdk_versions("BUILD", "versions")
-            except:
+            except KeyError:
                 print(
                     "Error: the 'versions' key cannot be loaded properly. "
                     "Is it a comma separated list of SDK versions?"
@@ -121,19 +130,42 @@ class AttackValidator:
 
     def validate_builder(self, attack):
         module = self.get_module(attack)
-        builder = get_builder(attack_name=attack, module=module)
-        print("Note: the attack is using the '%s' as its AttackBuilder." % builder)
+        self.builder = get_builder(attack_name=attack, module=module)
+        print("Note: the attack is using the '%s' as its AttackBuilder." % self.builder)
         return True
+
+    def validate_aids(self, attack):
+        valid = self.missing_aids_ini
+
+        if not valid:
+            valid = self.executor_method_defined("set_default_aids")
+
+        if not valid:
+            print(
+                "Error: the file 'aids.ini' is not in '%s', nor is it dynamically "
+                "created with the executor '%s'." % (self.workdir, self.executor)
+            )
+
+        return valid
+
+    def executor_method_defined(self, method):
+        try:
+            getattr(self.executor, method)
+            return True
+        except AttributeError:
+            return False
 
     def validate_executor(self, attack):
         module = self.get_module(attack)
-        executor = get_executor(attack_name=attack, module=module)
-        print("Note: the attack is using the '%s' as its AttackExecutor." % executor)
-        return False
+        self.executor = get_executor(attack_name=attack, module=module)
+        print(
+            "Note: the attack is using the '%s' as its AttackExecutor." % self.executor
+        )
+        return True
 
     def validate_scenario(self, attack):
-        modulefile = self.workdir / "%s.py" % attack
         # FIXME validate the stages
+        raise NotImplementedError("Scenario validation is yet to be implemented.")
 
     def validate_attack(self, attack):
         valid = True
@@ -152,6 +184,7 @@ class AttackValidator:
 
     def run(self, attacks: list):
         for attack in attacks:
+            print("validating '%s'" % attack)
             valid = self.validate_attack(attack)
             if valid:
                 print("The attack '%s' is configured correctly." % attack)
