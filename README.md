@@ -164,6 +164,14 @@ To make sure a fresh version is installed you need to uninstall it first:
 $ pipenv run pip3 uninstall --yes javus
 ```
 
+Licensing
+---------
+
+We are using MIT license at the moment. As far as we know, this should comply with the licensing,
+that is put on the previously published research, which we are using. If this is not the case
+and you think, that we are breaking some license, please, do inform use and we will make
+sure, that the licensing is fixed as soon as possible.
+
 
 Contribution
 ------------
