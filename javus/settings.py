@@ -41,8 +41,8 @@ def get_viewer_templates():
     return get_project_src() / "templates"
 
 
-def get_viewer_templates():
-    return get_project_root() / "submodules"
+def get_registry_file():
+    return get_project_data() / "registry.ini"
 
 
 PROJECT_ROOT = get_project_root()
@@ -55,3 +55,4 @@ CHECKDIR = get_project_checkdir()
 STATIC_DIR = get_viewer_static()
 TEMPLATES_DIR = get_viewer_templates()
 SUBMODULES_DIR = get_viewer_templates()
+REGISTRY_FILE = get_registry_file()
