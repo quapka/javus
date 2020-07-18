@@ -13,13 +13,13 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../jsec"))
+sys.path.insert(0, os.path.abspath("../javus"))
 sys.path.insert(0, os.path.abspath("../bin"))
 
 
 # -- Project information -----------------------------------------------------
 
-project = "JavaCard Security Analysis"
+project = "JavaCard Vulnerability Scanner"
 copyright = "2020, Jan Kvapil"
 author = "Jan Kvapil"
 

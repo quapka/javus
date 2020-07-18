@@ -1,7 +1,7 @@
-jsec
+javus
 ====
 
 .. toctree::
    :maxdepth: 4
 
-   jsec
+   javus

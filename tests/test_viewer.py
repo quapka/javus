@@ -1,5 +1,5 @@
 import pytest
-from jsec.viewer import format_duration, add_whitespace_id
+from javus.viewer import format_duration, add_whitespace_id
 
 
 @pytest.mark.parametrize(

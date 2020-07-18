@@ -9,7 +9,7 @@ fi
 
 echo "This bootstrap script was tested on Ubuntu 18.04"
 echo
-echo "This script will attempt to install all requirements for the jsec"
+echo "This script will attempt to install all requirements for the javus"
 echo "utility to work. Before running this script you should read through it"
 echo "carefully to see, what it does. This script needs root privileges"
 echo "at some places."
@@ -101,7 +101,7 @@ echo "building ant-javacard.jar.."
 popd
 
 # export JCVM_ANALYSIS_HOME="$(pwd)"
-# export FLASK_APP="$(pwd)/jsec/viewer.py"
+# export FLASK_APP="$(pwd)/javus/viewer.py"
 popd
 
 echo "The installations and setup to bootstrap your environment is done."

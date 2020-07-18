@@ -13,6 +13,6 @@ install newest VB and the extensions
 
 
 Dockefile
-download ant-javacard /jsec/jsec/lib/ant-javacard.jar
+download ant-javacard /javus/javus/lib/ant-javacard.jar
 
 need to populate all the aids.ini fileff

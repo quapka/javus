@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+    <head>
+        {% block head %}
+            {% include "head.j2" %}
+        {% endblock head %}
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>JavaCard Vulnerability Scanner</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>
+                        This rather minimalistic website will help you investigate the results of the analysis of your card(s).
+                        You can pick which analysis run you'd like to review. By clicking on the individual stages of the attack
+                        a new table will appear with the additional details about the stage.
+                    </p>
+                </div>
+            </div>
+            {% block forms %}
+                {% include "forms.j2" %}
+            {% endblock forms %}
+            {% block body %}
+                {# {% include "body.j2" %} #}
+            {% endblock body %}
+        </div>
+    </body>
+    <footer>
+        {% block footer %}
+            {% include "footer.j2" %}
+        {% endblock footer %}
+    </footer>
+</html>

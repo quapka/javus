@@ -141,7 +141,7 @@ pytest -c checks/check.ini checks
 
 Development
 -----------
-In order to be able to manually run and test the updated version (especially the script `jsec`) you need to install the project. You can use `invoke` for that. Run from anywhere in the project:
+In order to be able to manually run and test the updated version (especially the script `javus`) you need to install the project. You can use `invoke` for that. Run from anywhere in the project:
 ```
 $ inv develop
 ```
@@ -161,7 +161,7 @@ $ pipenv run pip3 install --editable .
 ```
 To make sure a fresh version is installed you need to uninstall it first:
 ```
-$ pipenv run pip3 uninstall --yes jsec
+$ pipenv run pip3 uninstall --yes javus
 ```
 
 
@@ -206,7 +206,7 @@ Therefore the only requirements for this project are:
  
 inv dock
 lsusb
-docker run --name test2 -it --device /dev/bus/usb/001/002:/dev/ttyUSB0 jsec
+docker run --name test2 -it --device /dev/bus/usb/001/002:/dev/ttyUSB0 javus
 
 TODO add explanation about why the setup is so complicated.
 
@@ -223,10 +223,10 @@ In case you don't have Docker already installed it is not very difficult. As usu
 
 In order to build the Docker image locally you need to execute the following command in the `PROJECT_ROOT` either in `cmd` or PowerShell
 ```
-> docker build --tag jsec .
+> docker build --tag javus .
 ```
 
-The name `jsec` is required in case you want to use the tooling explained in the
+The name `javus` is required in case you want to use the tooling explained in the
 following sections, because it will be used to start the right Docker container.
 The `build` command takes a while (several minutes), because a lot needs to be set up. Therefore,
 it is a good place to take a break and sip a coffee.
@@ -241,7 +241,7 @@ altered Docker image, that won't have this application as the entry point, but w
 allow to enter the Shell and make the necessary changes from there.
 
 - Make sure to `pip3 install --upgrade pipenv` to run the latest Pipenv
-- Install `jsecdev`
+- Install `javusdev`
 
 Fix GlobalPlatformPro to version:
 2d4bb36c145bd8c13606f12aa14e6e29d8ecef78

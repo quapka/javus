@@ -1,8 +1,8 @@
 import pytest
 
-from jsec.builder import BaseAttackBuilder
-from jsec.settings import TESTDIR
-from jsec.utils import cd
+from javus.builder import BaseAttackBuilder
+from javus.settings import TESTDIR
+from javus.utils import cd
 
 
 def test_building():

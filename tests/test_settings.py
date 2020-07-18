@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from jsec.settings import get_project_root
+from javus.settings import get_project_root
 
 
 def test_getting_project_root():

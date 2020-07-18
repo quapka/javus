@@ -11,11 +11,11 @@ mypy = "*"
 ipython = "*"
 pytest-mock = "*"
 mock = "*"
-jsecdev = {editable = true, path = "./pkgs/jsecdev"}
-jsec = {editable = true, path = "."}
 pydoc-markdown = "*"
 sphinx = "*"
 pymongo-inmemory = "*"
+javusdev = {editable = true, path = "./pkgs/javusdev"}
+javus = {editable = true, path = "."}
 
 [packages]
 pymongo = "*"

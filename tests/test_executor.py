@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from jsec.card import Card
-from jsec.executor import BaseAttackExecutor
-from jsec.utils import AttackConfigParser
-from jsec.gppw import GlobalPlatformProWrapper
+from javus.card import Card
+from javus.executor import BaseAttackExecutor
+from javus.utils import AttackConfigParser
+from javus.gppw import GlobalPlatformProWrapper
 import mock
 
 

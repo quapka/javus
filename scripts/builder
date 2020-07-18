@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from jsec.builder import CommandLineBuilder
+from javus.builder import CommandLineBuilder
 
 if __name__ == '__main__':
 # TODO add description

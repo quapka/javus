@@ -51,30 +51,30 @@ EXPOSE 27017/tcp
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-RUN mkdir /jsec
-COPY Pipfile /jsec/Pipfile
-COPY Pipfile.lock /jsec/Pipfile.lock
-WORKDIR /jsec
+RUN mkdir /javus
+COPY Pipfile /javus/Pipfile
+COPY Pipfile.lock /javus/Pipfile.lock
+WORKDIR /javus
 # dependencies
 RUN pipenv install --system --deploy --ignore-pipfile
 
-COPY . /jsec
-WORKDIR /jsec
+COPY . /javus
+WORKDIR /javus
 RUN pipenv install --dev .
 
 # build the required submodules
 RUN git submodule update --init --recursive --jobs 8
-WORKDIR /jsec/submodules/GlobalPlatformPro
+WORKDIR /javus/submodules/GlobalPlatformPro
 # GlobalPlatformPro is currently fixed to one particular version,
 # we need the `--dump` flag
 RUN git checkout 2d4bb36c145bd8c13606f12aa14e6e29d8ecef78 && mvn package
 
-WORKDIR /jsec/submodules/ant-javacard
+WORKDIR /javus/submodules/ant-javacard
 RUN ./mvnw package
 
-ENV JCVM_ANALYSIS_HOME /jsec
-ENV FLASK_APP /jsec/viewer.py
+ENV JCVM_ANALYSIS_HOME /javus
+ENV FLASK_APP /javus/viewer.py
 
-WORKDIR /jsec
-RUN chmod +x "bin/entrypoint-docker-jsec.sh"
-ENTRYPOINT ["bin/entrypoint-docker-jsec.sh"]
+WORKDIR /javus
+RUN chmod +x "bin/entrypoint-docker-javus.sh"
+ENTRYPOINT ["bin/entrypoint-docker-javus.sh"]

@@ -2,7 +2,7 @@ import configparser
 
 import pytest
 
-from jsec.gppw import GlobalPlatformProWrapper
+from javus.gppw import GlobalPlatformProWrapper
 
 
 # FIXME should be reimplemented as pytest check rather

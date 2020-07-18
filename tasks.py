@@ -114,7 +114,7 @@ def develop(c, restart=False):
 
     cmd += ["pip3"]
     if restart:
-        uninstall_cmd = cmd + ["uninstall", "--yes", "jsec"]
+        uninstall_cmd = cmd + ["uninstall", "--yes", "javus"]
         with cd(PROJECT_ROOT):
             c.run(" ".join(uninstall_cmd))
 
@@ -142,7 +142,7 @@ def dock(c, local=True):
     # TODO rename task to something like build-docker-image
     # but only after tab completion for invoke commands is figure out
     r"""Build the newest docker image"""
-    cmd = ["docker", "build", "--tag", "jsec-container:latest", "."]
+    cmd = ["docker", "build", "--tag", "javus-container:latest", "."]
     with cd(PROJECT_ROOT):
         c.run(" ".join(cmd))
 
@@ -160,6 +160,6 @@ def docs(c):
 @task
 def update_sdks(c):
     # TODO implement
-    # this task updates jsec/lib/jcversion.properties
+    # this task updates javus/lib/jcversion.properties
     # according to oracle_javacard_sdks
     pass

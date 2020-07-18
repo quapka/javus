@@ -1,7 +1,7 @@
 import pytest
 from deepdiff import DeepDiff
 
-from jsec.card import CardState
+from javus.card import CardState
 
 
 def test___parse_raw__with_correct_pkg():

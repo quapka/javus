@@ -2,7 +2,7 @@ from typing import Optional
 
 import pytest
 
-from jsec.utils import AID, JCVersion, SDKVersion, load_versions, codec_options
+from javus.utils import AID, JCVersion, SDKVersion, load_versions, codec_options
 from pymongo_inmemory import MongoClient as InMemoryMongoClient
 
 import pathlib

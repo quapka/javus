@@ -31,22 +31,22 @@ TODO: Add to source code files
 TODO: add mypy
 TODO: maybe some of the processes create java log files in ~
 TODO: flake8 specific configuration is not defined within the project, see ~/.config/.flake8
-TODO: check duplicate attacks (distinguished by names in jsec/data/attacks?)
+TODO: check duplicate attacks (distinguished by names in javus/data/attacks?)
 
 TODO:
 Running the pre-analysis..
 Traceback (most recent call last):
-  File "scripts/jsec", line 7, in <module>
+  File "scripts/javus", line 7, in <module>
     app.run()
-  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 279, in run
+  File "/home/qup/projects/fi/thesis/javus/analyzer.py", line 279, in run
     prem_results = prem.run()
-  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 125, in run
+  File "/home/qup/projects/fi/thesis/javus/analyzer.py", line 125, in run
     self.card.jcversion = self.get_jc_version()
-  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 134, in get_jc_version
+  File "/home/qup/projects/fi/thesis/javus/analyzer.py", line 134, in get_jc_version
     card=self.card, gp=self.gp, workdir=DATA / "jcversion", sdk=None
-  File "/home/qup/projects/fi/thesis/jsec/data/jcversion/jcversion.py", line 35, in get_jcversion
+  File "/home/qup/projects/fi/thesis/javus/data/jcversion/jcversion.py", line 35, in get_jcversion
     return JCVersion.from_str("")
-  File "/home/qup/projects/fi/thesis/jsec/utils.py", line 192, in from_str
+  File "/home/qup/projects/fi/thesis/javus/utils.py", line 192, in from_str
     major = int(string[:2])
 ValueError: invalid literal for int() with base 10: ''
 
@@ -69,17 +69,17 @@ swap_x (SDK: jc221)
     [ 4/ 5] uninstall
     [ 5/ 5] uninstall
 Traceback (most recent call last):
-  File "/home/qup/.local/share/virtualenvs/thesis-79WLnG5A/bin/jsec", line 7, in <module>
+  File "/home/qup/.local/share/virtualenvs/thesis-79WLnG5A/bin/javus", line 7, in <module>
     exec(compile(f.read(), __file__, 'exec'))
-  File "/home/qup/projects/fi/thesis/scripts/jsec", line 7, in <module>
+  File "/home/qup/projects/fi/thesis/scripts/javus", line 7, in <module>
     app.run()
-  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 465, in run
+  File "/home/qup/projects/fi/thesis/javus/analyzer.py", line 465, in run
     anam_results = anam.run()
-  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 609, in run
+  File "/home/qup/projects/fi/thesis/javus/analyzer.py", line 609, in run
     if self.card_not_working(result=result):
-  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 650, in card_not_working
+  File "/home/qup/projects/fi/thesis/javus/analyzer.py", line 650, in card_not_working
     cards = detect_cards()
-  File "/home/qup/projects/fi/thesis/jsec/analyzer.py", line 78, in detect_cards
+  File "/home/qup/projects/fi/thesis/javus/analyzer.py", line 78, in detect_cards
     con.connect()
   File "/home/qup/.local/share/virtualenvs/thesis-79WLnG5A/lib/python3.6/site-packages/smartcard/CardConnectionDecorator.py", line 54, in connect
     self.component.connect(protocol, mode, disposition)
@@ -88,7 +88,7 @@ Traceback (most recent call last):
 smartcard.Exceptions.CardConnectionException: Unable to connect with protocol: T0 or T1. Card is unpowered.
 :::
 
-Rename jsec to javus and jsec run to javus scan
-Rename JSec to JavaCard Vulnerability Scanner
+Rename javus to javus and javus run to javus scan
+Rename to JavaCard Vulnerability Scanner
 javus logo
 citations

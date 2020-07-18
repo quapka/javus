@@ -1,0 +1,53 @@
+#!/bin/bash
+
+getSmartcardDriverPaths() {
+    if ! [ -x "$(command -v lsusb)" ]; then
+        echo "Error: 'lsusb' is not installed - cannot find the Smartcard readers" >&2
+        exit 1
+    fi
+
+    lsusb | grep --line-buffered --ignore-case "smartcard" | while read -r readerLine;
+    do
+        deviceBusPath="$(parseReaderLine "$readerLine")"
+        if [ -c "$deviceBusPath" ]; then
+            echo "$deviceBusPath"
+        fi
+    done
+
+}
+
+parseReaderLine() {
+    # param `$1`: Bus 001 Device 002: ID 058f:9540 Alcor Micro Corp. AU9540 Smartcard Reader
+    busID="$(echo "$1" | grep --only-matching "Bus \([0-9]\{3\}\)" | sed -e "s/Bus //")"
+    # busID="$(echo "$line")"
+    deviceID="$(echo "$1" | grep --only-matching "Device \([0-9]\{3\}\)" | sed -e "s/Device //")"
+    # echo "$busID
+    echo -n "/dev/bus/usb/$busID/$deviceID"
+}
+
+buildDockerCommand() {
+    cmdParts=("docker" "run" "--interactive" "--tty=true" "--publish" "127.0.0.1:5000:5000")
+    for devicePath in $(getSmartcardDriverPaths);
+    do
+        cmdParts+=("--device=$devicePath")
+    done
+    cmdParts+=("javus-container:latest")
+
+    # pass the command line arguments
+    for cmdArgument in "${cmdArguments[@]}";
+    do
+        cmdParts+=("$cmdArgument")
+    done
+
+    cmd=""
+    for part in "${cmdParts[@]}";
+    do
+        cmd="$cmd $part"
+    done
+
+    echo "$cmd"
+}
+
+# save command line arguments, so that they can be appended later
+cmdArguments=("$@")
+eval "$(buildDockerCommand)"

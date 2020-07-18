@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "96643f1fb3d0aa159c7b6157966a902479f58092833bdb47faf1da1a7e74d1da"
+            "sha256": "ebd95369184982b0725b840294bb8d4a6e35f609ade38b38a066757010222578"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -380,10 +380,10 @@
         },
         "docspec-python": {
             "hashes": [
-                "sha256:7c6857c70a1b11ee3a3d14e9454e19f2796aee65f8d3d43f849eed80de2f8053",
-                "sha256:e307ee26e933e4ed830ce5bd517bc85cf52336f9d7474ddb3609f5b23c3b8124"
+                "sha256:13af366a2dc0efdc7488f7560ad169ee80992f7f792a6b8d7ad0097bba7a27ab",
+                "sha256:9949eda3f964aacdf39d5c84e24a72464e7e190d982cbb2714e661124fa03524"
             ],
-            "version": "==0.0.5"
+            "version": "==0.0.7"
         },
         "docutils": {
             "hashes": [
@@ -432,13 +432,17 @@
             ],
             "version": "==0.2.0"
         },
+        "javusdev": {
+            "editable": true,
+            "path": "./pkgs/javusdev"
+        },
         "jedi": {
             "hashes": [
-                "sha256:1ddb0ec78059e8e27ec9eb5098360b4ea0a3dd840bedf21415ea820c21b40a22",
-                "sha256:807d5d4f96711a2bcfdd5dfa3b1ae6d09aa53832b182090b222b5efb81f52f63"
+                "sha256:86ed7d9b750603e4ba582ea8edc678657fb4007894a12bcf6f4bb97892f31d20",
+                "sha256:98cc583fa0f2f8304968199b01b6b4b94f469a1f4a74c1560506ca2a211378b5"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
-            "version": "==0.17.1"
+            "version": "==0.17.2"
         },
         "jinja2": {
             "hashes": [
@@ -447,14 +451,6 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==2.11.2"
-        },
-        "jsec": {
-            "editable": true,
-            "path": "."
-        },
-        "jsecdev": {
-            "editable": true,
-            "path": "./pkgs/jsecdev"
         },
         "markupsafe": {
             "hashes": [
@@ -688,11 +684,11 @@
         },
         "pydoc-markdown": {
             "hashes": [
-                "sha256:3c60ea7bc5570ab7d9e92fb16282ba365708137160b1ab03b7bbb959cad0c073",
-                "sha256:62ad0a2e85c01fbe00009987c25c166d347f8a61613fdfff03e8b75c283b977a"
+                "sha256:5a5c97b6d103357a3934be686b4a7648b23e1b51d753e90bc30834a5448222d8",
+                "sha256:dba111847f0f85b9efcb4d77a27f360dcae0e5066969d2cdedac2b998c1ddf26"
             ],
             "index": "pypi",
-            "version": "==3.2.0"
+            "version": "==3.3.0"
         },
         "pygments": {
             "hashes": [

@@ -1,0 +1,64 @@
+<project name="FuzzVerifiers">
+    <property environment="env" />
+    <property name="project.root"
+        value="${basedir}/../../../../" />
+    <property file="${project.root}/javus/lib/javus.properties" />
+    <!-- Define Ant JavaCard task -->
+    <!-- TODO make sure the relative paths are ok -->
+    <taskdef name="javacard"
+             classname="pro.javacard.ant.JavaCard"
+             classpath="${project.root}/submodules/ant-javacard/target/ant-javacard.jar" />
+    <!-- Import Ant contribution definitions -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <!-- FIXME load this location dynamically -->
+            <pathelement location="/usr/share/java/lib/ant-contrib-0.3.jar" />
+        </classpath>
+    </taskdef>
+    <!-- Define properties common for all attacks -->
+    <property file="config.ini" />
+    <property file="aids.ini" />
+    <property name="src.dir"
+              value="src" />
+    <property name="build.dir"
+              value="build" />
+    <property name="classes.dir"
+              value="${build.dir}/classes" />
+    <property name="AID"
+              value="${pkg.rid}${applet.pix}" />
+    <!-- Target for building all supported versions for particular an attack -->
+    <target name="build-all-versions">
+        <echo message="${project.root}"/>
+        <foreach param="version"
+                 list="${versions}"
+                 target="build-version" />
+    </target>
+    <!-- Target for doing all build steps for one specific version for a specific attack -->
+    <target name="build-version"
+            depends="clean,bootstrap,build">
+        <!-- <mkdir dir="${classes.dir}" /> -->
+        <echo message="building version: ${version}" />
+    </target>
+    <target name="clean">
+        <echo message="cleaning version: ${version}" />
+        <delete dir="${build.dir}/${version}" />
+    </target>
+    <target name="bootstrap">
+        <echo message="boostrap version: ${version}" />
+        <mkdir dir="${build.dir}/${version}" />
+    </target>
+    <target name="build">
+        <javacard jckit="${project.root}/submodules/oracle_javacard_sdks/${version}_kit">
+            <!-- Verification is not supported JavaCard version 212 -->
+            <!-- FIXME should we support verification for others? -->
+            <cap output="${build.dir}/${version}/orig.cap"
+                 sources="${src.dir}/com"
+                package="com.fuzzverifiers"
+                 aid="${pkg.rid}"
+                 verify="false">
+                <applet class="com.fuzzverifiers.FuzzVerifiers"
+                        aid="${AID}" />
+            </cap>
+        </javacard>
+    </target>
+</project>

@@ -3,8 +3,8 @@ import configparser
 
 import pytest
 
-from jsec.gppw import Diversifier, GlobalPlatformProWrapper
-from jsec.card import Card
+from javus.gppw import Diversifier, GlobalPlatformProWrapper
+from javus.card import Card
 from smartcard.ATR import ATR
 
 
