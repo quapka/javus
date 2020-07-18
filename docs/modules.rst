@@ -1,5 +1,5 @@
 javus
-====
+=====
 
 .. toctree::
    :maxdepth: 4
