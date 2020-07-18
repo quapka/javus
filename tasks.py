@@ -152,7 +152,11 @@ def dock(c, local=True):
 
 @task
 def docs(c):
-    cmd = ["make", "html"]
+    cmd = []
+    if not pipenv_is_active():
+        cmd += ["pipenv", "run"]
+
+    cmd += ["make", "html"]
     with cd(PROJECT_ROOT / "docs"):
         c.run(" ".join(cmd))
 
