@@ -9,6 +9,8 @@ import importlib
 
 from pathlib import Path
 
+# TODO validate SDK versions in config.ini
+
 
 class AttackValidator:
     def __init__(self):
