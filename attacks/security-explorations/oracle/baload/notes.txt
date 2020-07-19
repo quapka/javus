@@ -1,8 +1,0 @@
-L2:	sconst_1;       // push 1 on stack
-        newarray 11;    // create new byte array of size one, push ref on stack
-        astore_2;       // pop the stack to store the ref to the array
-        aload_2;        // load the ref of the array
-        sconst_0;       // load the index to the array
-        sconst_1;       // load the value to the array
-        bastore;        // store the short value into a byte array
-        return;
