@@ -7,6 +7,11 @@ if [[ "$0" != "./boostrap-ubuntu-18.04.sh" ]]; then
     exit 1
 fi
 
+if ! [ -z ${PIPENV_ACTIVE+x} ]; then
+    echo "You are in a Pipenv virtual, please exit, before continueing."
+    exit 1
+fi
+
 echo "This bootstrap script was tested on Ubuntu 18.04"
 echo
 echo "This script will attempt to install all requirements for the javus"
