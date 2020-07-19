@@ -100,7 +100,7 @@ class AttackValidator:
         try:
             module = self.registry.get(self.section, "module")
             return module
-        except KeyError:
+        except configparser.NoOptionError:
             return ""
 
     def validate_config_file(self, attack):
