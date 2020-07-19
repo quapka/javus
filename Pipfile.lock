@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ebd95369184982b0725b840294bb8d4a6e35f609ade38b38a066757010222578"
+            "sha256": "ccd40aeb671fe90f5e47fc9e4001c55f4ea32b8ea8251b7d71270ee983317676"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -431,6 +431,10 @@
                 "sha256:eb2e116e75ecef9d4d228fdc66af54269afa26ab4463042e33785b887c628ba8"
             ],
             "version": "==0.2.0"
+        },
+        "javus": {
+            "editable": true,
+            "path": "."
         },
         "javusdev": {
             "editable": true,
