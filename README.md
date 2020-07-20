@@ -29,4 +29,4 @@ After card is inserted the tool can be invoked by:
 ```
 $ javus run
 ```
-Again, you are runnin this tool on your own risk.
+Again, you are running this tool at your own risk.
