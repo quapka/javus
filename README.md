@@ -34,4 +34,4 @@ Again, you are running this tool at your own risk.
 Licensing
 ---------
 
-The code related to the framework itself is MIT licensed. However, some of the POCs (namely, those from [Security Explorations](http://www.security-explorations.com/javacard_details.html)) have different license). Therefore using code from this repository should be done with care -- if in doubt, add an issue and ask the authors. More details are [here](https://github.com/quapka/javus/tree/master/javus/data/attacks).
+The code related to the framework itself is MIT licensed. However, some of the POCs (namely, those from [Security Explorations](http://www.security-explorations.com/javacard_details.html)) have different license. Therefore using code from this repository should be done with care -- if in doubt, add an issue and ask the authors. More details are [here](https://github.com/quapka/javus/tree/master/javus/data/attacks).
