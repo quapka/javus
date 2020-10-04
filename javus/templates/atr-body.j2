@@ -6,7 +6,7 @@
         {% for run in runs %}
             {% set analysis = run %}
             {% set attacks = run["analysis-results"] %}
-            {{ run["card"]["atr"]|convert_atr }}
+            {{ run["card"]["atr"] }}
             {# {% include "run-attacks.js2" %} #}
                     {% for attack_name, attack_data in attacks.items() %}
                       {% set stages = attack_data["results"] %}

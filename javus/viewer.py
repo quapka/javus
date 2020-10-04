@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 import argparse
 import configparser
-import time
 import datetime
 import threading
+import time
 import webbrowser
 from typing import List, Tuple
 
-import pymongo
 import pytz
+
+import flask_wtf
+import pymongo
+import wtforms
 from bson.objectid import ObjectId
 from flask import Flask, render_template, request
-import flask_wtf
-import wtforms
-
 from javus.settings import STATIC_DIR
 from javus.utils import MongoConnection
 
@@ -27,24 +27,6 @@ db_config = {
     "database": "javacard-analysis",
     "host": "localhost",
     "port": "27017",
-}
-
-
-# TODO only for the purpose of finishing the thesis
-atr2name = {
-    "3BFC180000813180459067464A01002005000000004E": "A",
-    "3BFC180000813180459067464A01002005000000004E": "Anew",
-    "3BFE1800008031FE4553434536302D43443038312D6E46A9": "B",
-    "3B7B1800000031C06477E30300839000": "C",
-    "3B7B1800000031C06477E30300829000": "Cnew",
-    "3BF81800008031FE450073C8401300900092": "D",
-    "3B9F95803FC7A08031E073FA21106300000083F09000BB": "E",
-    "3BF81300008131FE454A434F5076323431B7": "F",
-    "3B6D000080318065409086015183079000": "G",
-    "3BF81800FF8131FE454A434F507632343143": "H",
-    "3B7B1800000031C06477E910007F9000": "I",
-    "3B7B1800000031C06477E91000019000": "Inew",
-    "3B9495810146545601C4": "J",
 }
 
 
@@ -129,7 +111,7 @@ def get_card_atr_choices() -> List[Tuple[str, str]]:
             # FIXME remove on fresh database, where 'atr's are string
             atr = " ".join(["{:02X}".format(byte) for byte in atr])
 
-        label = convert_atr(atr)
+        label = atr
         choices.append((atr, label))
     choices = list(set(choices))
     choices.sort(key=lambda x: x[1])
@@ -324,19 +306,6 @@ def add_whitespace_id(_id: str) -> str:
     return " ".join(chunks)
 
 
-@app.template_filter()
-def convert_atr(value: str) -> str:
-    atr = value.replace(" ", "")
-    label = atr2name[atr] + " " + atr
-    return label
-
-
-# @app.route('/dump')
-# def dump():
-# html to include stylesheets
-# {% if dump_results %}
-#       <style type="text/css">{{ stylesheet_content | safe}}</style>
-# {% endif %}
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", default="localhost")
