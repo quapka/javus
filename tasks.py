@@ -1,10 +1,10 @@
 import logging
 import os
+import pathlib
 import sys
 from contextlib import contextmanager
 
 from invoke import task
-import pathlib
 
 # TODO add logging, might require setting flags through tasks
 # log = logging.getLogger(__file__)
