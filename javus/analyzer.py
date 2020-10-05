@@ -19,15 +19,10 @@ from typing import List, Optional
 
 # TODO consider importing only toplevel module
 import smartcard
-from smartcard.ATR import ATR
-from smartcard.CardConnection import CardConnection
-from smartcard.CardConnectionDecorator import CardConnectionDecorator
-from smartcard.System import readers
-
-from javus.builder import BaseAttackBuilder
+from javus.builder import BaseAttackBuilder, get_builder
 from javus.card import Card
 from javus.data.jcversion.jcversion import JCVersionExecutor
-from javus.executor import AbstractAttackExecutor, BaseAttackExecutor
+from javus.executor import AbstractAttackExecutor, BaseAttackExecutor, get_executor
 from javus.gppw import GlobalPlatformProWrapper
 from javus.settings import ATTACKS, DATA
 from javus.utils import (
@@ -37,13 +32,15 @@ from javus.utils import (
     MongoConnection,
     SDKVersion,
     cd,
-    load_versions,
     get_user_consent,
+    load_versions,
 )
-from javus.viewer import app
 from javus.validator import AttackValidator
-from javus.executor import get_executor
-from javus.builder import get_builder
+from javus.viewer import app
+from smartcard.ATR import ATR
+from smartcard.CardConnection import CardConnection
+from smartcard.CardConnectionDecorator import CardConnectionDecorator
+from smartcard.System import readers
 
 # FIXME handle error on gp --list
 # flake8: noqa [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)
