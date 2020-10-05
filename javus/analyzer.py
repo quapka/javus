@@ -24,7 +24,7 @@ from javus.card import Card
 from javus.data.jcversion.jcversion import JCVersionExecutor
 from javus.executor import AbstractAttackExecutor, BaseAttackExecutor, get_executor
 from javus.gppw import GlobalPlatformProWrapper
-from javus.settings import ATTACKS, DATA
+from javus.settings import ATTACKS, DATA, REGISTRY_FILE
 from javus.utils import (
     CommandLineApp,
     Error,
@@ -174,9 +174,12 @@ implementation it is running.
             dest="sub_command",
         )
         self.subparsers.required = True
+
         self.add_web_parser()
         self.add_run_parser()
         self.add_list_parser()
+        self.add_enable_parser()
+        self.add_disable_parser()
         self.add_attack_validator_parser()
 
     def add_web_parser(self):
@@ -191,6 +194,19 @@ implementation it is running.
         list_parser = self.subparsers.add_parser(
             "list", help="List all the registered attacks."
         )
+
+    def add_enable_parser(self):
+        enable_parser = self.subparsers.add_parser(
+            "enable", help="Enable given attack(s)"
+        )
+
+        attacks = enable_parser.add_argument("attacks", nargs="+")
+
+    def add_disable_parser(self):
+        disable_parser = self.subparsers.add_parser(
+            "disable", help="Disable given attack(s)"
+        )
+        attacks = disable_parser.add_argument("attacks", nargs="+")
 
     def add_run_parser(self):
         run_parser = self.subparsers.add_parser(
@@ -302,6 +318,14 @@ implementation it is running.
         return self.args.sub_command == "list"
 
     @property
+    def enable_subcommand(self):
+        return self.args.sub_command == "enable"
+
+    @property
+    def disable_subcommand(self):
+        return self.args.sub_command == "disable"
+
+    @property
     def attack_validator_subcommand(self):
         return self.args.sub_command == "validate"
 
@@ -334,6 +358,12 @@ implementation it is running.
                 self.attacks = [self.args.attack]
             else:
                 self.attacks = self.load_attacks_raw()
+
+        elif self.enable_subcommand:
+            self.attacks = self.args.attacks
+
+        elif self.disable_subcommand:
+            self.attacks = self.args.attacks
 
     def validate_config(self, value: str) -> Path:
         if not os.path.exists(value):
@@ -515,6 +545,44 @@ implementation it is running.
 
         elif self.attack_validator_subcommand:
             self.validate_attacks()
+
+        elif self.enable_subcommand:
+            self.enable_attacks()
+
+        elif self.disable_subcommand:
+            self.disable_attacks()
+
+    def enable_attacks(self):
+        registry = self.load_attacks()
+        for attack in self.attacks:
+            found = False
+            for section in registry.sections():
+                if registry.has_option(section, attack):
+                    registry.set(section, attack, value="yes")
+                    found = True
+            if not found:
+                log.warn(
+                    "The attack '%s' was not found and therefore not enabled.", attack
+                )
+        self.save_registry(registry)
+
+    def disable_attacks(self):
+        registry = self.load_attacks()
+        for attack in self.attacks:
+            found = False
+            for section in registry.sections():
+                if registry.has_option(section, attack):
+                    registry.set(section, attack, value="no")
+                    found = True
+            if not found:
+                log.warn(
+                    "The attack '%s' was not found and therefore not disabled.", attack
+                )
+        self.save_registry(registry)
+
+    def save_registry(self, registry):
+        with open(REGISTRY_FILE, "w") as registry_file:
+            registry.write(registry_file)
 
     def validate_attacks(self):
         attack_validator = AttackValidator()
