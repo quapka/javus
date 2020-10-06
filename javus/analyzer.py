@@ -377,19 +377,6 @@ implementation it is running.
             )
         return Path(value)
 
-    def in_docker(self):
-        r"""Based on answer from: https://stackoverflow.com/a/20012536
-        """
-        docker = False
-        # TODO technically we won't ever be inside Windows container, therefore
-        # we only need to check for "Linux" systems
-        if self._system == "Linux":
-            with open("/proc/1/cgroup", "r") as f:
-                for line in f.readlines():
-                    if "docker" in line:
-                        docker = True
-        return docker
-
     # TODO unify load_configuration and load_config
     def load_configuration(self):
         self.config = configparser.ConfigParser()
@@ -447,12 +434,11 @@ implementation it is running.
 
     def load_attacks(self) -> configparser.ConfigParser:
         registry = configparser.ConfigParser()
-        registry_file = Path(DATA / "registry.ini")
-        if not registry_file.exists():
-            log.error("Missing registry file '%s'", registry_file)
+        if not REGISTRY_FILE.exists():
+            log.critical("Missing registry file '%s'", registry_file)
             # TODO how to handle clean exit?
         # FIXME does not fail on missing file, check it before
-        registry.read(registry_file)
+        registry.read(REGISTRY_FILE)
         return registry
 
     def print_attack_list(self):

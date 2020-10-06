@@ -1,5 +1,21 @@
 import os
+import platform
+import shutil
 from pathlib import Path
+
+
+def in_docker():
+    r"""Based on answer from: https://stackoverflow.com/a/20012536
+    """
+    docker = False
+    # TODO technically we won't ever be inside Windows container, therefore
+    # we only need to check for "Linux" systems
+    if platform.system() == "Linux":
+        with open("/proc/1/cgroup", "r") as f:
+            for line in f.readlines():
+                if "docker" in line:
+                    docker = True
+    return docker
 
 
 def get_project_root():
@@ -42,7 +58,15 @@ def get_viewer_templates():
 
 
 def get_registry_file():
-    return get_project_data() / "registry.ini"
+    # FIXME this is awful and fragile workaround
+    project_registry = get_project_data() / "registry.ini"
+    if in_docker():
+        docker_registry = Path("/registry/registry.ini")
+        if not docker_registry.exists():
+            shutil.copyfile(project_registry, docker_registry)
+        return docker_registry
+    else:
+        return project_registry
 
 
 PROJECT_ROOT = get_project_root()
