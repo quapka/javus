@@ -20,7 +20,7 @@ fi
 if [ "$1" == "--DEBUG-DOCKER" ];
 then
     echo "In a poor man's debug mode"
-    python3
+    bash
 else
     pipenv run python scripts/javus $@
 fi
