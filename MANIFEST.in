@@ -1,1 +1,3 @@
 recursive-include javus/data *
+recursive-include javus/templates *
+recursive-include javus/static *
