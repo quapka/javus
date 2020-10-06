@@ -7,6 +7,12 @@ if grep docker /proc/1/cgroup --quiet; then
     service pcscd start
     echo "Checking pcscd daemon status:"
     service pcscd status
+
+    echo "Starting MongoDB"
+    service mongodb start
+    echo "Checking MongoDB daemon status:"
+    service mongodb status
+
 else
     echo "Running outside of docker"
 fi
