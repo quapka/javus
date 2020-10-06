@@ -21,46 +21,27 @@ RUN apt-get update && apt-get install --yes \
     maven \
     mongodb
 
-RUN pip3 install pipenv
-
-# prepare GlobalPlatformPro
-# RUN mkdir /dependencies
-# WORKDIR /dependencies
-# RUN git clone https://github.com/martinpaljak/GlobalPlatformPro
-# WORKDIR /dependencies/GlobalPlatformPro
-# # NOTE: we are using older version of GlobalPlatformPro, because we
-# # depend on the --dump commang line flag
-# RUN git checkout git checkout 2d4bb36c145bd8c13606f12aa14e6e29d8ecef78
-# RUN ./mvn package
-# This command is for the newest version of GlobalPlatformPro
-# RUN ./mvnw package
-
-# update the IP address MongoDB listens on to Docker IP
-RUN sed --in-place 's/^bind_ip = 127.0.0.1$/bind_ip = 172.17.0.1/' /etc/mongodb.conf
-RUN cat /etc/mongodb.conf
-
 # document port for the viewer part of the application
 EXPOSE 80/tcp
 EXPOSE 27017/tcp
 
-# # start SmartCard daemon
-# RUN service pcscd start
-
-# install Python dependencies
 # set locales to silent Pipenv errors 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 RUN mkdir /javus
-COPY Pipfile /javus/Pipfile
-COPY Pipfile.lock /javus/Pipfile.lock
-WORKDIR /javus
-# dependencies
-RUN pipenv install --system --deploy --ignore-pipfile
+RUN mkdir /registry
 
 COPY . /javus
 WORKDIR /javus
-RUN pipenv install --dev .
+
+# using pipenv in Docker takes forever to then build the image
+# this is not ideal, as requirements.txt will get update
+# FIXME make sure requirements.txt are up to date
+RUN pip3 install --requirement requirements.txt
+# not using --editable install the package system-wide
+# which was cause of troubles, this could be debugged more
+RUN pip3 install --editable .
 
 # build the required submodules
 RUN git submodule update --init --recursive --jobs 8
@@ -77,4 +58,5 @@ ENV FLASK_APP /javus/viewer.py
 
 WORKDIR /javus
 RUN chmod +x "bin/entrypoint-docker-javus.sh"
+
 ENTRYPOINT ["bin/entrypoint-docker-javus.sh"]

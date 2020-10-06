@@ -474,7 +474,7 @@ implementation it is running.
         print("\n    ".join(disabled))
 
     def start_webserver(self):
-        app.run(host=self.web_host, port=self.web_port)
+        app.run(host=self.web_host, port=self.web_port, load_dotenv=True)
 
     def handle_user_consent(self):
         if not self.riskit:
