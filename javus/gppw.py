@@ -11,7 +11,6 @@ import tempfile
 from typing import List, Optional
 
 import smartcard
-
 from javus.card import CardState
 from javus.settings import DATA, PROJECT_ROOT
 from javus.utils import Timer
@@ -141,7 +140,7 @@ class GlobalPlatformProWrapper(object):
 
     def determine_diversifier(self):
         log.debug("Try to determine the diversifier for the card.")
-        self.load_diversifier_from_config()
+        self.load_diversifier_from_types()
         if self.diversifier != Diversifier.UNDETECTED:
             return
 
@@ -156,25 +155,28 @@ class GlobalPlatformProWrapper(object):
             "If you know it, set it directly in the configuration file"
         )
 
-    def load_diversifier_from_config(self):
-        log.debug("Loading diversifier value from the configuration")
-        try:
-            value = self.config["CARD"]["diversifier"]
-        except KeyError:
-            log.debug("Config does not contain a value for diversifier.")
-            # don't set diversifier since we haven't found it in the config
-            return
+    def load_diversifier_from_types(self):
+        r"""Try to infer the diversifier from known card types"""
+        str_atr = " ".join(["%02x" % byte for byte in self.card.atr.bytes])
+        if self.card_types.has_option(str_atr, "diversifier"):
+            suggested = self.card_types.get(str_atr, "diversifier")
+            if suggested == "":
+                self.diversifier = Diversifier.NONE
+            else:
+                try:
+                    self.diversifier = Diversifier[suggested]
+                except KeyError:
+                    self.diversifier = Diversifier.UNDETECTED
+                    log.warn(
+                        "Diversifier '%s' was suggested from known types, but is not known to the framework",
+                        suggested,
+                    )
 
-        value = value.strip()
-        value = value.upper()
-        try:
-            self.diversifier = Diversifier[value]
-            log.debug(
-                "Diversifier '%s' loaded from the configuration", self.diversifier
-            )
-        except KeyError:
-            log.warning("The value '%s' is not recognized as valid diversifier.", value)
-            return
+            if self.diversifier != Diversifier.UNDETECTED:
+                log.debug(
+                    "Diversifier '%s' loaded from the known card types",
+                    self.diversifier,
+                )
 
     def infer_diversifier(self):
         log.debug("Try to infer the diversifier from predefined list of known cards.")
