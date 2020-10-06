@@ -4,20 +4,18 @@ import configparser
 import enum
 import logging
 import os
+import pathlib
 import re
 import subprocess
 import sys
 import time
 from contextlib import contextmanager
-import pathlib
-
-import bson
 
 # from collections import namedtuple
 from typing import List, NamedTuple, Optional
 
+import bson
 import pymongo
-
 from javus.settings import LIB_DIR
 
 log = logging.getLogger(__file__)

@@ -62,6 +62,8 @@ class Diversifier(enum.Enum):
         # create a list of not NONE diversifiers
         return [cls.EMV, cls.VISA2, cls.KDF3]
 
+    # TODO add __bool__ method True on detected diversifiers, False otherwise
+
 
 class GlobalPlatformProWrapper(object):
     DIVERSIFIER_ERROR_MSG = (
