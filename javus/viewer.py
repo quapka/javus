@@ -309,15 +309,18 @@ def add_whitespace_id(_id: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", default="localhost")
-    parser.add_argument("--port", default="27017")
+    parser.add_argument("--port", default="5000")
 
     args = parser.parse_args()
-    host = args.host
-    port = args.port
+
+    web_kwargs = {
+        "host": args.host,
+        "port": args.port,
+    }
     # FIXME only for development
     # the following lines are meant for testing and development
     # the real server should be launched differently
-    app_thread = threading.Thread(target=app.run)
+    app_thread = threading.Thread(target=app.run, args=[], kwargs=web_kwargs)
     # TODO create URL dynamically
     url = "localhost:5000"
     browser_thread = threading.Thread(target=webbrowser.open, args=(url,))
