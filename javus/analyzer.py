@@ -197,14 +197,16 @@ implementation it is running.
 
     def add_enable_parser(self):
         enable_parser = self.subparsers.add_parser(
-            "enable", help="Enable given attack(s)"
+            "enable",
+            help="Enable given attack(s). You can specify one or more separated by spaces.",
         )
 
         attacks = enable_parser.add_argument("attacks", nargs="+")
 
     def add_disable_parser(self):
         disable_parser = self.subparsers.add_parser(
-            "disable", help="Disable given attack(s)"
+            "disable",
+            help="Disable given attack(s). You can specify one or more separated by spaces.",
         )
         attacks = disable_parser.add_argument("attacks", nargs="+")
 
