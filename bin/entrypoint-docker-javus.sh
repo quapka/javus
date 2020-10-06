@@ -22,5 +22,5 @@ then
     echo "In a poor man's debug mode"
     bash
 else
-    pipenv run python scripts/javus $@
+    python3 scripts/javus $@
 fi
