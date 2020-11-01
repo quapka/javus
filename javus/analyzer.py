@@ -178,6 +178,7 @@ implementation it is running.
         self.add_web_parser()
         self.add_run_parser()
         self.add_list_parser()
+        self.add_rebuild_parser()
         self.add_enable_parser()
         self.add_disable_parser()
         self.add_attack_validator_parser()
@@ -193,6 +194,11 @@ implementation it is running.
     def add_list_parser(self):
         list_parser = self.subparsers.add_parser(
             "list", help="List all the registered attacks."
+        )
+
+    def add_rebuild_parser(self):
+        rebuild_parser = self.subparsers.add_parser(
+            "rebuild", help="Rebuild all the registered attacks."
         )
 
     def add_enable_parser(self):
@@ -263,6 +269,15 @@ implementation it is running.
             ),
             action="store_true",
         )
+        run_parser.add_argument(
+            "-b",
+            "--rebuild",
+            action="store_true",
+            help=(
+                "Setting this flag only rebuilds the attacks, so that they can be easily "
+                "executed manually instead of having to build the manually as well"
+            ),
+        )
 
         # TODO implement execution of a single attack
         run_parser.add_argument(
@@ -318,6 +333,10 @@ implementation it is running.
     @property
     def list_subcommand(self):
         return self.args.sub_command == "list"
+
+    @property
+    def rebuild_subcommand(self):
+        return self.args.sub_command == "rebuild"
 
     @property
     def enable_subcommand(self):
@@ -531,6 +550,9 @@ implementation it is running.
         elif self.list_subcommand:
             self.print_attack_list()
 
+        elif self.rebuild_subcommand:
+            self.rebuild_attacks()
+
         elif self.attack_validator_subcommand:
             self.validate_attacks()
 
@@ -539,6 +561,12 @@ implementation it is running.
 
         elif self.disable_subcommand:
             self.disable_attacks()
+
+    def rebuild_attacks(self):
+        anam = AnalysisManager(
+            self.card, self.gp, self.config, update_attack=self.add_attack_to_db
+        )
+        anam.rebuild()
 
     def enable_attacks(self):
         registry = self.load_attacks()
@@ -709,6 +737,31 @@ class AnalysisManager:
                 else:
                     print("%s: skip" % attack)
         return report
+
+    def rebuild(self):
+        # FIXME this method is just copied and simplified self.run() method
+        # this is far from ideal
+        self.attacks = self.load_attacks()
+        for section in self.attacks.sections():
+            print("Rebuilding attacks from %s" % section)
+            log.info("Rebuilding attacks from '%s'", section)
+
+            module = self.attacks[section]["module"]
+            for attack, value in self.attacks[section].items():
+                if attack == "module":
+                    continue
+                AttackExecutor = get_executor(attack_name=attack, module=module)
+                executor = AttackExecutor(
+                    card=self.card, gp=self.gp, workdir=ATTACKS / attack
+                )
+                AttackBuilder = get_builder(attack_name=attack, module=module)
+                if self.attacks.getboolean(section, attack):
+                    for version in executor.sdks:
+                        print("%s (SDK: %s)" % (attack, version.raw))
+                        builder = AttackBuilder(
+                            gp=self.gp, workdir=ATTACKS / attack, version=version
+                        )
+                        builder.execute(BaseAttackBuilder.COMMANDS.build)
 
     def update_report(self, attack_name, report):
         """
