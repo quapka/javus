@@ -2,12 +2,13 @@
 
 
 import argparse
-
 # TODO add docstrings
 # pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
 import configparser
+import datetime
 import importlib
+import json
 import logging
 import os
 import platform
@@ -22,19 +23,12 @@ import smartcard
 from javus.builder import BaseAttackBuilder, get_builder
 from javus.card import Card
 from javus.data.jcversion.jcversion import JCVersionExecutor
-from javus.executor import AbstractAttackExecutor, BaseAttackExecutor, get_executor
+from javus.executor import (AbstractAttackExecutor, BaseAttackExecutor,
+                            get_executor)
 from javus.gppw import GlobalPlatformProWrapper
 from javus.settings import ATTACKS, DATA, REGISTRY_FILE
-from javus.utils import (
-    CommandLineApp,
-    Error,
-    JCVersion,
-    MongoConnection,
-    SDKVersion,
-    cd,
-    get_user_consent,
-    load_versions,
-)
+from javus.utils import (CommandLineApp, Error, JCVersion, MongoConnection,
+                         SDKVersion, cd, get_user_consent, load_versions)
 from javus.validator import AttackValidator
 from javus.viewer import app
 from smartcard.ATR import ATR
@@ -50,7 +44,8 @@ from smartcard.System import readers
 log = logging.getLogger(__file__)
 # TODO add handler for printing
 handler = logging.StreamHandler()
-formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s: %(message)s")
+formatter = logging.Formatter(
+    "%(levelname)s:%(asctime)s:%(name)s: %(message)s")
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
@@ -104,7 +99,8 @@ class PreAnalysisManager:
             single_card = False
 
         if number_of_cards > 1:
-            log.error("Too many cards ('%s') have been detected", number_of_cards)
+            log.error("Too many cards ('%s') have been detected",
+                      number_of_cards)
             print(
                 "Detected %s cards, that is too many, insert only single card."
                 % number_of_cards
@@ -289,6 +285,12 @@ implementation it is running.
         # TODO add -t/--tag for tagging analysis runs?
         # TODO def add options attempting to uninstall all applets, that were installed
         # TODO add argument to dump to json file intead of MongoDB
+        run_parser.add_argument(
+            "-j",
+            "--json",
+            action="store_true",
+            help="Store the results in the MongoDB",
+        )
 
     def add_attack_validator_parser(self):
         self.validator_parser = self.subparsers.add_parser(
@@ -373,6 +375,17 @@ implementation it is running.
             self.web_port = self.args.web_port
             self.attack_name = self.args.attack
             self.riskit = self.args.riskit
+            self.use_json = self.args.json
+
+            if self.use_json:
+                reports_dir = Path('analysis-reports')
+                try:
+                    os.mkdir(reports_dir)
+                except FileExistsError:
+                    pass
+                now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                self.report_filepath = reports_dir / (now + '_report.json')
+                self.report = {}
 
         elif self.attack_validator_subcommand:
             if self.args.attack is not None:
@@ -420,16 +433,22 @@ implementation it is running.
         except KeyError:
             self.db_port = "27017"
 
-    def add_attack_to_db(self, attack_name, attack_results):
+    def add_attack_to_report(self, attack_name, attack_results):
         """
         Adds the attack results to the database
         """
         key = "analysis-results.%s" % attack_name
         value = attack_results
-        with MongoConnection(
-            database=self.database, host=self.db_host, port=self.db_port
-        ) as con:
-            con.col.update_one({"_id": self.report_id}, {"$set": {key: value}})
+
+        if not self.use_json:
+            with MongoConnection(
+                database=self.database, host=self.db_host, port=self.db_port
+            ) as con:
+                con.col.update_one({"_id": self.report_id},
+                                   {"$set": {key: value}})
+        else:
+            self.report[key] = value
+            self.update_json_report()
 
     def prepare(self):
         self.load_configuration()
@@ -496,6 +515,52 @@ implementation it is running.
                 print("No attacks were executed.")
                 sys.exit(0)
 
+    def add_report_pre_analysis(self, prem_results):
+        self.start_time = time.time()
+        start_report = {
+            "start-time": self.start_time,
+            # set end-time and duration, so that the analysis can be viewed mid run
+            "end-time": "",
+            "duration": "",
+            "message": self.message,
+            "card": self.card.get_report(),
+            "pre-analysis-results": prem_results,
+        }
+
+        if not self.use_json:
+            with MongoConnection(
+                database=self.database, host=self.db_host, port=self.db_port
+            ) as con:
+                self.report_id = con.col.insert_one(
+                    start_report).inserted_id
+
+        else:
+            self.report.update(start_report)
+            self.update_json_report()
+
+    def add_report_post_analysis(self):
+        end_time = time.time()
+
+        end_report = {
+            "end-time": end_time,
+            "duration": end_time - self.start_time,
+        }
+
+        if not self.use_json:
+            with MongoConnection(
+                database=self.database, host=self.db_host, port=self.db_port
+            ) as con:
+                con.col.update_one({"_id": self.report_id}, {
+                                   "$set": end_report})
+        else:
+            self.report.update(end_report)
+            self.update_json_report()
+
+    def update_json_report(self):
+        # FIXME far from ideal as it does rewrite the complete report each time
+        with open(self.report_filepath, 'w') as f:
+            json.dump(obj=self.report, fp=f, indent=4)
+
     def run(self):
         # FIXME --dry-run
         if self.web_subcommand:
@@ -504,46 +569,54 @@ implementation it is running.
         elif self.run_subcommand:
             self.handle_user_consent()
 
-            start_time = time.time()
             self.prepare()
 
             print("Running the pre-analysis..")
             prem = PreAnalysisManager(self.card, self.gp)
             prem_results = prem.run()
 
-            start_report = {
-                "start-time": start_time,
-                # set end-time and duration, so that the analysis can be viewed mid run
-                "end-time": "",
-                "duration": "",
-                "message": self.message,
-                "card": self.card.get_report(),
-                "pre-analysis-results": prem_results,
-            }
-            with MongoConnection(
-                database=self.database, host=self.db_host, port=self.db_port
-            ) as con:
-                self.report_id = con.col.insert_one(start_report).inserted_id
+            self.add_report_pre_analysis(prem_results=prem_results)
+
+            # start_report = {
+            #     "start-time": start_time,
+            #     # set end-time and duration, so that the analysis can be viewed mid run
+            #     "end-time": "",
+            #     "duration": "",
+            #     "message": self.message,
+            #     "card": self.card.get_report(),
+            #     "pre-analysis-results": prem_results,
+            # }
+
+            # if not self.use_json:
+            #     with MongoConnection(
+            #         database=self.database, host=self.db_host, port=self.db_port
+            #     ) as con:
+            #         self.report_id = con.col.insert_one(
+            #             start_report).inserted_id
 
             print("Running the analysis..")
             anam = AnalysisManager(
-                self.card, self.gp, self.config, update_attack=self.add_attack_to_db
+                self.card, self.gp, self.config, update_attack=self.add_attack_to_report
             )
             anam_results = anam.run()
 
             print("Running the post-analysis..")
-            end_time = time.time()
 
-            end_report = {
-                "end-time": end_time,
-                "duration": end_time - start_time,
-            }
-            with MongoConnection(
-                database=self.database, host=self.db_host, port=self.db_port
-            ) as con:
-                con.col.update_one({"_id": self.report_id}, {"$set": end_report})
+            self.add_report_post_analysis()
 
-            # self.save_record()
+            # end_time = time.time()
+
+            # end_report = {
+            #     "end-time": end_time,
+            #     "duration": end_time - start_time,
+            # }
+            # if not self.use_json:
+            #     with MongoConnection(
+            #         database=self.database, host=self.db_host, port=self.db_port
+            #     ) as con:
+            #         con.col.update_one({"_id": self.report_id}, {
+            #                            "$set": end_report})
+
             if self.start_web:
                 self.start_webserver()
 
@@ -564,7 +637,7 @@ implementation it is running.
 
     def rebuild_attacks(self):
         anam = AnalysisManager(
-            self.card, self.gp, self.config, update_attack=self.add_attack_to_db
+            self.card, self.gp, self.config, update_attack=self.add_attack_to_report
         )
         anam.rebuild()
 
@@ -698,7 +771,8 @@ class AnalysisManager:
                 # is share with ant
                 if attack == "module":
                     continue
-                AttackExecutor = get_executor(attack_name=attack, module=module)
+                AttackExecutor = get_executor(
+                    attack_name=attack, module=module)
                 executor = AttackExecutor(
                     card=self.card, gp=self.gp, workdir=ATTACKS / attack
                 )
@@ -750,7 +824,8 @@ class AnalysisManager:
             for attack, value in self.attacks[section].items():
                 if attack == "module":
                     continue
-                AttackExecutor = get_executor(attack_name=attack, module=module)
+                AttackExecutor = get_executor(
+                    attack_name=attack, module=module)
                 executor = AttackExecutor(
                     card=self.card, gp=self.gp, workdir=ATTACKS / attack
                 )
@@ -782,7 +857,8 @@ class AnalysisManager:
             except KeyError:
                 err = ""
 
-            error_constansts = ["SCARD_E_NOT_TRANSACTED", "SCARD_W_UNPOWERED_CARD"]
+            error_constansts = [
+                "SCARD_E_NOT_TRANSACTED", "SCARD_W_UNPOWERED_CARD"]
             works = True
             for err_const in error_constansts:
                 if err_const in out or err_const in err:

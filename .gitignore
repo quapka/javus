@@ -61,3 +61,5 @@ aids.ini
 docs/_build/
 
 *.zip
+
+analysis-reports/
