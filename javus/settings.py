@@ -58,8 +58,15 @@ def get_viewer_templates():
 
 
 def get_registry_file():
+    # FIXME Path.home() probably expects a user with $HOME directory
+    #       in case this would be executed as a service it might fail?
+    project_registry = Path.home() / ".config" / "javus" / "registry.ini"
+    read_only_registry = DATA / "registry.ini"
+    if not project_registry.exists():
+        if not project_registry.parent.exists():
+            os.makedirs(project_registry.parent)
+        shutil.copyfile(read_only_registry, project_registry)
     # FIXME this is awful and fragile workaround
-    project_registry = get_project_data() / "registry.ini"
     if in_docker():
         docker_registry = Path("/registry/registry.ini")
         if not docker_registry.exists():

@@ -721,12 +721,11 @@ class AnalysisManager:
 
     def load_attacks(self) -> configparser.ConfigParser:
         registry = configparser.ConfigParser()
-        registry_file = Path(DATA / "registry.ini")
-        if not registry_file.exists():
-            log.error("Missing registry file '%s'", registry_file)
+        if not REGISTRY_FILE.exists():
+            log.error("Missing registry file '%s'", REGISTRY_FILE)
             # TODO how to handle clean exit?
         # FIXME does not fail on missing file, check it before
-        registry.read(registry_file)
+        registry.read(REGISTRY_FILE)
         return registry
 
     # TODO implement execution of a single attack

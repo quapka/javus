@@ -65,7 +65,7 @@ class AttackValidator:
 
     def validate_is_registered(self, attack):
         self.registry = configparser.ConfigParser()
-        self.registry.read(DATA / "registry.ini")
+        self.registry.read(REGISTRY_FILE)
 
         valid = False
         for section in self.registry.sections():
