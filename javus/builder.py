@@ -158,7 +158,7 @@ class BaseAttackBuilder(AbstractAttackBuilder):
             # command line application
             log.info("The command '%s' was successful.", self.cmd.name)
         except subprocess.CalledProcessError:
-            log.error("Command ended with non-zero error")
+            log.error("The command '%s' ended with non-zero error: %s", ' '.join(cmd), proc.stdout)
 
         return proc
 
