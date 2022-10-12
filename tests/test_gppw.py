@@ -53,6 +53,7 @@ def test_add_diversifier_flag_to_gp_prefix(div, diversifier_flag):
     assert gp.gp_prefix() == expected_cmd
 
 
+@pytest.mark.skip("Read-only NixOS filesystem prevents writing to some `pymongo_inmemory` cache")
 def test_detecting_diversifier_from_config():
     config = configparser.ConfigParser()
     # FIXME the path needs to be loaded dynamically

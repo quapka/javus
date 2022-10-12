@@ -179,6 +179,7 @@ class TestCustomCodecOptions:
             "test-collection", codec_options=codec_options
         )
 
+    @pytest.mark.skip("Read-only NixOS filesystem prevents writing to some `pymongo_inmemory` cache")
     def test_path_codec(self):
         path = pathlib.Path("/".join("abcde"))
         self.collection.insert_one({"path": path})
