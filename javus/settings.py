@@ -70,7 +70,7 @@ def get_registry_file():
     if in_docker():
         docker_registry = Path("/registry/registry.ini")
         if not docker_registry.exists():
-            shutil.copyfile(project_registry, docker_registry)
+            shutil.copyfile(read_only_registry, docker_registry)
         return docker_registry
     else:
         return project_registry
