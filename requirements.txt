@@ -52,7 +52,7 @@ pluggy==0.13.1
 prompt-toolkit==3.0.5
 ptyprocess==0.6.0
 pudb==2019.2
-py==1.9.0
+py==1.10.0
 pydoc-markdown==3.3.0
 Pygments==2.6.1
 pymongo==3.10.1
