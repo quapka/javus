@@ -221,17 +221,17 @@ def card_form_template(form):
 
 
 class AnalysisResultForm(flask_wtf.FlaskForm):
-    analysis = wtforms.SelectField(u"Run")
+    analysis = wtforms.SelectField("Run")
     submit = wtforms.SubmitField("Show")
 
 
 class CardSelectForm(flask_wtf.FlaskForm):
-    atr = wtforms.SelectField(u"ATR")
+    atr = wtforms.SelectField("ATR")
     submit = wtforms.SubmitField("Show")
 
 
 class AttackSelectForm(flask_wtf.FlaskForm):
-    attack_name = wtforms.SelectField(u"Attack")
+    attack_name = wtforms.SelectField("Attack")
     submit = wtforms.SubmitField("Show")
 
 
