@@ -2,6 +2,7 @@
 
 
 import argparse
+
 # TODO add docstrings
 # pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
@@ -23,12 +24,19 @@ import smartcard
 from javus.builder import BaseAttackBuilder, get_builder
 from javus.card import Card
 from javus.data.jcversion.jcversion import JCVersionExecutor
-from javus.executor import (AbstractAttackExecutor, BaseAttackExecutor,
-                            get_executor)
+from javus.executor import AbstractAttackExecutor, BaseAttackExecutor, get_executor
 from javus.gppw import GlobalPlatformProWrapper
 from javus.settings import ATTACKS, DATA, REGISTRY_FILE
-from javus.utils import (CommandLineApp, Error, JCVersion, MongoConnection,
-                         SDKVersion, cd, get_user_consent, load_versions)
+from javus.utils import (
+    CommandLineApp,
+    Error,
+    JCVersion,
+    MongoConnection,
+    SDKVersion,
+    cd,
+    get_user_consent,
+    load_versions,
+)
 from javus.validator import AttackValidator
 from javus.viewer import app
 from smartcard.ATR import ATR
@@ -44,8 +52,7 @@ from smartcard.System import readers
 log = logging.getLogger(__file__)
 # TODO add handler for printing
 handler = logging.StreamHandler()
-formatter = logging.Formatter(
-    "%(levelname)s:%(asctime)s:%(name)s: %(message)s")
+formatter = logging.Formatter("%(levelname)s:%(asctime)s:%(name)s: %(message)s")
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
@@ -99,8 +106,7 @@ class PreAnalysisManager:
             single_card = False
 
         if number_of_cards > 1:
-            log.error("Too many cards ('%s') have been detected",
-                      number_of_cards)
+            log.error("Too many cards ('%s') have been detected", number_of_cards)
             print(
                 "Detected %s cards, that is too many, insert only single card."
                 % number_of_cards
@@ -139,6 +145,7 @@ class PreAnalysisManager:
         return version
 
 
+# FIXME rename App -> Javus
 class App(CommandLineApp):
     APP_DESCRIPTION = """
 [DISCLAIMER] Running the analysis can potentially dammage (brick/lock) your card!
@@ -219,7 +226,9 @@ implementation it is running.
             description=self.APP_DESCRIPTION,
         )
         run_parser.add_argument(
-            "-c", "--config-file", type=self.validate_config,
+            "-c",
+            "--config-file",
+            type=self.validate_config,
         )
         run_parser.add_argument(
             "-n",
@@ -253,7 +262,10 @@ implementation it is running.
             help="Hostname for the web application",
         )
         run_parser.add_argument(
-            "--web-port", type=str, default="5000", help="Port for the web application",
+            "--web-port",
+            type=str,
+            default="5000",
+            help="Port for the web application",
         )
         run_parser.add_argument(
             "-r",
@@ -294,11 +306,14 @@ implementation it is running.
 
     def add_attack_validator_parser(self):
         self.validator_parser = self.subparsers.add_parser(
-            "validate", help="Validate, that the [ATACK] is ready fro execution",
+            "validate",
+            help="Validate, that the [ATACK] is ready fro execution",
         )
 
         self.validator_parser.add_argument(
-            "-a", "--attack", help="The name of the attack to validate",
+            "-a",
+            "--attack",
+            help="The name of the attack to validate",
         )
 
     def validate_attack_name(self, value):
@@ -378,13 +393,13 @@ implementation it is running.
             self.use_json = self.args.json
 
             if self.use_json:
-                reports_dir = Path('analysis-reports')
+                reports_dir = Path("analysis-reports")
                 try:
                     os.mkdir(reports_dir)
                 except FileExistsError:
                     pass
-                now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-                self.report_filepath = reports_dir / (now + '_report.json')
+                now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                self.report_filepath = reports_dir / (now + "_report.json")
                 self.report = {}
 
         elif self.attack_validator_subcommand:
@@ -444,8 +459,7 @@ implementation it is running.
             with MongoConnection(
                 database=self.database, host=self.db_host, port=self.db_port
             ) as con:
-                con.col.update_one({"_id": self.report_id},
-                                   {"$set": {key: value}})
+                con.col.update_one({"_id": self.report_id}, {"$set": {key: value}})
         else:
             self.report[key] = value
             self.update_json_report()
@@ -455,7 +469,9 @@ implementation it is running.
         self.load_db_configuration()
 
         self.gp = GlobalPlatformProWrapper(
-            config=self.config, dry_run=self.dry_run, log_verbosity=self.verbosity,
+            config=self.config,
+            dry_run=self.dry_run,
+            log_verbosity=self.verbosity,
         )
         self.card = Card(gp=self.gp)
         self.gp.card = self.card
@@ -531,8 +547,7 @@ implementation it is running.
             with MongoConnection(
                 database=self.database, host=self.db_host, port=self.db_port
             ) as con:
-                self.report_id = con.col.insert_one(
-                    start_report).inserted_id
+                self.report_id = con.col.insert_one(start_report).inserted_id
 
         else:
             self.report.update(start_report)
@@ -550,15 +565,14 @@ implementation it is running.
             with MongoConnection(
                 database=self.database, host=self.db_host, port=self.db_port
             ) as con:
-                con.col.update_one({"_id": self.report_id}, {
-                                   "$set": end_report})
+                con.col.update_one({"_id": self.report_id}, {"$set": end_report})
         else:
             self.report.update(end_report)
             self.update_json_report()
 
     def update_json_report(self):
         # FIXME far from ideal as it does rewrite the complete report each time
-        with open(self.report_filepath, 'w') as f:
+        with open(self.report_filepath, "w") as f:
             json.dump(obj=self.report, fp=f, indent=4)
 
     def run(self):
@@ -574,7 +588,6 @@ implementation it is running.
             print("Running the pre-analysis..")
             prem = PreAnalysisManager(self.card, self.gp)
             prem_results = prem.run()
-
             self.add_report_pre_analysis(prem_results=prem_results)
 
             # start_report = {
@@ -770,8 +783,7 @@ class AnalysisManager:
                 # is share with ant
                 if attack == "module":
                     continue
-                AttackExecutor = get_executor(
-                    attack_name=attack, module=module)
+                AttackExecutor = get_executor(attack_name=attack, module=module)
                 executor = AttackExecutor(
                     card=self.card, gp=self.gp, workdir=ATTACKS / attack
                 )
@@ -823,8 +835,7 @@ class AnalysisManager:
             for attack, value in self.attacks[section].items():
                 if attack == "module":
                     continue
-                AttackExecutor = get_executor(
-                    attack_name=attack, module=module)
+                AttackExecutor = get_executor(attack_name=attack, module=module)
                 executor = AttackExecutor(
                     card=self.card, gp=self.gp, workdir=ATTACKS / attack
                 )
@@ -838,13 +849,11 @@ class AnalysisManager:
                         builder.execute(BaseAttackBuilder.COMMANDS.build)
 
     def update_report(self, attack_name, report):
-        """
-        """
+        """ """
         self.updater(attack_name, report)
 
     def card_not_working(self, result):
-        """
-        """
+        """ """
         for stage in result:
             try:
                 out = stage["stdout"]
@@ -856,8 +865,7 @@ class AnalysisManager:
             except KeyError:
                 err = ""
 
-            error_constansts = [
-                "SCARD_E_NOT_TRANSACTED", "SCARD_W_UNPOWERED_CARD"]
+            error_constansts = ["SCARD_E_NOT_TRANSACTED", "SCARD_W_UNPOWERED_CARD"]
             works = True
             for err_const in error_constansts:
                 if err_const in out or err_const in err:

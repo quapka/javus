@@ -451,7 +451,8 @@ def get_executor(attack_name: str, module: str) -> AbstractAttackExecutor:
 
     try:
         executor = getattr(
-            importlib.import_module(f"javus.data.attacks.{module}"), "AttackExecutor",
+            importlib.import_module(f"javus.data.attacks.{module}"),
+            "AttackExecutor",
         )
         # TODO maybe add ModuleNotFoundError, but if it is in config.ini it is actually an
         # error - either missing module or should not be in config
