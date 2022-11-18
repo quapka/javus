@@ -15,6 +15,36 @@ from dataclasses import dataclass
 import sys
 from typing import List
 
+# source: https://github.com/petrs/jcAIDScan/blob/master/jcAIDScan.py#L81
+PKG_AID_TO_NAME = {
+    "A0000000620001": "java.lang",
+    "A0000000620002": "java.io",
+    "A0000000620003": "java.rmi",
+    "A0000000620101": "javacard.framework",
+    "A000000062010101": "javacard.framework.service",
+    "A0000000620102": "javacard.security",
+    "A0000000620201": "javacardx.crypto",
+    "A0000000620202": "javacardx.biometry",
+    "A0000000620203": "javacardx.external",
+    "A0000000620204": "javacardx.biometry1toN",
+    "A0000000620205": "javacardx.security",
+    "A000000062020801": "javacardx.framework.util",
+    "A00000006202080101": "javacardx.framework.util.intx",
+    "A000000062020802": "javacardx.framework.math",
+    "A000000062020803": "javacardx.framework.tlv",
+    "A000000062020804": "javacardx.framework.string",
+    "A0000000620209": "javacardx.apdu",
+    "A000000062020901": "javacardx.apdu.util",
+    "A00000015100": "org.globalplatform",
+    "A00000015102": "org.globalplatform.contactless",
+    "A00000015103": "org.globalplatform.securechannel",
+    "A00000015104": "org.globalplatform.securechannel.provider",
+    "A00000015105": "org.globalplatform.privacy",
+    "A00000015106": "org.globalplatform.filesystem",
+    "A00000015107": "org.globalplatform.upgrade",
+    "A0000000030000": "visa.openplatform",
+}
+
 
 @dataclass
 class AID:
@@ -73,6 +103,20 @@ class package_info:
     def collect(self) -> bytes:
         return self.minor_version + self.major_version + self.AID_length + self.AID
 
+    def __str__(self):
+        """
+        <name/AID> <major>.<minor>
+        """
+        try:
+            name = PKG_AID_TO_NAME[self.AID.hex().upper()]
+        except KeyError:
+            name = self.AID.hex(sep=" ")
+
+        major = int.from_bytes(self.major_version, byteorder="big")
+        minor = int.from_bytes(self.minor_version, byteorder="big")
+        output = f"{name} {major}.{minor}"
+        return output
+
 
 @dataclass
 class package_name:
@@ -117,6 +161,20 @@ class ImportComponent:
     def collect(self) -> bytes:
         packages = [p.collect() for p in self.packages]
         return self.tag + self.size + self.count + b"".join(packages)
+
+    def __str__(self):
+        tag = int.from_bytes(self.tag, byteorder="big")
+        size = int.from_bytes(self.size, byteorder="big")
+        count = int.from_bytes(self.count, byteorder="big")
+        packages = "\n\t".join([str(p) for p in self.packages])
+        output = f"""
+ImportComponent:
+    tag: {tag}
+    size: {size}
+    count: {count}
+    packages:
+        {packages}"""
+        return output.strip()
 
 
 @dataclass
@@ -189,6 +247,19 @@ def confuse_import_component(cap_path: Path, result_path: Path):
         shutil.move(str(result_path) + ".zip", result_path)
 
 
+def print_import_component(cap_path: Path):
+    zf = zipfile.ZipFile(cap_path)
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        zf.extractall(tempdir)
+
+        import_path = get_import_path(tempdir)
+        with open(import_path, "rb") as handle:
+            ic = ImportComponent.parse(handle)
+
+    print(ic)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -196,7 +267,15 @@ def main():
     )
     args = parser.parse_args()
 
-    confuse_import_component(cap_path=args.path)
+    path = args.path
+    if path.is_dir():
+        for cap_file in path.rglob("*.cap"):
+            print(cap_file.name)
+            print_import_component(cap_path=cap_file)
+            print()
+    else:
+        print_import_component(cap_path=path)
+    # confuse_import_component(cap_path=args.path)
 
 
 if __name__ == "__main__":
