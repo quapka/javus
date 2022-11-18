@@ -41,7 +41,8 @@ class CommandLineBuilder(CommandLineApp):
         # TODO improve help
         # FIXME validate the path
         self.parser.add_argument(
-            "cmd", type=self.validate_cmd,
+            "cmd",
+            type=self.validate_cmd,
         )
 
         self.parser.add_argument(
@@ -58,7 +59,8 @@ class CommandLineBuilder(CommandLineApp):
         )
         # TODO validate default and passed value
         self.parser.add_argument(
-            "--version", default="jc211",
+            "--version",
+            default="jc211",
         )
 
     def parse_options(self):
@@ -150,7 +152,11 @@ class BaseAttackBuilder(AbstractAttackBuilder):
             cmd.extend(options)
 
         with cd(self.workdir):
-            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,)
+            proc = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
 
         try:
             proc.check_returncode()
@@ -158,7 +164,11 @@ class BaseAttackBuilder(AbstractAttackBuilder):
             # command line application
             log.info("The command '%s' was successful.", self.cmd.name)
         except subprocess.CalledProcessError:
-            log.error("The command '%s' ended with non-zero error: %s", ' '.join(cmd), proc.stdout)
+            log.error(
+                "The command '%s' ended with non-zero error: %s",
+                " ".join(cmd),
+                proc.stdout,
+            )
 
         return proc
 
@@ -268,7 +278,8 @@ def get_builder(attack_name: str, module: str):
 
     try:
         builder = getattr(
-            importlib.import_module(f"javus.data.attacks.{module}"), "AttackBuilder",
+            importlib.import_module(f"javus.data.attacks.{module}"),
+            "AttackBuilder",
         )
         return builder
     except AttributeError:

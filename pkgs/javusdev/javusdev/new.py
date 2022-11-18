@@ -195,7 +195,10 @@ class App(object):
         data = re.sub("<ProjectName>", self.project_name, data)
         data = re.sub("<PackageName>", self.package_name, data)
 
-        with open(dest_dir / (self.project_name + ".java"), "w",) as f:
+        with open(
+            dest_dir / (self.project_name + ".java"),
+            "w",
+        ) as f:
             f.write(data)
 
     def create_aid_file(self):
@@ -215,7 +218,8 @@ class App(object):
         filename = self.dest_name + ".py"
         print("creating attack module %s file" % filename)
         shutil.copy(
-            self.source_path / "applet_template.py", self.dest_path / filename,
+            self.source_path / "applet_template.py",
+            self.dest_path / filename,
         )
 
     @property

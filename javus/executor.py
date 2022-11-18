@@ -92,7 +92,10 @@ class BaseAttackExecutor(AbstractAttackExecutor):
             + module_name
         )
         try:
-            stages = getattr(importlib.import_module(relative_module_path), "Scenario",)
+            stages = getattr(
+                importlib.import_module(relative_module_path),
+                "Scenario",
+            )
             return stages.STAGES
         except (ModuleNotFoundError, AttributeError):
             pass

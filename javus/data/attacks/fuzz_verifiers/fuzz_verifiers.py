@@ -32,7 +32,7 @@ class AttackBuilder(BaseAttackBuilder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # fix seed for every build
-        self.seed = random.randint(0, 2 ** 32)
+        self.seed = random.randint(0, 2**32)
         self.rad = pyradamsa.Radamsa()
 
     def _build(self):

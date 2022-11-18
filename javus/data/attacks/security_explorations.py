@@ -53,7 +53,13 @@ class AttackBuilder(BaseAttackBuilder):
         r"""Generate the vulns.new.cap file for the given version"""
         vulns_dir = os.path.realpath(
             os.path.join(
-                self.workdir, "build", version.raw, "com", "se", "vulns", "javacard",
+                self.workdir,
+                "build",
+                version.raw,
+                "com",
+                "se",
+                "vulns",
+                "javacard",
             )
         )
 

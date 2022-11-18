@@ -126,8 +126,7 @@ def develop(c, restart=False):
 
 @task
 def sort_imports(c):
-    r"""Use `isort` to fix the Python imports in the whole project
-    """
+    r"""Use `isort` to fix the Python imports in the whole project"""
     if git_dirty(c):
         print("Repository is dirty! Commit changes.")
         sys.exit(1)

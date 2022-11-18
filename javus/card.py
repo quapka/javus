@@ -2,8 +2,7 @@ import re
 
 
 class CardState:
-    r"""Basically a parsed output from `gp --list`
-    """
+    r"""Basically a parsed output from `gp --list`"""
 
     def __init__(self, raw: str):
         self.raw = raw

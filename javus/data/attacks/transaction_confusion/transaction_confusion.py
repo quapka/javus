@@ -1,6 +1,9 @@
 class Scenario:
     STAGES = [
-        {"name": "install", "path": "build/{version}/transaction_confusion.cap",},
+        {
+            "name": "install",
+            "path": "build/{version}/transaction_confusion.cap",
+        },
         {
             "name": "send",
             "comment": "INS_PREPARE1",

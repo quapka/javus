@@ -119,7 +119,10 @@ class TestSDKVersion:
 
 
 @pytest.mark.parametrize(
-    "string,expected_aid", [("0011223344", b"\x00\x11\x22\x33\x44"),]
+    "string,expected_aid",
+    [
+        ("0011223344", b"\x00\x11\x22\x33\x44"),
+    ],
 )
 def test_reading_aid(string, expected_aid):
     aid = AID(string)
@@ -179,14 +182,16 @@ class TestCustomCodecOptions:
             "test-collection", codec_options=codec_options
         )
 
-    @pytest.mark.skip("Read-only NixOS filesystem prevents writing to some `pymongo_inmemory` cache")
+    @pytest.mark.skip(
+        "Read-only NixOS filesystem prevents writing to some `pymongo_inmemory` cache"
+    )
     def test_path_codec(self):
         path = pathlib.Path("/".join("abcde"))
         self.collection.insert_one({"path": path})
 
     @classmethod
     def teardown_class(cls):
-        """ teardown any state that was previously setup with a call to
+        """teardown any state that was previously setup with a call to
         setup_class.
         """
         cls.client.close()

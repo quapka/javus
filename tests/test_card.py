@@ -15,7 +15,11 @@ def test___parse_raw__with_correct_pkg():
             "PKG": {
                 "AID": "A00000006303010C02",
                 "STATE": "LOADED",
-                "ITEMS": {"Privs": [], "Version": [], "Applet": [],},
+                "ITEMS": {
+                    "Privs": [],
+                    "Version": [],
+                    "Applet": [],
+                },
             }
         }
     ]
