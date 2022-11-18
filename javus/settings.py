@@ -5,8 +5,7 @@ from pathlib import Path
 
 
 def in_docker():
-    r"""Based on answer from: https://stackoverflow.com/a/20012536
-    """
+    r"""Based on answer from: https://stackoverflow.com/a/20012536"""
     docker = False
     # TODO technically we won't ever be inside Windows container, therefore
     # we only need to check for "Linux" systems
@@ -76,6 +75,12 @@ def get_registry_file():
         return project_registry
 
 
+# FIXME: There is config.ini, registry.ini and db connections string is also stored somewhere,
+#        this should be ideally unified.
+def get_config_file():
+    return Path.home() / ".config" / "javus" / "config.ini"
+
+
 PROJECT_ROOT = get_project_root()
 PROJECT_SRC = get_project_src()
 DATA = get_project_data()
@@ -87,3 +92,4 @@ STATIC_DIR = get_viewer_static()
 TEMPLATES_DIR = get_viewer_templates()
 SUBMODULES_DIR = get_viewer_templates()
 REGISTRY_FILE = get_registry_file()
+CONFIG_FILE = get_config_file()

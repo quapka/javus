@@ -116,7 +116,7 @@ class GlobalPlatformProWrapper(object):
         try:
             section = self.config["PATHS"]
         except KeyError:
-            log.warning("Config does not contain 'PATHS' section. Please, add it.")
+            log.error("Config does not contain 'PATHS' section. Please, add it.")
             self.gp_path = str(
                 (
                     PROJECT_ROOT
@@ -441,7 +441,7 @@ if __name__ == "__main__":
     import logging
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config-file", default="config.ini")
+    parser.add_argument("-c", "--config-file", default="config.ini", required=True)
     parser.add_argument("-t", "--card-types-file", default="types.ini")
 
     args = parser.parse_args()

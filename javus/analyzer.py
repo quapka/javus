@@ -26,7 +26,7 @@ from javus.card import Card
 from javus.data.jcversion.jcversion import JCVersionExecutor
 from javus.executor import AbstractAttackExecutor, BaseAttackExecutor, get_executor
 from javus.gppw import GlobalPlatformProWrapper
-from javus.settings import ATTACKS, DATA, REGISTRY_FILE
+from javus.settings import ATTACKS, DATA, REGISTRY_FILE, CONFIG_FILE
 from javus.utils import (
     CommandLineApp,
     Error,
@@ -158,7 +158,7 @@ implementation it is running.
     def __init__(self):
         # FIXME sort self arguments and parameters
         self.config = None
-        self.config_file = None
+        self.config_file = CONFIG_FILE
         self.gp: Optional[GlobalPlatformProWrapper] = None
         self.card: Optional[Card] = None
         self.list = False
