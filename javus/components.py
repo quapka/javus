@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 
 import os
 import glob
@@ -15,6 +16,8 @@ from dataclasses import dataclass
 import sys
 from typing import List
 
+# FIXME: The keys are actually bytes values, but HEX representation is ambigious
+#        using `bytes` as keys is possible (lower x upper)
 # source: https://github.com/petrs/jcAIDScan/blob/master/jcAIDScan.py#L81
 PKG_AID_TO_NAME = {
     "A0000000620001": "java.lang",
@@ -117,6 +120,15 @@ class package_info:
         output = f"{name} {major}.{minor}"
         return output
 
+    def as_json(self):
+        return {
+            "minor_version": self.minor_version,
+            "major_verison": self.major_version,
+            "AID_length": self.AID_length,
+            "AID": self.AID,
+            "name": PKG_AID_TO_NAME[self.AID.hex().upper()],
+        }
+
 
 @dataclass
 class package_name:
@@ -175,6 +187,14 @@ ImportComponent:
     packages:
         {packages}"""
         return output.strip()
+
+    def as_json(self):
+        return {
+            "tag": self.tag,
+            "size": self.size,
+            "count": self.count,
+            "packages": [p.as_json() for p in self.packages],
+        }
 
 
 @dataclass
@@ -247,7 +267,7 @@ def confuse_import_component(cap_path: Path, result_path: Path):
         shutil.move(str(result_path) + ".zip", result_path)
 
 
-def print_import_component(cap_path: Path):
+def get_import_component(cap_path: Path, as_json: bool = False):
     zf = zipfile.ZipFile(cap_path)
 
     with tempfile.TemporaryDirectory() as tempdir:
@@ -257,7 +277,10 @@ def print_import_component(cap_path: Path):
         with open(import_path, "rb") as handle:
             ic = ImportComponent.parse(handle)
 
-    print(ic)
+    if as_json:
+        return ic.as_json()
+
+    return ic
 
 
 def main():
@@ -267,16 +290,30 @@ def main():
         type=Path,
         help="A path to a CAP file or a directory containing CAP files (recurses into subdirs)",
     )
+    parser.add_argument(
+        "-j",
+        "--json",
+        action="store_true",
+    )
     args = parser.parse_args()
+    as_json = args.json
 
     path = args.path
+    result = {}
     if path.is_dir():
         for cap_file in sorted(path.rglob("*.cap")):
-            print(cap_file.name)
-            print_import_component(cap_path=cap_file)
-            print()
+            data = get_import_component(cap_path=cap_file, as_json=as_json)
+            if as_json:
+                result[cap_file.name] = data
+            else:
+                print(cap_file.name)
+                print(data)
+                print()
+        if as_json:
+            print(json.dumps(result))
     else:
-        print_import_component(cap_path=path)
+        data = get_import_component(cap_path=path)
+        print(data)
     # confuse_import_component(cap_path=args.path)
 
 
