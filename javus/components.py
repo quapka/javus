@@ -263,7 +263,9 @@ def print_import_component(cap_path: Path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-p", "--path", type=Path, default=Path("./javacardversion-jc211.cap")
+        "path",
+        type=Path,
+        help="A path to a CAP file or a directory containing CAP files (recurses into subdirs)",
     )
     args = parser.parse_args()
 
