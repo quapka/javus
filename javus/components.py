@@ -269,7 +269,7 @@ def main():
 
     path = args.path
     if path.is_dir():
-        for cap_file in path.rglob("*.cap"):
+        for cap_file in sorted(path.rglob("*.cap")):
             print(cap_file.name)
             print_import_component(cap_path=cap_file)
             print()
