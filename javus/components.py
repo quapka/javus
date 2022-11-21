@@ -106,6 +106,12 @@ class package_info:
             value -= 1
         self.major_version = value.to_bytes(1, byteorder="big")
 
+    def set_major_version(self, value: int):
+        self.major_version = value.to_bytes(1, byteorder="big")
+
+    def set_minor_version(self, value: int):
+        self.minor_version = value.to_bytes(1, byteorder="big")
+
     def collect(self) -> bytes:
         return self.minor_version + self.major_version + self.AID_length + self.AID
 
