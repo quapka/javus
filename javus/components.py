@@ -156,6 +156,7 @@ class package_name:
 # NOTE parsing might be SDK version dependant
 @dataclass
 class ImportComponent:
+    # TODO add a method to tell whether a package is available
     tag: bytes  # u1
     size: bytes  # u2
     count: bytes  # u1, should be 0-128 inclusive
@@ -325,7 +326,7 @@ def main():
                 print(data)
                 print()
         if as_json:
-            print(json.dumps(result))
+            print(json.dumps(result, indent=4))
     else:
         data = get_import_component(cap_path=path)
         print(data)
