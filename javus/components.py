@@ -14,7 +14,7 @@ from collections import namedtuple
 from dataclasses import dataclass
 
 import sys
-from typing import List
+from typing import List, Union
 
 # FIXME: The keys are actually bytes values, but HEX representation is ambigious
 #        using `bytes` as keys is possible (lower x upper)
@@ -47,6 +47,8 @@ PKG_AID_TO_NAME = {
     "A00000015107": "org.globalplatform.upgrade",
     "A0000000030000": "visa.openplatform",
 }
+
+NAME_TO_PKG_AID = {value: key for key, value in PKG_AID_TO_NAME.items()}
 
 
 @dataclass
@@ -170,6 +172,12 @@ class ImportComponent:
             count=count,
             packages=packages,
         )
+
+    def get_package(self, name: Union[str, bytes]) -> package_info:
+        aid = bytes.fromhex(NAME_TO_PKG_AID[name.strip()])
+        for pkg in self.packages:
+            if pkg.AID == aid:
+                return pkg
 
     def collect(self) -> bytes:
         packages = [p.collect() for p in self.packages]
