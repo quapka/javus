@@ -57,6 +57,7 @@ class AID:
 
 @dataclass
 class package_info:
+    # FIXME we have to move to the actual values I am afraid :(
     minor_version: bytes  # u1
     major_version: bytes  # u1
     AID_length: bytes  # u1
@@ -122,10 +123,10 @@ class package_info:
 
     def as_json(self):
         return {
-            "minor_version": self.minor_version,
-            "major_verison": self.major_version,
-            "AID_length": self.AID_length,
-            "AID": self.AID,
+            "minor_version": int.from_bytes(self.minor_version, byteorder="big"),
+            "major_version": int.from_bytes(self.major_version, byteorder="big"),
+            "AID_length": self.AID_length.hex(),
+            "AID": self.AID.hex(),
             "name": PKG_AID_TO_NAME[self.AID.hex().upper()],
         }
 
@@ -190,9 +191,9 @@ ImportComponent:
 
     def as_json(self):
         return {
-            "tag": self.tag,
-            "size": self.size,
-            "count": self.count,
+            "tag": self.tag.hex(),
+            "size": self.size.hex(),
+            "count": self.count.hex(),
             "packages": [p.as_json() for p in self.packages],
         }
 
