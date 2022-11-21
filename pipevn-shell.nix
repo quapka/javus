@@ -3,6 +3,8 @@ pkgs.mkShell {
   name = "my-python-project";
   buildInputs = with pkgs; [
     python310
+    python310Packages.ipython
+    python310Packages.pytest
     pipenv
 
     ant
