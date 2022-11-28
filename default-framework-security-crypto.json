@@ -1,0 +1,275 @@
+{
+    "crypto-security-pkg-jc221.cap": {
+        "tag": "04",
+        "size": "001f",
+        "count": "03",
+        "packages": [
+            {
+                "minor_version": 2,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620101",
+                "name": "javacard.framework"
+            },
+            {
+                "minor_version": 2,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620102",
+                "name": "javacard.security"
+            },
+            {
+                "minor_version": 2,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620201",
+                "name": "javacardx.crypto"
+            }
+        ]
+    },
+    "crypto-security-pkg-jc222.cap": {
+        "tag": "04",
+        "size": "0029",
+        "count": "04",
+        "packages": [
+            {
+                "minor_version": 3,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620101",
+                "name": "javacard.framework"
+            },
+            {
+                "minor_version": 3,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620102",
+                "name": "javacard.security"
+            },
+            {
+                "minor_version": 3,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620201",
+                "name": "javacardx.crypto"
+            },
+            {
+                "minor_version": 0,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620001",
+                "name": "java.lang"
+            }
+        ]
+    },
+    "crypto-security-pkg-jc303.cap": {
+        "tag": "04",
+        "size": "0029",
+        "count": "04",
+        "packages": [
+            {
+                "minor_version": 4,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620101",
+                "name": "javacard.framework"
+            },
+            {
+                "minor_version": 4,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620102",
+                "name": "javacard.security"
+            },
+            {
+                "minor_version": 4,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620201",
+                "name": "javacardx.crypto"
+            },
+            {
+                "minor_version": 0,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620001",
+                "name": "java.lang"
+            }
+        ]
+    },
+    "crypto-security-pkg-jc304.cap": {
+        "tag": "04",
+        "size": "0029",
+        "count": "04",
+        "packages": [
+            {
+                "minor_version": 5,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620101",
+                "name": "javacard.framework"
+            },
+            {
+                "minor_version": 5,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620102",
+                "name": "javacard.security"
+            },
+            {
+                "minor_version": 5,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620201",
+                "name": "javacardx.crypto"
+            },
+            {
+                "minor_version": 0,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620001",
+                "name": "java.lang"
+            }
+        ]
+    },
+    "crypto-security-pkg-jc305u1.cap": {
+        "tag": "04",
+        "size": "0029",
+        "count": "04",
+        "packages": [
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620101",
+                "name": "javacard.framework"
+            },
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620102",
+                "name": "javacard.security"
+            },
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620201",
+                "name": "javacardx.crypto"
+            },
+            {
+                "minor_version": 0,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620001",
+                "name": "java.lang"
+            }
+        ]
+    },
+    "crypto-security-pkg-jc305u2.cap": {
+        "tag": "04",
+        "size": "0029",
+        "count": "04",
+        "packages": [
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620101",
+                "name": "javacard.framework"
+            },
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620102",
+                "name": "javacard.security"
+            },
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620201",
+                "name": "javacardx.crypto"
+            },
+            {
+                "minor_version": 0,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620001",
+                "name": "java.lang"
+            }
+        ]
+    },
+    "crypto-security-pkg-jc305u3.cap": {
+        "tag": "04",
+        "size": "0029",
+        "count": "04",
+        "packages": [
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620101",
+                "name": "javacard.framework"
+            },
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620102",
+                "name": "javacard.security"
+            },
+            {
+                "minor_version": 6,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620201",
+                "name": "javacardx.crypto"
+            },
+            {
+                "minor_version": 0,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620001",
+                "name": "java.lang"
+            }
+        ]
+    },
+    "crypto-security-pkg-jc310b43.cap": {
+        "tag": "04",
+        "size": "0029",
+        "count": "04",
+        "packages": [
+            {
+                "minor_version": 8,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620101",
+                "name": "javacard.framework"
+            },
+            {
+                "minor_version": 7,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620102",
+                "name": "javacard.security"
+            },
+            {
+                "minor_version": 7,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620201",
+                "name": "javacardx.crypto"
+            },
+            {
+                "minor_version": 0,
+                "major_version": 1,
+                "AID_length": "07",
+                "AID": "a0000000620001",
+                "name": "java.lang"
+            }
+        ]
+    }
+}

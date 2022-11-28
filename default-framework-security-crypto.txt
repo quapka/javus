@@ -1,0 +1,77 @@
+example-attack-jc222.cap
+ImportComponent:
+    tag: 4
+    size: 41
+    count: 4
+    packages:
+        javacard.framework 1.3
+	javacard.security 1.3
+	javacardx.crypto 1.3
+	java.lang 1.0
+
+example-attack-jc303.cap
+ImportComponent:
+    tag: 4
+    size: 41
+    count: 4
+    packages:
+        javacard.framework 1.4
+	javacard.security 1.4
+	javacardx.crypto 1.4
+	java.lang 1.0
+
+example-attack-jc304.cap
+ImportComponent:
+    tag: 4
+    size: 41
+    count: 4
+    packages:
+        javacard.framework 1.5
+	javacard.security 1.5
+	javacardx.crypto 1.5
+	java.lang 1.0
+
+example-attack-jc305u1.cap
+ImportComponent:
+    tag: 4
+    size: 41
+    count: 4
+    packages:
+        javacard.framework 1.6
+	javacard.security 1.6
+	javacardx.crypto 1.6
+	java.lang 1.0
+
+example-attack-jc305u2.cap
+ImportComponent:
+    tag: 4
+    size: 41
+    count: 4
+    packages:
+        javacard.framework 1.6
+	javacard.security 1.6
+	javacardx.crypto 1.6
+	java.lang 1.0
+
+example-attack-jc305u3.cap
+ImportComponent:
+    tag: 4
+    size: 41
+    count: 4
+    packages:
+        javacard.framework 1.6
+	javacard.security 1.6
+	javacardx.crypto 1.6
+	java.lang 1.0
+
+example-attack-jc310b43.cap
+ImportComponent:
+    tag: 4
+    size: 41
+    count: 4
+    packages:
+        javacard.framework 1.8
+	javacard.security 1.7
+	javacardx.crypto 1.7
+	java.lang 1.0
+
