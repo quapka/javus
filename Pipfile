@@ -99,6 +99,8 @@ wtforms = "==2.3.1"
 zipp = "==3.1.0"
 wheel = "*"
 javus = {editable = true, path = "."}
+plotly = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.9"

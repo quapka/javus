@@ -5,6 +5,7 @@ pkgs.mkShell {
     python310
     python310Packages.ipython
     python310Packages.pytest
+    python310Packages.plotly
     pipenv
 
     ant
@@ -15,5 +16,7 @@ pkgs.mkShell {
 
   LD_LIBRARY_PATH = with pkgs; pkgs.lib.makeLibraryPath [
     pcsclite
+    zlib
+    libgccjit
   ];
 }
