@@ -82,7 +82,7 @@ def get_stylesheet_content():
 def get_analysis_choices() -> List[Tuple[str, str]]:
     with MongoConnection(**db_config) as con:
         all_attack_ids = con.col.find(
-            projection=["_id"], sort=[("start-time", pymongo.ASCENDING)]
+            projection=["_id"]  # , sort=[("start-time", pymongo.ASCENDING)]
         )
 
     choices = []
