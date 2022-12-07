@@ -212,7 +212,7 @@ def card_form_template(form):
     """
     atr = request.form["card-atr"]
     with MongoConnection(**db_config) as con:
-        card = con.col.find_one({"card.atr": atr}, projection=["card"])
+        card = con.col.find_one({"card.atr": atr}, projection=["card"])["card"]
 
     with MongoConnection(**db_config) as con:
         runs = con.col.find({"card.atr": atr})
