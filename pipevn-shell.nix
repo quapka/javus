@@ -1,11 +1,12 @@
 { pkgs ? import <nixpkgs> { } }:
 pkgs.mkShell {
-  name = "my-python-project";
+  name = "javus";
   buildInputs = with pkgs; [
     python310
     python310Packages.ipython
     python310Packages.pytest
     python310Packages.plotly
+    python310Packages.pandas
     pipenv
 
     ant
