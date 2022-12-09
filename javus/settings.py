@@ -56,6 +56,10 @@ def get_viewer_templates():
     return get_project_src() / "templates"
 
 
+def get_atr_to_name_map():
+    return Path.home() / ".config" / "javus" / "atr_to_name_map.json"
+
+
 def get_registry_file():
     # FIXME Path.home() probably expects a user with $HOME directory
     #       in case this would be executed as a service it might fail?
@@ -93,3 +97,4 @@ TEMPLATES_DIR = get_viewer_templates()
 SUBMODULES_DIR = get_viewer_templates()
 REGISTRY_FILE = get_registry_file()
 CONFIG_FILE = get_config_file()
+ATR_TO_NAME = get_atr_to_name_map()

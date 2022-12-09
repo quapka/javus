@@ -2,10 +2,11 @@
 import argparse
 import configparser
 import datetime
+import json
 import threading
 import time
 import webbrowser
-from typing import List, Tuple
+from typing import List, Tuple, Mapping
 
 import pytz
 
@@ -14,7 +15,7 @@ import pymongo
 import wtforms
 from bson.objectid import ObjectId
 from flask import Flask, render_template, request
-from javus.settings import STATIC_DIR
+from javus.settings import STATIC_DIR, ATR_TO_NAME
 from javus.utils import MongoConnection
 
 app = Flask(__name__)
@@ -71,6 +72,17 @@ def load_config():
     config.read()
 
 
+def load_ATR_map() -> Mapping[bytes, str]:
+    try:
+        with open(ATR_TO_NAME, "r") as handle:
+            data = json.load(handle)
+    except FileNotFoundError:
+        return {}
+
+    atr_to_name = {bytes.fromhex(k): v for k, v in data.items()}
+    return atr_to_name
+
+
 def get_stylesheet_content():
     # FIXME this approach is quite naive and does not handle fonts
     with open(STATIC_DIR / "css" / "stylesheet.css") as f:
@@ -97,6 +109,8 @@ def get_analysis_choices() -> List[Tuple[str, str]]:
 
 
 def get_card_atr_choices() -> List[Tuple[str, str]]:
+    atr_to_name = load_ATR_map()
+
     with MongoConnection(**db_config) as con:
         records = con.col.find(projection=["card"])
 
@@ -110,8 +124,10 @@ def get_card_atr_choices() -> List[Tuple[str, str]]:
         if isinstance(atr, list):
             # FIXME remove on fresh database, where 'atr's are string
             atr = " ".join(["{:02X}".format(byte) for byte in atr])
-
-        label = atr
+        try:
+            label = atr_to_name[bytes.fromhex(atr)]
+        except KeyError:
+            label = atr
         choices.append((atr, label))
     choices = list(set(choices))
     choices.sort(key=lambda x: x[1])
