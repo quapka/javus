@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import pprint
 
 import os
 import glob
@@ -49,6 +50,20 @@ PKG_AID_TO_NAME = {
 }
 
 NAME_TO_PKG_AID = {value: key for key, value in PKG_AID_TO_NAME.items()}
+
+COMPONENT_NAME_TO_NUM = {
+    "COMPONENT_Header": 1,
+    "COMPONENT_Directory": 2,
+    "COMPONENT_Applet": 3,
+    "COMPONENT_Import": 4,
+    "COMPONENT_ConstantPool": 5,
+    "COMPONENT_Class": 6,
+    "COMPONENT_Method": 7,
+    "COMPONENT_StaticField": 8,
+    "COMPONENT_ReferenceLocation": 9,
+}
+
+NUM_TO_COMPONENT_NAME = {value: key for key, value in COMPONENT_NAME_TO_NUM.items()}
 
 
 @dataclass
@@ -214,6 +229,49 @@ ImportComponent:
 
 
 @dataclass
+class DirectoryComponent:
+    tag: bytes  # u1
+    size: bytes  # u2
+    component_sizes: bytes  # [12] u2
+    static_field_size: bytes  # static_field_size_info
+    import_count: bytes  # u1
+    applet_count: bytes  # u1
+    custom_count: bytes  # u1
+    custom_components: bytes  # [custom_count] custom_component_info
+
+    @classmethod
+    def parse(cls, stream: bytes) -> "DirectoryComponent":
+        tag = stream.read(1)
+        size = stream.read(2)
+        # list of sizes of all the components, in 2.2.2 equals to two for all
+        # FIXME create the actual array
+        # component_sizes = stream.read(2 * 12)
+        component_sizes = [int.from_bytes(stream.read(2), "big") for _ in range(12)]
+        # FIXME create the sub struct
+        static_field_size = stream.read(3 * 2)
+        import_count = stream.read(1)
+        applet_count = stream.read(1)
+        custom_count = stream.read(1)
+        custom_components = stream.read(int.from_bytes(custom_count, "big"))
+
+        return DirectoryComponent(
+            tag=tag,
+            size=size,
+            component_sizes=component_sizes,
+            static_field_size=static_field_size,
+            import_count=import_count,
+            applet_count=applet_count,
+            custom_count=custom_count,
+            custom_components=custom_components,
+        )
+
+    def collect(self) -> bytes:
+        # FIXME finish impl
+        raise NotImplementedError
+        return b""
+
+
+@dataclass
 class HeaderComponent:
     tag: bytes  # u1
     size: bytes  # u2
@@ -248,14 +306,14 @@ class HeaderComponent:
         pass
 
 
-def get_import_path(tempdir: Path) -> Path:
+def get_import_path(tempdir: Path, target_name: str = "Import.cap") -> Path:
     """
     Return a path to ImportComponent.cap in a `tempdir` if it exists
     """
     for root, dirs, files in os.walk(tempdir):
         path = root.split(os.sep)
         for file in files:
-            if file == "Import.cap":
+            if file == target_name:
                 return Path("/") / "/".join(path) / f"{file}"
 
 
@@ -299,6 +357,41 @@ def get_import_component(cap_path: Path, as_json: bool = False):
     return ic
 
 
+def get_directory_component(cap_path: Path, as_json: bool = False):
+    zf = zipfile.ZipFile(cap_path)
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        zf.extractall(tempdir)
+
+        path = get_import_path(tempdir, target_name="Directory.cap")
+        with open(path, "rb") as handle:
+            # ic = .parse(handle)
+            dc = DirectoryComponent.parse(handle)
+            print(dc)
+            # with open("jc222-applets-directory-component.cap", "wb") as out:
+            #     out.write(handle.read())
+            # import sys
+
+            # sys.stdout.write(handle.read())
+
+    # FIXME return
+
+
+def show_directory():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "path",
+        type=Path,
+        help="A path to a CAP file or a directory containing CAP files (recurses into subdirs)",
+    )
+    args = parser.parse_args()
+
+    path = args.path
+    get_directory_component(path)
+    ic = get_import_component(path)
+    print(ic)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -316,22 +409,29 @@ def main():
 
     path = args.path
     result = {}
+    package_sets = set()
     if path.is_dir():
         for cap_file in sorted(path.rglob("*.cap")):
             data = get_import_component(cap_path=cap_file, as_json=as_json)
             if as_json:
                 result[cap_file.name] = data
             else:
-                print(cap_file.name)
+                print(cap_file)
                 print(data)
+                package_sets.add(tuple(str(pkg) for pkg in data.packages))
+                # for pc in data.packages:
+                #     print(pc)
                 print()
         if as_json:
             print(json.dumps(result, indent=4))
     else:
         data = get_import_component(cap_path=path)
         print(data)
+
     # confuse_import_component(cap_path=args.path)
+    pprint.pprint(package_sets)
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    show_directory()
