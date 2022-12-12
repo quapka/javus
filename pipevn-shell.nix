@@ -1,21 +1,26 @@
 { pkgs ? import <nixpkgs> { } }:
-pkgs.mkShell {
+let
+  pythonPackages = with pkgs.python310Packages; [
+    ipython
+    pytest
+    plotly
+    pandas
+    jupyter
+    jupytext
+  ];
+in
+pkgs.mkShell rec {
   name = "javus";
+
   buildInputs = with pkgs; [
     python310
-    python310Packages.ipython
-    python310Packages.pytest
-    python310Packages.plotly
-    python310Packages.pandas
-    python310Packages.jupyter
-    python310Packages.jupytext
     pipenv
 
     ant
     jdk8
     mongodb
     swig
-  ];
+  ] ++ pythonPackages;
 
   LD_LIBRARY_PATH = with pkgs; pkgs.lib.makeLibraryPath [
     pcsclite
