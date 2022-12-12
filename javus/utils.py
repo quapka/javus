@@ -95,7 +95,9 @@ class CommandLineApp(object):
         self.parser.add_argument(
             "-v",
             "--verbose",
-            help="Set the verbosity {" + levels + "}",
+            help="Set the verbosity {"
+            + levels
+            + "}. Lower number means higher verbosity.",
             type=self.validate_verbosity,
         )
 
