@@ -7,6 +7,8 @@ pkgs.mkShell {
     python310Packages.pytest
     python310Packages.plotly
     python310Packages.pandas
+    python310Packages.jupyter
+    python310Packages.jupytext
     pipenv
 
     ant
