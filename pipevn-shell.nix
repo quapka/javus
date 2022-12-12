@@ -5,8 +5,8 @@ let
     pytest
     plotly
     pandas
-    jupyter
-    jupytext
+    pip
+    venvShellHook
   ];
 in
 pkgs.mkShell rec {
@@ -20,11 +20,23 @@ pkgs.mkShell rec {
     jdk8
     mongodb
     swig
+
+    pcsclite
+    pcsclite.dev
   ] ++ pythonPackages;
+
+  CPATH = with pkgs; "${pcsclite.dev}/include/PCSC";
 
   LD_LIBRARY_PATH = with pkgs; pkgs.lib.makeLibraryPath [
     pcsclite
     zlib
     libgccjit
   ];
+
+  venvDir = ".virt";
+  venvShellHook = ''
+    pip install --editable .
+  '';
+
+  shellHook = "source ${venvDir}/bin/activate";
 }
