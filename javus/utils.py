@@ -16,6 +16,10 @@ from typing import List, NamedTuple, Optional
 
 import bson
 import pymongo
+from smartcard.CardConnection import CardConnection
+from smartcard.CardConnectionDecorator import CardConnectionDecorator
+from smartcard.System import readers
+
 from javus.settings import LIB_DIR
 
 log = logging.getLogger(__file__)
@@ -578,6 +582,28 @@ def proc_to_dict(proc: subprocess.CompletedProcess) -> dict:
             pass
 
     return result
+
+
+def detect_cards() -> List[CardConnectionDecorator]:
+    """
+    Detect all the JavaCards, that are currently inserted
+    in the readers.
+    """
+    cards = []
+    for reader in readers():
+        con = reader.createConnection()
+        try:
+            # NOTE we are not explicitly disconnecting, so far it seems that it is not
+            # an issue
+            con.connect()
+            cards.append(con)
+        except (
+            smartcard.Exceptions.NoCardException,
+            smartcard.Exceptions.CardConnectionException,
+        ):
+            pass
+
+    return cards
 
 
 if __name__ == "__main__":

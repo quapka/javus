@@ -38,13 +38,11 @@ from javus.utils import (
     cd,
     get_user_consent,
     load_versions,
+    detect_cards,
 )
 from javus.validator import AttackValidator
 from javus.viewer import app
 from smartcard.ATR import ATR
-from smartcard.CardConnection import CardConnection
-from smartcard.CardConnectionDecorator import CardConnectionDecorator
-from smartcard.System import readers
 
 # FIXME handle error on gp --list
 # flake8: noqa [WARN] GPSession - GET STATUS failed for 80F21000024F0000 with 0x6A81 (Function not supported e.g. card Life Cycle State is CARD_LOCKED)
@@ -67,28 +65,6 @@ if int(PY_VERSION[0]) < 3:
     print("Unsupported python version: {}".format(PY_VERSION))
     print("Try using Python 3.6")
     sys.exit(Error.UNSUPPORTED_PYTHON_VERSION)
-
-
-def detect_cards() -> List[CardConnectionDecorator]:
-    """
-    Detect all the JavaCards, that are currently inserted
-    in the readers.
-    """
-    cards = []
-    for reader in readers():
-        con = reader.createConnection()
-        try:
-            # NOTE we are not explicitly disconnecting, so far it seems that it is not
-            # an issue
-            con.connect()
-            cards.append(con)
-        except (
-            smartcard.Exceptions.NoCardException,
-            smartcard.Exceptions.CardConnectionException,
-        ):
-            pass
-
-    return cards
 
 
 class PreAnalysisManager:
