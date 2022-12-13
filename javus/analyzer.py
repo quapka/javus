@@ -7,8 +7,10 @@ import argparse
 # pylint: disable = missing-class-docstring, missing-function-docstring, invalid-name, fixme
 # FIXME use isort
 import configparser
+import dataclasses
 import datetime
 import importlib
+import io
 import json
 import logging
 import os
@@ -22,7 +24,7 @@ from typing import List, Optional
 # TODO consider importing only toplevel module
 import smartcard
 from javus.builder import BaseAttackBuilder, get_builder
-from javus.card import Card
+from javus.card import Card, CPLC
 from javus.data.jcversion.jcversion import JCVersionExecutor
 from javus.executor import AbstractAttackExecutor, BaseAttackExecutor, get_executor
 from javus.gppw import GlobalPlatformProWrapper
@@ -76,6 +78,8 @@ def detect_cards() -> List[CardConnectionDecorator]:
     for reader in readers():
         con = reader.createConnection()
         try:
+            # NOTE we are not explicitly disconnecting, so far it seems that it is not
+            # an issue
             con.connect()
             cards.append(con)
         except (
@@ -115,6 +119,24 @@ class PreAnalysisManager:
 
         return single_card
 
+    def get_cplc_info(self) -> "CPLC":
+        cards = detect_cards()
+        assert len(cards) == 1
+
+        card = cards[0]
+        data, sw1, sw2 = card.transmit(CPLC.APDU)
+        card.disconnect()
+
+        if sw1 != 0x90 or sw2 != 0x00:
+            log.warning(
+                "Received the status words %s%s instead of 9000 when asking for CPLC",
+                sw1,
+                sw2,
+            )
+            return {}
+
+        return CPLC.parse(io.BytesIO(bytes(data)))
+
     def run(self):
         report = {}
         if not self.single_card_inserted():
@@ -133,8 +155,12 @@ class PreAnalysisManager:
         # FIXME getting the jc version still seems to cause troubles
         self.card.jcversion = self.get_jc_version()
         self.card.sdks = self.card.jcversion.get_sdks()
+        self.card.cplc = self.get_cplc_info()
         report["JCVersion"] = self.card.jcversion
         report["SDKs"] = self.card.sdks
+        report["CPLC"] = (
+            dataclasses.asdict(self.card.cplc) if self.card.cplc != {} else {}
+        )
 
         return report
 
