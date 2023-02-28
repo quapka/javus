@@ -63,3 +63,6 @@ docs/_build/
 *.zip
 
 analysis-reports/
+
+.ipynb_checkpoints/
+.virt/
