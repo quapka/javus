@@ -1,8 +1,16 @@
+#!/usr/bin/env python3
+import argparse
 import logging
 import re
 import io
 
+import dataclasses
 from dataclasses import dataclass
+
+import smartcard
+from smartcard.CardConnection import CardConnection
+
+from javus.utils import detect_cards, MongoConnection
 
 
 log = logging.getLogger(__file__)
@@ -164,6 +172,43 @@ class Card:
         }
         return report
 
+    @staticmethod
+    def get_cplc_info(card_connection=CardConnection) -> "CPLC":
+
+        # FIXME remove prints
+        data, sw1, sw2 = card_connection.transmit(CPLC.SELECT_APDU)
+        print("Select APDU:", bytes(data).hex(sep=" "))
+
+        if sw1 != 0x90 or sw2 != 0x00:
+            log.warning(
+                "Received the status words %X%X when selecting the card manager",
+                sw1,
+                sw2,
+            )
+
+        if sw1 == 0x61:
+            data, sw1, sw2 = card_connection.transmit([0x00, 0xC0, 0x00, 0x00, sw2])
+            print("GET RESPONSE:", bytes(data).hex(sep=" "))
+            print("%X%X" % (sw1, sw2))
+
+        data, sw1, sw2 = card_connection.transmit(CPLC.APDU)
+        if sw1 == 0x6C and sw2 != 0x00:
+            apdu = CPLC.APDU[:-1] + [sw2]
+            data, sw1, sw2 = card_connection.transmit(apdu)
+
+        print("GET CPLC:", bytes(data).hex(sep=" "))
+        # card_connection.disconnect()
+
+        if sw1 != 0x90 or sw2 != 0x00:
+            log.warning(
+                "Received the status words %X%X instead of 9000 when asking for CPLC",
+                sw1,
+                sw2,
+            )
+            return {}
+
+        return CPLC.parse(io.BytesIO(bytes(data)))
+
 
 @dataclass
 class CPLC:
@@ -210,7 +255,8 @@ class CPLC:
     ICPersonalizationDate: str  # number of bytes: 2
     ICPersonalizationEquipmentID: str  # number of bytes: 4
 
-    APDU = [0x80, 0xCA, 0x9F, 0x7F]
+    SELECT_APDU = [0x00, 0xA4, 0x04, 0x00]
+    APDU = [0x80, 0xCA, 0x9F, 0x7F, 0x00]
 
     @classmethod
     def parse(cls, stream: io.BytesIO) -> "CPLC":
@@ -267,3 +313,92 @@ class CPLC:
             ICPersonalizationDate=ICPersonalizationDate,
             ICPersonalizationEquipmentID=ICPersonalizationEquipmentID,
         )
+
+
+def save_card_information():
+    parser = argparse.ArgumentParser(
+        description=(
+            "Loads the card's Card Production Life Cycle (CPLC) information "
+            "and saves it to the 'cards' collation"
+        )
+    )
+    parser.add_argument(
+        "-n",
+        "--name",
+        help=(
+            "The human readable name of the card. "
+            "Usually, what is written on the card."
+        ),
+        # required=True,
+    )
+
+    args = parser.parse_args()
+    name = args.name
+
+    cards = detect_cards()
+    n_cards = len(cards)
+    assert (
+        n_cards == 1
+    ), f"Error: there is '{n_cards}' cards currently connected. Expected is '1'."
+
+    cplc = Card.get_cplc_info(card_connection=cards[0])
+    cplc_dict = dataclasses.asdict(cplc) if cplc != {} else {}
+    print(f"Name: {name}")
+    print(cplc)
+
+    with MongoConnection(database="test-javacard-analysis", collation="cards") as con:
+        existing = con.col.find_one({"cplc": {"$eq": cplc_dict}})
+        atr = bytes(cards[0].getATR()).hex(sep=" ").upper()
+        if existing:
+            if cplc_dict != {}:
+                print(f"Info: This card is already in the list. Adding ATR.")
+                query = {"cplc.ICSerialNumber": {"$eq": cplc_dict["ICSerialNumber"]}}
+                if not atr:
+                    print("Cannot get ATR")
+                else:
+                    print(atr)
+                    update = con.col.update_one(query, {"$set": {"atr": str(atr)}})
+                    assert (
+                        update.acknowledged == True
+                    ), "The update was note acknowledged"
+                    assert (
+                        update.matched_count == 1
+                    ), f"{update.matched_count} have matched instead of expected 1"
+
+            else:
+                print("CPLC is {}. Need to update manually.")
+                print(f"The ATR: {atr}")
+        else:
+            con.col.insert_one({"name": args.name, "cplc": cplc_dict})
+
+        print(con.col.find_one({"cplc": cplc_dict}))
+
+
+def framework_range(emv=False):
+    from pathlib import Path
+    import subprocess as sp
+    import re
+
+    pdir = Path(
+        "/home/qup/projects/javus/javus/data/jcversion/javacard.framework-altered"
+    )
+
+    versions = []
+    for path in sorted(pdir.rglob("*.cap")):
+        version = str(path).split("-")[-1].replace(".cap", "")
+        cmd = ["gp", "--install", path]
+        if emv:
+            cmd.append("--emv")
+
+        print(version)
+        print(cmd)
+
+
+def update_card_with_ATR():
+    pass
+
+
+if __name__ == "__main__":
+    # load CPLC information about a card and save it to the cards collation
+    # save_card_information()
+    framework_range()

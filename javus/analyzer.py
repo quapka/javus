@@ -96,6 +96,7 @@ class PreAnalysisManager:
         return single_card
 
     def get_cplc_info(self) -> "CPLC":
+        # FIXME the same method is currently present on the Card class as well
         cards = detect_cards()
         assert len(cards) == 1
 
