@@ -16,6 +16,7 @@ from typing import List, NamedTuple, Optional
 
 import bson
 import pymongo
+import smartcard
 from smartcard.CardConnection import CardConnection
 from smartcard.CardConnectionDecorator import CardConnectionDecorator
 from smartcard.System import readers
