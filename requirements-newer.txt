@@ -93,3 +93,6 @@ jupyter
 jupyter-contrib-nbextensions
 jupyter-nbextensions-configurator
 ipykernel
+jupyterlab_code_formatter
+black
+isort
