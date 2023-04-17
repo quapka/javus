@@ -506,6 +506,9 @@ class AttackConfigParser(configparser.ConfigParser):
         sdks = [SDKVersion.from_str(ver) for ver in strings]
         return sdks
 
+    def get_supported_versions(self) -> List[str]:
+        return self.getlist(section="BUILD", option="supported.versions")
+
 
 class PathTypeEncoder(bson.codec_options.TypeEncoder):
     python_type = pathlib.PosixPath
