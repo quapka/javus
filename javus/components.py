@@ -270,6 +270,29 @@ class DirectoryComponent:
         raise NotImplementedError
         return b""
 
+    def __str__(self):
+        tag = int.from_bytes(self.tag, byteorder="big")
+        size = int.from_bytes(self.size, byteorder="big")
+        component_sizes = self.component_sizes
+        static_field_size = self.static_field_size
+        import_count = int.from_bytes(self.import_count, byteorder="big")
+        applet_count = int.from_bytes(self.applet_count, byteorder="big")
+        custom_count = int.from_bytes(self.custom_count, byteorder="big")
+        custom_components = self.custom_components
+
+        output = f"""
+DirectoryComponent:
+    tag: {tag}
+    size: {size}
+    component_sizes: {component_sizes}
+    static_field_size: {static_field_size}
+    import_count: {import_count}
+    applet_count: {applet_count}
+    custom_count: {custom_count}
+    custom_components: {custom_components}
+        """.strip()
+        return output
+
 
 @dataclass
 class HeaderComponent:
@@ -367,14 +390,15 @@ def get_directory_component(cap_path: Path, as_json: bool = False):
         with open(path, "rb") as handle:
             # ic = .parse(handle)
             dc = DirectoryComponent.parse(handle)
-            print(dc)
             # with open("jc222-applets-directory-component.cap", "wb") as out:
             #     out.write(handle.read())
             # import sys
 
             # sys.stdout.write(handle.read())
 
-    # FIXME return
+    if as_json:
+        return dc.as_json()
+    return dc
 
 
 def show_directory():
@@ -387,8 +411,9 @@ def show_directory():
     args = parser.parse_args()
 
     path = args.path
-    get_directory_component(path)
+    dc = get_directory_component(path)
     ic = get_import_component(path)
+    print(dc)
     print(ic)
 
 
