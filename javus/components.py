@@ -293,6 +293,9 @@ DirectoryComponent:
         """.strip()
         return output
 
+    def as_json(self):
+        raise NotImplementedError
+
 
 @dataclass
 class HeaderComponent:
