@@ -72,6 +72,7 @@ class AID:
     PIX: bytes  # 0-11 bytes
 
 
+# NOTE: we don't follow Python class naming convention, but the name in JavaCard specifications
 @dataclass
 class package_info:
     # FIXME we have to move to the actual values I am afraid :(
@@ -95,6 +96,7 @@ class package_info:
                 AID_length=AID_length,
                 AID=AID,
             ),
+            # FIXME why do we return stream here?
             stream,
         )
 
@@ -152,6 +154,23 @@ class package_info:
             "AID": self.AID.hex(),
             "name": PKG_AID_TO_NAME[self.AID.hex().upper()],
         }
+
+    def __eq__(self, other):
+
+        if not isinstance(other, package_info):
+            raise ValueError(f"Trying to compare {type(other)} to {type(self)}")
+
+        equal = True
+        equal = all(
+            [
+                (self.minor_version == other.minor_version),
+                (self.major_version == other.major_version),
+                (self.AID_length == other.AID_length),
+                (self.AID == other.AID),
+            ]
+        )
+
+        return equal
 
 
 @dataclass
@@ -226,6 +245,22 @@ ImportComponent:
             "count": self.count.hex(),
             "packages": [p.as_json() for p in self.packages],
         }
+
+    def __eq__(self, other):
+
+        if not isinstance(other, ImportComponent):
+            raise NotImplementedError
+
+        equal = all(
+            [
+                (self.tag == other.tag),
+                (self.size == other.size),
+                (self.count == other.count),
+                (self.packages == other.packages),
+            ]
+        )
+
+        return equal
 
 
 @dataclass

@@ -32,12 +32,55 @@ def test_package_info():
     assert pi.AID == bytes.fromhex("a0 00 00 00 62 01 01")
 
 
+def test_comparing_same_package_info():
+    package_info_raw = bytes.fromhex("00 01 07 a0 00 00 00 62 01 01")
+    stream = io.BytesIO(package_info_raw)
+    pi, _ = package_info.parse(stream)
+
+    assert pi == pi
+
+
+def test_comparing_same_package_info():
+    package_info_raw = bytes.fromhex("00 01 07 a0 00 00 00 62 01 01")
+    stream = io.BytesIO(package_info_raw)
+    pi, _ = package_info.parse(stream)
+
+    # it differs in the last value 01 -> 02
+    other_package_info_raw = bytes.fromhex("00 01 07 a0 00 00 00 62 01 02")
+    other_stream = io.BytesIO(other_package_info_raw)
+    other_pi, _ = package_info.parse(other_stream)
+    assert pi != other_pi
+
+
 def test_import_component_parse_and_collect():
     import_component_raw = bytes.fromhex("04 00 0b 01 00 01 07 a0  00 00 00 62 01 01")
     stream = io.BytesIO(import_component_raw)
     ic = ImportComponent.parse(stream)
 
     assert import_component_raw == ic.collect()
+
+
+def test_comparing_same_import_component():
+    import_component_raw = bytes.fromhex("04 00 0b 01 00 01 07 a0  00 00 00 62 01 01")
+    stream = io.BytesIO(import_component_raw)
+    ic = ImportComponent.parse(stream)
+
+    assert ic == ic
+
+
+def test_comparing_component():
+    import_component_raw = bytes.fromhex("04 00 0b 01 00 01 07 a0  00 00 00 62 01 01")
+    stream = io.BytesIO(import_component_raw)
+    ic = ImportComponent.parse(stream)
+
+    # other differs 62 -> 63
+    other_import_component_raw = bytes.fromhex(
+        "05 00 0b 01 00 01 07 a0  00 00 00 63 01 01"
+    )
+    other_stream = io.BytesIO(other_import_component_raw)
+    other_ic = ImportComponent.parse(stream)
+
+    assert ic != other_ic
 
 
 @pytest.mark.skip("Not implemented")
